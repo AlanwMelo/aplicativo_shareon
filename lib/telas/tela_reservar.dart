@@ -192,13 +192,12 @@ class _Tela_ReservarState extends State<Tela_Reservar> {
       if (dataFim.isBefore(dataInicio)) {
         print("A data de devolução não pode ser menor que a data de Retirada");
         setState(() {
-          calcValorProdutoConversor = 50.toStringAsFixed(2);
           dataFim = DateTime.now();
           _horarioConfirmado("fim", TimeOfDay.now());
+          calcValorProdutoConversor = 50.toStringAsFixed(2);
         });
       } else {
         setState(() {
-          dataFim = DateTime.now();
           _verificaEstimado();
           _horarioConfirmado("fim", horarioSelecionado);
         });
@@ -248,8 +247,7 @@ class _Tela_ReservarState extends State<Tela_Reservar> {
           DiaSelecionado.day, dataFim.hour, dataFim.minute);
 
       if (dataFim.isBefore(dataInicio)) {
-        print(
-            "A data de devolução não pode ser menor que a data de Retirada !");
+        print("A data de devolução não pode ser menor que a data de Retirada");
         setState(() {
           dataFim = DateTime.now();
 
