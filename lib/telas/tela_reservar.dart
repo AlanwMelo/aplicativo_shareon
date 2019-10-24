@@ -2,6 +2,7 @@ import 'package:aplicativo_shareon/utils/seletor_calendario.dart';
 import 'package:aplicativo_shareon/utils/shareon_appbar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:toast/toast.dart';
 
 class Tela_Reservar extends StatefulWidget {
   @override
@@ -172,7 +173,7 @@ class _Tela_ReservarState extends State<Tela_Reservar> {
           horarioSelecionado.hour, horarioSelecionado.minute);
 
       if (dataInicio.isBefore(dataBase)) {
-        print("A data de inicio não pode ser menor que a atual");
+        _Toast("A data de inicio não pode ser menor que a atual.", context);
         setState(() {
           dataInicio = DateTime.now();
           calcValorProdutoConversor = 50.toStringAsFixed(2);
@@ -190,7 +191,7 @@ class _Tela_ReservarState extends State<Tela_Reservar> {
           horarioSelecionado.hour, horarioSelecionado.minute);
 
       if (dataFim.isBefore(dataInicio)) {
-        print("A data de devolução não pode ser menor que a data de Retirada");
+        _Toast("A data de devolução não pode ser menor que a data de retirada.", context);
         setState(() {
           dataFim = DateTime.now();
           _horarioConfirmado("fim", TimeOfDay.now());
@@ -217,7 +218,7 @@ class _Tela_ReservarState extends State<Tela_Reservar> {
           DiaSelecionado.day, dataInicio.hour, dataInicio.minute);
 
       if (dataInicio.isBefore(dataBase)) {
-        print("A data de inicio não pode ser menor que a atual");
+        _Toast("A data de inicio não pode ser menor que a atual.", context);
         setState(() {
           dataInicio = DateTime.now();
 
@@ -247,7 +248,7 @@ class _Tela_ReservarState extends State<Tela_Reservar> {
           DiaSelecionado.day, dataFim.hour, dataFim.minute);
 
       if (dataFim.isBefore(dataInicio)) {
-        print("A data de devolução não pode ser menor que a data de Retirada");
+        _Toast("A data de devolução não pode ser menor que a data de retirada.", context);
         setState(() {
           dataFim = DateTime.now();
 
@@ -289,10 +290,6 @@ class _Tela_ReservarState extends State<Tela_Reservar> {
     int duracao = (devolucao.difference(retirada).inMinutes);
 
     valordoProduto = ValordoProduto / (60);
-
-    print("$valordoProduto");
-    print("$duracao");
-
     double calcValorProduto = duracao.toDouble() * valordoProduto;
 
     calcValorProdutoConversor = calcValorProduto.toStringAsFixed(2);
@@ -389,4 +386,7 @@ _horarioFimPadrao() {
       DateTime.now().minute.toString().padLeft(2, "0");
 
   return hora;
+}
+_Toast(String texto, BuildContext context) {
+  Toast.show("$texto", context, duration: Toast.LENGTH_LONG, gravity:  Toast.BOTTOM, backgroundColor: Colors.black.withOpacity(0.8));
 }
