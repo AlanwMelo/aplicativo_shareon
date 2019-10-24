@@ -172,23 +172,35 @@ class _Tela_ReservarState extends State<Tela_Reservar> {
           horarioSelecionado.hour, horarioSelecionado.minute);
 
       if (dataInicio.isBefore(dataBase)) {
-        print("A data selecionada não pode ser menor que a atual");
+        print("A data de inicio não pode ser menor que a atual");
+        setState(() {
+          dataInicio = DateTime.now();
+          calcValorProdutoConversor = 50.toStringAsFixed(2);
+          _horarioConfirmado("inicio", TimeOfDay.now());
+        });
       } else {
         setState(() {
-          _valorEstimado(ValordoProduto, dataInicio, dataFim);
+          _verificaEstimado();
           _horarioConfirmado(inicioFim, horarioSelecionado);
         });
       }
-    } else if (horarioSelecionado != null && inicioFim == "fim") {
+    }
+    if (horarioSelecionado != null && inicioFim == "fim") {
       dataFim = DateTime(dataFim.year, dataFim.month, dataFim.day,
           horarioSelecionado.hour, horarioSelecionado.minute);
 
       if (dataFim.isBefore(dataInicio)) {
-        print("A data selecionada não pode ser menor que a data de inicio");
+        print("A data de devolução não pode ser menor que a data de Retirada");
+        setState(() {
+          calcValorProdutoConversor = 50.toStringAsFixed(2);
+          dataFim = DateTime.now();
+          _horarioConfirmado("fim", TimeOfDay.now());
+        });
       } else {
         setState(() {
-          _valorEstimado(ValordoProduto, dataInicio, dataFim);
-          _horarioConfirmado(inicioFim, horarioSelecionado);
+          dataFim = DateTime.now();
+          _verificaEstimado();
+          _horarioConfirmado("fim", horarioSelecionado);
         });
       }
     }
@@ -206,10 +218,22 @@ class _Tela_ReservarState extends State<Tela_Reservar> {
           DiaSelecionado.day, dataInicio.hour, dataInicio.minute);
 
       if (dataInicio.isBefore(dataBase)) {
-        print("A data selecionada não pode ser menor que a atual");
-      } else
+        print("A data de inicio não pode ser menor que a atual");
         setState(() {
-          _valorEstimado(ValordoProduto, dataInicio, dataFim);
+          dataInicio = DateTime.now();
+
+          _horarioConfirmado("inicio", TimeOfDay.now());
+          calcValorProdutoConversor = 50.toStringAsFixed(2);
+
+          _dataInicio = dataInicio.day.toString() +
+              "/" +
+              dataInicio.month.toString() +
+              "/" +
+              dataInicio.year.toString();
+        });
+      } else {
+        setState(() {
+          _verificaEstimado();
 
           _dataInicio = DiaSelecionado.day.toString() +
               "/" +
@@ -217,15 +241,30 @@ class _Tela_ReservarState extends State<Tela_Reservar> {
               "/" +
               DiaSelecionado.year.toString();
         });
+      }
     }
     if (DiaSelecionado != null && inicioFim == "fim") {
-      dataInicio = DateTime(DiaSelecionado.year, DiaSelecionado.month,
-          DiaSelecionado.day, dataInicio.hour, dataInicio.minute);
+      dataFim = DateTime(DiaSelecionado.year, DiaSelecionado.month,
+          DiaSelecionado.day, dataFim.hour, dataFim.minute);
 
       if (dataFim.isBefore(dataInicio)) {
+        print(
+            "A data de devolução não pode ser menor que a data de Retirada !");
+        setState(() {
+          dataFim = DateTime.now();
+
+          _horarioConfirmado("fim", TimeOfDay.now());
+          calcValorProdutoConversor = 50.toStringAsFixed(2);
+
+          _dataFim = dataFim.day.toString() +
+              "/" +
+              dataFim.month.toString() +
+              "/" +
+              dataFim.year.toString();
+        });
       } else {
         setState(() {
-          _valorEstimado(ValordoProduto, dataInicio, dataFim);
+          _verificaEstimado();
 
           _dataFim = DiaSelecionado.day.toString() +
               "/" +
@@ -237,11 +276,19 @@ class _Tela_ReservarState extends State<Tela_Reservar> {
     }
   }
 
+  _verificaEstimado() {
+    if (dataInicio.isAfter(dataFim)) {
+      calcValorProdutoConversor = 50.toStringAsFixed(2);
+    } else {
+      _valorEstimado(ValordoProduto, dataInicio, dataFim);
+    }
+  }
+
   _valorEstimado(double valordoProduto, DateTime dataInicio, DateTime dataFim) {
     DateTime retirada = dataInicio;
     DateTime devolucao = dataFim;
 
-    int duracao = (retirada.difference(devolucao).inMinutes);
+    int duracao = (devolucao.difference(retirada).inMinutes);
 
     valordoProduto = ValordoProduto / (60);
 
@@ -268,7 +315,7 @@ class _Tela_ReservarState extends State<Tela_Reservar> {
             ":" +
             time.minute.toString().padLeft(2, "0");
 
-        _valorEstimado(ValordoProduto, dataInicio, dataFim);
+        _verificaEstimado();
       });
     }
   }
