@@ -8,18 +8,18 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:975761612516:android:45c9ccf9fd2a8fb4aed6f1",
+        "mobilesdk_app_id": "1:975761612516:android:70c3ed344eaa04acaed6f1",
         "android_client_info": {
           "package_name": "com.aplicativoshareon.tcc.shareon.aplicativo_shareon"
         }
       },
       "oauth_client": [
         {
-          "client_id": "975761612516-73bdsl0hi4bcclq3mbtr19jaa5erpv3u.apps.googleusercontent.com",
+          "client_id": "975761612516-iaid2vi6vaf2123f32fhp63l7tqnlt29.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.aplicativoshareon.tcc.shareon.aplicativo_shareon",
-            "certificate_hash": "768b8b09a01592c7e7cbfb083c1a6c37a0171a7b"
+            "certificate_hash": "f8e98790fa0bc1ac4dca40b7180a67c733383a49"
           }
         },
         {

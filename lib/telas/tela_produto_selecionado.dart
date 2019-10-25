@@ -1,161 +1,97 @@
-import 'package:aplicativo_shareon/telas/tela_reservar.dart';
-import 'package:aplicativo_shareon/utils/shareon_appbar.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
-import 'package:page_indicator/page_indicator.dart';
+import  'package: aplicativo_shareon / layout_listas / lista_meus_produtos_builder.dart' ;
+import  'pacote: flutter / cupertino.dart' ;
+import  'pacote: flutter / material.dart' ;
 
-class ProdutoSelecionado extends StatefulWidget {
-  @override
-  _ProdutoSelecionadoState createState() => _ProdutoSelecionadoState();
+classe  MeusProdutos  estende  StatefulWidget {
+@sobrepor
+_MeusProdutosState  createState () = >  _MeusProdutosState ();
 }
 
-class _ProdutoSelecionadoState extends State<ProdutoSelecionado> {
-  @override
-  Widget build(BuildContext context) {
-    return _produto_selecionado(context);
-  }
+classe  _MeusProdutosState  estende o  estado < MeusProdutos > {
+@sobrepor
+Widget  de construção ( BuildContext contexto) {
+  voltar para  homeMeusProdutos ();
+}
 }
 
-_produto_selecionado(BuildContext context) {
-  return Scaffold(
-    appBar: shareon_appbar(),
-    body: SizedBox.expand(
-      child: Container(
-        color: Colors.indigo,
-        child: SingleChildScrollView(
-          child: Container(
-            child: Center(
-              child: Container(
-                child: Column(
-                  children: <Widget>[
-                    Container(
-                      height: 300,
-                      child: PageIndicatorContainer(
-                        length: 3,
-                        indicatorSpace: 10.0,
-                        padding: const EdgeInsets.all(10),
-                        indicatorColor: Colors.white.withOpacity(0.7),
-                        indicatorSelectorColor: Colors.blue,
-                        shape: IndicatorShape.circle(size: 10),
-                        child: PageView(
-                          children: <Widget>[
-                            _img(
-                                "https://i.pinimg.com/originals/50/8d/1d/508d1d2a8f9bc715aedfd3ca17d10c2b.jpg"),
-                            _img(
-                                "https://jotacortizo.files.wordpress.com/2016/11/casas-de-hogwarts.jpg"),
-                            _img(
-                                "https://i.pinimg.com/originals/64/82/0f/64820fd9ad5cce4b795ccf059e382f84.jpg"),
-                          ],
-                        ),
-                      ),
+homeMeusProdutos () {
+  andaime de retorno (
+    body :  Container (
+      filho :  coluna (
+        filhos :  < Widget > [
+          Container (
+            padding :  EdgeInsets . tudo ( 10 )
+            altura :  50 ,
+            cor :  Cores. índigo,
+            filho :  Row (
+              mainAxisAlignment :  MainAxisAlignment .spaceEvenly,
+              filhos :  < Widget > [
+                Container (
+                  filho :  expandido (
+                    filho :  coluna (
+                      mainAxisAlignment :  MainAxisAlignment .center,
+                      crossAxisAlignment :  CrossAxisAlignment .start,
+                      filhos :  < Widget > [
+                        _icPesquisa (),
+                      ],
                     ),
-                    Container(
-                      margin: EdgeInsets.only(top: 8),
-                      child: _text("Nome do Objeto", Titulo: true),
-                    ),
-                    Container(
-                        width: 70,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: <Widget>[
-                            _text("5.0"),
-                            _iconEstrela(),
-                          ],
-                        )),
-                    Container(
-                      margin: EdgeInsets.only(top: 8),
-                      child: _text("Nome do dono"),
-                    ),
-                    Container(
-                      margin: EdgeInsets.only(top: 8, bottom: 8),
-                      child: _text("Descrição:"),
-                    ),
-                    ConstrainedBox(
-                      constraints: BoxConstraints(
-                        minHeight: 235,
-                      ),
-                      child: Container(
-                        margin: EdgeInsets.all(8),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.all(Radius.circular(16)),
-                          child: Container(
-                            color: Colors.white,
-                            width: 1000,
-                            padding: EdgeInsets.all(8),
-                            child: _text(
-                                "	Lorem ipsum neque pretium plla dui. consectetur porttitor nisl nunc eget potenti posuere porta augue ullamcorper aenean. donec nibh scelerisque laoreet quis gravida tempus curae lorem, enim nibh sociosqu posuere fermentum vivamus nullam, leo vel auctor mi tellus dictumst mi morbi, vestibulum nibh facilisis sociosqu laoreet aenean. quis risus posuere ipsum ad eu nulla ornare nulla aenean eleifend purus, orci hendrerit a sem vel sagittis senectus tellus ac. ",
-                                Resumo: true),
-                          ),
-                        ),
-                      ),
-                    ),
-                    Container(
-                      margin: EdgeInsets.only(bottom: 8),
-                      child: RaisedButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (BuildContext context) {
-                              return Tela_Reservar();
-                            }),
-                          );
-                        },
-                        child: _text("Reservar", Resumo: true),
-                      ),
-                    ),
-                  ],
+                  ),
                 ),
-              ),
+                Container (
+                  filho :  coluna (
+                    mainAxisAlignment :  MainAxisAlignment .center,
+                    filhos :  < Widget > [
+                      _text ( "Adicionar" ),
+                    ],
+                  ),
+                ),
+                Container (
+                  filho :  expandido (
+                    filho :  coluna (
+                      mainAxisAlignment :  MainAxisAlignment .center,
+                      crossAxisAlignment :  CrossAxisAlignment .end,
+                      filhos :  < Widget > [
+                        _icFiltros (),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
-        ),
+          Expandido (
+            filho :  lista_meus_produtos_builder (),
+          ),
+        ],
       ),
     ),
   );
 }
 
-_text(String texto, {bool Titulo = false, bool Resumo = false}) {
-  if (Titulo == true) {
-    return Text(
-      "$texto",
-      style: TextStyle(
-        fontWeight: FontWeight.bold,
-        color: Colors.white,
-        fontSize: 30,
-      ),
-    );
-  } else if (Resumo == true) {
-    return Text(
-      "$texto",
-      style: TextStyle(
-        fontSize: 16,
-      ),
-    );
-  } else {
-    return Text(
-      "$texto",
-      style: TextStyle(
-        fontWeight: FontWeight.bold,
-        color: Colors.white,
-        fontSize: 20,
-      ),
-    );
-  }
-}
-
-_img(String url) {
-  return Container(
-    child: Image.network(
-      "$url",
-      fit: BoxFit.cover,
-    ),
+_icFiltros () {
+  Ícone de retorno (
+  Ícones .filter_list,
+  cor :  cores .branco,
+  tamanho :  30.0 ,
   );
 }
 
-_iconEstrela() {
-  return Icon(
-    Icons.star,
-    color: Colors.white,
-    size: 20.0,
+_icPesquisa () {
+  Ícone de retorno (
+  Icons .search,
+  cor :  cores .branco,
+  tamanho :  30.0 ,
+  semanticLabel :  'Definir local' ,
+  );
+}
+
+_text ( String x) {
+  retornar  texto (
+      x,
+      estilo :  TextStyle (
+      cor :  cores .branco,
+      fontSize :  20 ,
+      fontWeight :  FontWeight .bold,
+  ),
   );
 }

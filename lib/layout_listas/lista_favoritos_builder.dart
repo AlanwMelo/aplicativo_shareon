@@ -1,5 +1,7 @@
 // Classe que cria e gerencia as listas da tela principal
 
+
+
 import 'package:aplicativo_shareon/item_listas/lista_favoritos.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -114,10 +116,9 @@ _icFavoritos() {
     size: 35.0,
   );
 }
-
 _textPreco() {
   return Text(
-    "45,00",
+    "R\$ 45,00",
     style: TextStyle(
       fontWeight: FontWeight.bold,
       fontSize: 18,
@@ -125,7 +126,7 @@ _textPreco() {
   );
 }
 
-_iconEstrela() {
+_iconEstrela(){
   return Icon(
     Icons.star,
     color: Colors.black,

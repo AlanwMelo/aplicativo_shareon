@@ -1,21 +1,28 @@
-import 'package:aplicativo_shareon/telas/home.dart';
+import 'package:aplicativo_shareon/telas/tela_login.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:scoped_model/scoped_model.dart';
+import 'models/usuario_model.dart';
+  
+void main (){
 
-
-void main() => runApp(MyApp());
-
-class MyApp extends StatefulWidget {
-  @override
-  _MyAppState createState() => _MyAppState();
+  runApp(MyApp());
 }
 
-class _MyAppState extends State<MyApp> {
+class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(primaryColor: Colors.indigo),
-      home: Home(),
+    return ScopedModel <UserModel>(
+      model: UserModel(),
+      child: MaterialApp(
+        title: "Share On",
+        theme: ThemeData(
+            primaryColor: Colors.indigo
+        ),
+        debugShowCheckedModeBanner: false,
+        home: Login(),
+      ),
     );
   }
 }
+
