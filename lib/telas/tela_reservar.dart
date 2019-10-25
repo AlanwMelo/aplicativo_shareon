@@ -15,6 +15,8 @@ class _Tela_ReservarState extends State<Tela_Reservar> {
   DateTime dataFim = DateTime.now();
   TimeOfDay timeInicio = TimeOfDay.now();
   TimeOfDay timeFim = TimeOfDay.now();
+  int duracao;
+  String Strduracao;
 
   // Strings
 
@@ -140,9 +142,17 @@ class _Tela_ReservarState extends State<Tela_Reservar> {
                         width: 500,
                         margin: EdgeInsets.all(8),
                         child: RaisedButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            if (dataFim.isBefore(dataInicio)) {
+                              _Toast(
+                                  "A data de devolução não pode ser menor que a data de retirada.",
+                                  context);
+                            } else {
+                              _alertConfirmacao(context);
+                            }
+                          },
                           child: Text(
-                            "Confirmar solicitação",
+                            "Reservar",
                             style: TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.bold,
@@ -158,6 +168,186 @@ class _Tela_ReservarState extends State<Tela_Reservar> {
           ],
         ),
       ),
+    );
+  }
+
+  _alertConfirmacao(BuildContext context) {
+    return showDialog(
+      context: context,
+      builder: (context) {
+        return Container(
+          padding: EdgeInsets.all(32),
+          color: Colors.white.withOpacity(0.1),
+          child: Center(
+            child: ClipRRect(
+              borderRadius: BorderRadius.all(Radius.circular(16)),
+              child: GestureDetector(
+                onTap: () => null,
+                child: Container(
+                  height: 350,
+                  child: Container(
+                    color: Colors.white,
+                    child: Container(
+                      color: Colors.grey[200],
+                      child: Column(
+                        children: <Widget>[
+                          Container(
+                            margin: EdgeInsets.only(bottom: 8, top: 8),
+                            child: Text(
+                              "Confirmação",
+                              style: TextStyle(
+                                decoration: TextDecoration.none,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                                fontSize: 25,
+                              ),
+                            ),
+                          ),
+                          Container(
+                            padding: EdgeInsets.all(12),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                Container(
+                                  margin: EdgeInsets.only(
+                                      right: 8, left: 8, bottom: 8),
+                                  child: Row(
+                                    children: <Widget>[
+                                      _TextConfirmacao("Data de retirada:",
+                                          Titulo: true),
+                                    ],
+                                  ),
+                                ),
+                                Container(
+                                  margin: EdgeInsets.only(
+                                      right: 8, left: 8, bottom: 8),
+                                  child: Row(
+                                    children: <Widget>[
+                                      _TextConfirmacao("$_dataInicio $_horarioInicio"),
+                                    ],
+                                  ),
+                                ),
+                                Container(
+                                  margin: EdgeInsets.only(
+                                      right: 8, left: 8, bottom: 8),
+                                  child: Row(
+                                    children: <Widget>[
+                                      _TextConfirmacao("Data de devolução:",
+                                          Titulo: true),
+                                    ],
+                                  ),
+                                ),
+                                Container(
+                                  margin: EdgeInsets.only(
+                                      right: 8, left: 8, bottom: 8),
+                                  child: Row(
+                                    children: <Widget>[
+                                      _TextConfirmacao("$_dataFim $_horarioFim"),
+                                    ],
+                                  ),
+                                ),
+                                Container(
+                                  margin: EdgeInsets.only(
+                                      right: 8, left: 8, bottom: 8),
+                                  child: Row(
+                                    children: <Widget>[
+                                      _TextConfirmacao("Duração: ",
+                                          Titulo: true),
+                                    ],
+                                  ),
+                                ),
+                                Container(
+                                  margin: EdgeInsets.only(
+                                      right: 8, left: 8, bottom: 8),
+                                  child: Row(
+                                    children: <Widget>[
+                                      _TextConfirmacao("$Strduracao"),
+                                    ],
+                                  ),
+                                ),
+                                Container(
+                                  margin: EdgeInsets.only(
+                                      right: 8, left: 8, bottom: 8),
+                                  child: Row(
+                                    children: <Widget>[
+                                      _TextConfirmacao("Valor estimado: ",
+                                          Titulo: true),
+                                    ],
+                                  ),
+                                ),
+                                Container(
+                                  margin: EdgeInsets.only(
+                                      right: 8, left: 8, bottom: 8),
+                                  child: Row(
+                                    children: <Widget>[
+                                      _TextConfirmacao("R\$ $calcValorProdutoConversor"),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Expanded(
+                            child: Container(
+                                color: Colors.indigo,
+                                child: Row(
+                                  children: <Widget>[
+                                    Expanded(
+                                      child: Container(
+                                        height: 70,
+                                        child: RaisedButton(
+                                          color: Colors.indigo,
+                                          onPressed: () {
+                                            setState(() {
+                                              Navigator.pop(context);
+                                            });
+                                          },
+                                          child: Text(
+                                            "Confirmar Solicitação",
+                                            textAlign: TextAlign.center,
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.white,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    Expanded(
+                                      child: Container(
+                                        height: 70,
+                                        child: RaisedButton(
+                                          color: Colors.indigo,
+                                          onPressed: () {
+                                            setState(() {
+                                              Navigator.pop(context);
+                                            });
+                                          },
+                                          child: Text(
+                                            "Cancelar",
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.white,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                          ),
+
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        );
+      },
     );
   }
 
@@ -191,7 +381,8 @@ class _Tela_ReservarState extends State<Tela_Reservar> {
           horarioSelecionado.hour, horarioSelecionado.minute);
 
       if (dataFim.isBefore(dataInicio)) {
-        _Toast("A data de devolução não pode ser menor que a data de retirada.", context);
+        _Toast("A data de devolução não pode ser menor que a data de retirada.",
+            context);
         setState(() {
           dataFim = DateTime.now();
           _horarioConfirmado("fim", TimeOfDay.now());
@@ -248,7 +439,8 @@ class _Tela_ReservarState extends State<Tela_Reservar> {
           DiaSelecionado.day, dataFim.hour, dataFim.minute);
 
       if (dataFim.isBefore(dataInicio)) {
-        _Toast("A data de devolução não pode ser menor que a data de retirada.", context);
+        _Toast("A data de devolução não pode ser menor que a data de retirada.",
+            context);
         setState(() {
           dataFim = DateTime.now();
 
@@ -275,6 +467,12 @@ class _Tela_ReservarState extends State<Tela_Reservar> {
     }
   }
 
+  getTimeString(int value) {
+    final int hour = value ~/ 60;
+    final int minutes = value % 60;
+    Strduracao = '${hour.toString().padLeft(2, "0")}:${minutes.toString().padLeft(2, "0")}';
+  }
+
   _verificaEstimado() {
     if (dataInicio.isAfter(dataFim)) {
       calcValorProdutoConversor = 50.toStringAsFixed(2);
@@ -287,10 +485,12 @@ class _Tela_ReservarState extends State<Tela_Reservar> {
     DateTime retirada = dataInicio;
     DateTime devolucao = dataFim;
 
-    int duracao = (devolucao.difference(retirada).inMinutes);
+    duracao = (devolucao.difference(retirada).inMinutes);
 
     valordoProduto = ValordoProduto / (60);
     double calcValorProduto = duracao.toDouble() * valordoProduto;
+
+    getTimeString(duracao);
 
     calcValorProdutoConversor = calcValorProduto.toStringAsFixed(2);
 
@@ -387,6 +587,34 @@ _horarioFimPadrao() {
 
   return hora;
 }
+
 _Toast(String texto, BuildContext context) {
-  Toast.show("$texto", context, duration: Toast.LENGTH_LONG, gravity:  Toast.BOTTOM, backgroundColor: Colors.black.withOpacity(0.8));
+  Toast.show("$texto", context,
+      duration: 3,
+      gravity: Toast.BOTTOM,
+      backgroundColor: Colors.black.withOpacity(0.8));
+}
+
+_TextConfirmacao(String texto, {bool Titulo = false}) {
+  if (Titulo) {
+    return Text(
+      "$texto",
+      style: TextStyle(
+        fontWeight: FontWeight.bold,
+        color: Colors.red,
+        fontSize: 16,
+        decoration: TextDecoration.none,
+      ),
+    );
+  } else {
+    return Text(
+      "$texto",
+      style: TextStyle(
+        fontWeight: FontWeight.normal,
+        color: Colors.black,
+        fontSize: 16,
+        decoration: TextDecoration.none,
+      ),
+    );
+  }
 }
