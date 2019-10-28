@@ -2,6 +2,7 @@ import 'package:aplicativo_shareon/telas/tela_reservar.dart';
 import 'package:aplicativo_shareon/utils/shareon_appbar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:page_indicator/page_indicator.dart';
 
 class ProdutoSelecionado extends StatefulWidget {
   @override
@@ -17,7 +18,7 @@ class _ProdutoSelecionadoState extends State<ProdutoSelecionado> {
 
 _produto_selecionado(BuildContext context) {
   return Scaffold(
-    appBar: shareon_appbar(),
+    appBar: shareon_appbar(context),
     body: SizedBox.expand(
       child: Container(
         color: Colors.indigo,
@@ -29,15 +30,23 @@ _produto_selecionado(BuildContext context) {
                   children: <Widget>[
                     Container(
                       height: 300,
-                      child: PageView(
-                        children: <Widget>[
-                          _img(
-                              "https://i.pinimg.com/originals/50/8d/1d/508d1d2a8f9bc715aedfd3ca17d10c2b.jpg"),
-                          _img(
-                              "https://jotacortizo.files.wordpress.com/2016/11/casas-de-hogwarts.jpg"),
-                          _img(
-                              "https://i.pinimg.com/originals/64/82/0f/64820fd9ad5cce4b795ccf059e382f84.jpg"),
-                        ],
+                      child: PageIndicatorContainer(
+                        length: 3,
+                        indicatorSpace: 10.0,
+                        padding: const EdgeInsets.all(10),
+                        indicatorColor: Colors.white.withOpacity(0.7),
+                        indicatorSelectorColor: Colors.blue,
+                        shape: IndicatorShape.circle(size: 10),
+                        child: PageView(
+                          children: <Widget>[
+                            _img(
+                                "https://i.pinimg.com/originals/50/8d/1d/508d1d2a8f9bc715aedfd3ca17d10c2b.jpg"),
+                            _img(
+                                "https://jotacortizo.files.wordpress.com/2016/11/casas-de-hogwarts.jpg"),
+                            _img(
+                                "https://i.pinimg.com/originals/64/82/0f/64820fd9ad5cce4b795ccf059e382f84.jpg"),
+                          ],
+                        ),
                       ),
                     ),
                     Container(
