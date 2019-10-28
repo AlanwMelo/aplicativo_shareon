@@ -16,7 +16,7 @@ class _MeuPerfilState extends State<MeuPerfil> {
   Widget _meu_perfil() {
     return Scaffold(
       backgroundColor: Colors.indigo,
-      appBar: shareon_appbar(),
+      appBar: shareon_appbar(context),
       body: SizedBox.expand(
         child: Container(
           padding: EdgeInsets.all(16),
