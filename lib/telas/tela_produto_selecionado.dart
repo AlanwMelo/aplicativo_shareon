@@ -1,57 +1,57 @@
-import  'package: aplicativo_shareon / layout_listas / lista_meus_produtos_builder.dart' ;
-import  'pacote: flutter / cupertino.dart' ;
-import  'pacote: flutter / material.dart' ;
+import 'package:aplicativo_shareon/layout_listas/lista_meus_produtos_builder.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 
-classe  MeusProdutos  estende  StatefulWidget {
-@sobrepor
-_MeusProdutosState  createState () = >  _MeusProdutosState ();
+class MeusProdutos extends StatefulWidget {
+  @override
+  _MeusProdutosState createState() => _MeusProdutosState();
 }
 
-classe  _MeusProdutosState  estende o  estado < MeusProdutos > {
-@sobrepor
-Widget  de construção ( BuildContext contexto) {
-  voltar para  homeMeusProdutos ();
-}
+class _MeusProdutosState extends State<MeusProdutos> {
+  @override
+  Widget build(BuildContext context) {
+    return homeMeusProdutos();
+  }
 }
 
-homeMeusProdutos () {
-  andaime de retorno (
-    body :  Container (
-      filho :  coluna (
-        filhos :  < Widget > [
-          Container (
-            padding :  EdgeInsets . tudo ( 10 )
-            altura :  50 ,
-            cor :  Cores. índigo,
-            filho :  Row (
-              mainAxisAlignment :  MainAxisAlignment .spaceEvenly,
-              filhos :  < Widget > [
-                Container (
-                  filho :  expandido (
-                    filho :  coluna (
-                      mainAxisAlignment :  MainAxisAlignment .center,
-                      crossAxisAlignment :  CrossAxisAlignment .start,
-                      filhos :  < Widget > [
-                        _icPesquisa (),
+homeMeusProdutos() {
+  return Scaffold(
+    body: Container(
+      child: Column(
+        children: <Widget>[
+          Container(
+            padding: EdgeInsets.all(10),
+            height: 50,
+            color: Colors.indigo,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: <Widget>[
+                Container(
+                  child: Expanded(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        _icPesquisar(),
                       ],
                     ),
                   ),
                 ),
-                Container (
-                  filho :  coluna (
-                    mainAxisAlignment :  MainAxisAlignment .center,
-                    filhos :  < Widget > [
-                      _text ( "Adicionar" ),
+                Container(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      _text("Adicionar"),
                     ],
                   ),
                 ),
-                Container (
-                  filho :  expandido (
-                    filho :  coluna (
-                      mainAxisAlignment :  MainAxisAlignment .center,
-                      crossAxisAlignment :  CrossAxisAlignment .end,
-                      filhos :  < Widget > [
-                        _icFiltros (),
+                Container(
+                  child: Expanded(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: <Widget>[
+                        _icFiltros(),
                       ],
                     ),
                   ),
@@ -59,8 +59,8 @@ homeMeusProdutos () {
               ],
             ),
           ),
-          Expandido (
-            filho :  lista_meus_produtos_builder (),
+          Expanded(
+            child: lista_meus_produtos_builder(),
           ),
         ],
       ),
@@ -68,30 +68,30 @@ homeMeusProdutos () {
   );
 }
 
-_icFiltros () {
-  Ícone de retorno (
-  Ícones .filter_list,
-  cor :  cores .branco,
-  tamanho :  30.0 ,
+_icFiltros() {
+  return Icon(
+    Icons.filter_list,
+    color: Colors.white,
+    size: 30.0,
   );
 }
 
-_icPesquisa () {
-  Ícone de retorno (
-  Icons .search,
-  cor :  cores .branco,
-  tamanho :  30.0 ,
-  semanticLabel :  'Definir local' ,
+_icPesquisar() {
+  return Icon(
+    Icons.search,
+    color: Colors.white,
+    size: 30.0,
+    semanticLabel: 'Set Location',
   );
 }
 
-_text ( String x) {
-  retornar  texto (
-      x,
-      estilo :  TextStyle (
-      cor :  cores .branco,
-      fontSize :  20 ,
-      fontWeight :  FontWeight .bold,
-  ),
+_text(String x) {
+  return Text(
+    x,
+    style: TextStyle(
+      color: Colors.white,
+      fontSize: 20,
+      fontWeight: FontWeight.bold,
+    ),
   );
 }

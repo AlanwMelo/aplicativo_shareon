@@ -1,3 +1,4 @@
+import 'package:aplicativo_shareon/telas/chat_conversa.dart';
 import 'package:aplicativo_shareon/telas/tela_reservar.dart';
 import 'package:aplicativo_shareon/utils/shareon_appbar.dart';
 import 'package:flutter/cupertino.dart';
@@ -17,7 +18,19 @@ class _ProdutoSelecionadoState extends State<ProdutoSelecionado> {
 
 _produto_selecionado(BuildContext context) {
   return Scaffold(
-    appBar: shareon_appbar(),
+    appBar: AppBar(
+      title: Text("Share On"),
+      actions: <Widget>[
+        IconButton(
+          icon: Icon(Icons.chat),
+          onPressed: (){
+            Navigator.of(context).pushReplacement(
+                MaterialPageRoute(builder: (context)=>ChatConversa())
+            );
+          },
+        ),
+      ],
+    ),
     body: SizedBox.expand(
       child: Container(
         color: Colors.indigo,
