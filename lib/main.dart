@@ -1,4 +1,3 @@
-import 'package:aplicativo_shareon/telas/home.dart';
 import 'package:aplicativo_shareon/telas/tela_login.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';

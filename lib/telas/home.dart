@@ -10,6 +10,7 @@ import 'package:aplicativo_shareon/telas/tela_main.dart';
 import 'package:aplicativo_shareon/telas/tela_meus_produtos.dart';
 import 'package:aplicativo_shareon/telas/tela_reservas.dart';
 import 'package:aplicativo_shareon/telas/tela_suporte.dart';
+import 'package:aplicativo_shareon/utils/floatbutton.dart';
 import 'package:aplicativo_shareon/utils/shareon_appbar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -33,6 +34,8 @@ class _HomeState extends State<Home> {
       key: _drawerKey,
       appBar: shareon_appbar(context),
       body: homeController(),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      floatingActionButton: FloatButton(),
     );
   }
 
