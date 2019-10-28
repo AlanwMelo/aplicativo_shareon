@@ -31,7 +31,7 @@ class _HomeState extends State<Home> {
     return Scaffold(
       drawer: _Drawer(),
       key: _drawerKey,
-      appBar: shareon_appbar(),
+      appBar: shareon_appbar(context),
       body: homeController(),
     );
   }
