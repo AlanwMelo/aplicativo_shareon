@@ -1,4 +1,5 @@
 import 'dart:io';
+
 import 'package:aplicativo_shareon/models/usuario_model.dart';
 import 'package:aplicativo_shareon/telas/tela_chat.dart';
 import 'package:aplicativo_shareon/telas/tela_configuracoes.dart';
@@ -35,7 +36,7 @@ class _HomeState extends State<Home> {
       appBar: shareon_appbar(context),
       body: homeController(),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      floatingActionButton: FloatButton(),
+      floatingActionButton: _FloatActionButtonController(controllerPointer),
     );
   }
 
@@ -81,24 +82,31 @@ class _HomeState extends State<Home> {
     }
   }
 
+  _FloatActionButtonController(int controller) {
+    if (controller == 1) {
+      return FloatButton();
+    } else {
+      return Container();
+    }
+  }
+
   _Drawer() {
     return Drawer(
       child: SingleChildScrollView(
         child: Container(
           child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: <Widget>[
-                _cabecalho(context),
-                SingleChildScrollView(
-                  child: Container(
-                    child: Column(
-                      children: <Widget>[
-                        _corpo(),
-                      ],
-                    ),
-                  ),
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              _cabecalho(context),
+              Container(
+                child: Column(
+                  children: <Widget>[
+                    _corpo(),
+                  ],
                 ),
-              ]),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -534,7 +542,7 @@ _img() {
 
 _textnome() {
   return ScopedModelDescendant<UserModel>(
-    builder: (context, child, model){
+    builder: (context, child, model) {
       return Text(
         model.isLoggedIn() ? model.userData["nome"] : model.userData["nome"],
         style: TextStyle(
@@ -549,7 +557,7 @@ _textnome() {
 
 _textemail() {
   return ScopedModelDescendant<UserModel>(
-    builder: (context, child, model){
+    builder: (context, child, model) {
       return Text(
         model.isLoggedIn() ? model.userData["email"] : model.userData["email"],
         style: TextStyle(
