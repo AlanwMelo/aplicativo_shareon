@@ -21,7 +21,7 @@ class _Tela_Reserva_ProximaState extends State<Tela_Reserva_Proxima> {
 
 homeReservaProxima(BuildContext context) {
   return Container(
-    margin: EdgeInsets.only(top: 20, left: 12, right: 12),
+    margin: EdgeInsets.only(top: 20, left: 16, right: 16),
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
@@ -48,17 +48,33 @@ homeReservaProxima(BuildContext context) {
             child: _text("Nome do Produto", Titulo: true),
           ),
         ),
-        Container(
-          margin: EdgeInsets.only(top: 8),
-          child: _text("Retirada: 13:00"),
-        ),
-        Container(
-          margin: EdgeInsets.only(top: 8),
-          child: _text("Devolução: 17:00"),
-        ),
-        Container(
-          margin: EdgeInsets.only(top: 8),
-          child: _text("Valor estimado: R\$75,00"),
+        ConstrainedBox(
+          constraints: BoxConstraints(
+            minHeight: 200,
+          ),
+          child: Container(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: <Widget>[
+                Container(
+                  margin: EdgeInsets.only(top: 8),
+                  child: _text("Retirada: 13:00"),
+                ),
+                Container(
+                  margin: EdgeInsets.only(top: 8),
+                  child: _text("Devolução: 17:00"),
+                ),
+                Container(
+                  margin: EdgeInsets.only(top: 8),
+                  child: _text("Valor estimado: R\$75,00"),
+                ),
+                Container(
+                  margin: EdgeInsets.only(top: 8),
+                  child: _text("Endereço do produto."),
+                ),
+              ],),
+          ),
         ),
         Expanded(
           child: Container(
@@ -67,13 +83,20 @@ homeReservaProxima(BuildContext context) {
               children: <Widget>[
                 Container(
                   width: 400,
+                  margin: EdgeInsets.only(bottom: 20),
                   child: RaisedButton(
                     onPressed: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (BuildContext context){
-                        return Tela_Validacao();
-                      }));
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (BuildContext context) {
+                            return Tela_Validacao();
+                          }));
                     },
-                    child: Text("Validar retirada"),
+                    child: Text(
+                      "Validar retirada",
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                   ),
                 )
               ],
