@@ -38,7 +38,10 @@ class _Tela_ValidacaoState extends State<Tela_Validacao> {
               onPressed: () {
                 scan();
               },
-              child: Text("Escanear"),
+              child: Text("Escanear",
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+              ),),
             ),
           ),
           Container(
@@ -94,9 +97,13 @@ class _Tela_ValidacaoState extends State<Tela_Validacao> {
                 children: <Widget>[
                   Container(
                     width: 400,
+                    margin: EdgeInsets.only(bottom: 10),
                     child: RaisedButton(
                       onPressed: () {},
-                      child: Text("Validar"),
+                      child: Text("Validar",
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                      ),),
                     ),
                   )
                 ],
