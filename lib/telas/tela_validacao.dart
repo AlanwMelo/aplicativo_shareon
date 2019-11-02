@@ -22,95 +22,97 @@ class _Tela_ValidacaoState extends State<Tela_Validacao> {
   }
 
   telaValidacao() {
-    return Container(
-      padding: EdgeInsets.all(12),
-      child: Column(
-        children: <Widget>[
-          Center(
-            child: Container(
-              child: _text(
-                  "Para validar uma transação escaneie o código do outro usuário, ou peça para ele escanear o seu."),
+    return SingleChildScrollView(
+      child: Container(
+        padding: EdgeInsets.all(12),
+        child: Column(
+          children: <Widget>[
+            Center(
+              child: Container(
+                child: _text(
+                    "Para validar uma transação escaneie o código do outro usuário, ou peça para ele escanear o seu."),
+              ),
             ),
-          ),
-          Container(
-            margin: EdgeInsets.only(top: 8),
-            child: RaisedButton(
-              onPressed: () {
-                scan();
-              },
-              child: Text("Escanear",
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-              ),),
-            ),
-          ),
-          Container(
-            margin: EdgeInsets.only(top: 8),
-            child: _QRZone(),
-          ),
-          Center(
-            child: Container(
+            Container(
               margin: EdgeInsets.only(top: 8),
-              child: _text(
-                  "Ou se preferir digite sua senha no celular dele, ou peça para que ele digite a dele."),
+              child: RaisedButton(
+                onPressed: () {
+                  scan();
+                },
+                child: Text("Escanear",
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                ),),
+              ),
             ),
-          ),
-          Container(
-            margin: EdgeInsets.only(top: 8),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: <Widget>[
-                Container(
-                  child: Center(
-                    child: _boxSenha(),
-                  ),
-                ),
-                Container(
-                  child: Center(
-                    child: _boxSenha(),
-                  ),
-                ),
-                Container(
-                  child: Center(
-                    child: _boxSenha(),
-                  ),
-                ),
-                Container(
-                  child: Center(
-                    child: _boxSenha(),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Center(
-            child: Container(
+            Container(
               margin: EdgeInsets.only(top: 8),
-              child: _textAlerta(
-                  "IMPORTANTE: Nunca deixe com que a outra pessoa saiba sua senha."),
+              child: _QRZone(),
             ),
-          ),
-          Expanded(
-            child: Container(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.end,
+            Center(
+              child: Container(
+                margin: EdgeInsets.only(top: 8),
+                child: _text(
+                    "Ou se preferir digite sua senha no celular dele, ou peça para que ele digite a dele."),
+              ),
+            ),
+            Container(
+              margin: EdgeInsets.only(top: 8),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
                   Container(
-                    width: 400,
-                    margin: EdgeInsets.only(bottom: 10),
-                    child: RaisedButton(
-                      onPressed: () {},
-                      child: Text("Validar",
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                      ),),
+                    child: Center(
+                      child: _boxSenha(),
                     ),
-                  )
+                  ),
+                  Container(
+                    child: Center(
+                      child: _boxSenha(),
+                    ),
+                  ),
+                  Container(
+                    child: Center(
+                      child: _boxSenha(),
+                    ),
+                  ),
+                  Container(
+                    child: Center(
+                      child: _boxSenha(),
+                    ),
+                  ),
                 ],
               ),
             ),
-          ),
-        ],
+            Center(
+              child: Container(
+                margin: EdgeInsets.only(top: 8),
+                child: _textAlerta(
+                    "IMPORTANTE: Nunca deixe com que a outra pessoa saiba sua senha."),
+              ),
+            ),
+
+               Container(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: <Widget>[
+                    Container(
+                      width: 400,
+                      margin: EdgeInsets.only(bottom: 10, top: 100),
+                      child: RaisedButton(
+                        onPressed: () {},
+                        child: Text("Validar",
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                        ),),
+                      ),
+                    )
+                  ],
+                ),
+              ),
+
+          ],
+        ),
       ),
     );
   }

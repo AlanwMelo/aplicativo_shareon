@@ -45,7 +45,7 @@ homeMain(BuildContext context) {
                 GestureDetector(
                   onTap: () => Navigator.push(context,
                       MaterialPageRoute(builder: (BuildContext context) {
-                    return homeMapa();
+                    return Tela_Maps();
                   })),
                   child: Container(
                     child: Column(

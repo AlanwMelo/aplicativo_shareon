@@ -57,119 +57,121 @@ class _Tela_ReservarState extends State<Tela_Reservar> {
     return Scaffold(
       appBar: shareon_appbar(context),
       backgroundColor: Colors.indigo,
-      body: Container(
-        margin: EdgeInsets.all(16),
-        child: Column(
-          children: <Widget>[
-            _text("Nome do produto", Titulo: true),
-            Container(
-              margin: EdgeInsets.only(top: 16, bottom: 16),
-              child: _img(),
-            ),
-            _text(
-                "Para reservar um produto você precisa informar a data e a hora que deseja utiliza-lo para checarmos sua disponibilidade."),
-            Container(
-              margin: EdgeInsets.all(8),
-              child: Column(
-                children: <Widget>[
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: <Widget>[
-                      Container(
-                        width: 100,
-                        child: _text("Retirada:"),
-                      ),
-                      Container(
-                        child: RaisedButton(
-                          onPressed: () {
-                            _SelecionarData(context, "inicio");
-                          },
-                          child: Text("$_dataInicio"),
+      body: SingleChildScrollView(
+        child: Container(
+          margin: EdgeInsets.all(16),
+          child: Column(
+            children: <Widget>[
+              _text("Nome do produto", Titulo: true),
+              Container(
+                margin: EdgeInsets.only(top: 16, bottom: 16),
+                child: _img(),
+              ),
+              _text(
+                  "Para reservar um produto você precisa informar a data e a hora que deseja utiliza-lo para checarmos sua disponibilidade."),
+              Container(
+                margin: EdgeInsets.all(8),
+                child: Column(
+                  children: <Widget>[
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: <Widget>[
+                        Container(
+                          width: 100,
+                          child: _text("Retirada:"),
                         ),
-                      ),
-                      Container(
-                        child: RaisedButton(
-                          onPressed: () {
-                            _SelecionarHorario(context, "inicio");
-                          },
-                          child: Text(
-                            "$_horarioInicio",
+                        Container(
+                          child: RaisedButton(
+                            onPressed: () {
+                              _SelecionarData(context, "inicio");
+                            },
+                            child: Text("$_dataInicio"),
                           ),
                         ),
-                      ),
-                    ],
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: <Widget>[
-                      Container(
-                        width: 100,
-                        child: _text("Devolução:"),
-                      ),
-                      Container(
-                        child: RaisedButton(
-                          onPressed: () {
-                            _SelecionarData(context, "fim");
-                          },
-                          child: Text("$_dataFim"),
-                        ),
-                      ),
-                      Container(
-                        child: RaisedButton(
-                          onPressed: () {
-                            _SelecionarHorario(context, "fim");
-                          },
-                          child: Text("$_horarioFim"),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-            Container(
-              margin: EdgeInsets.only(bottom: 8, right: 8, left: 8),
-              child: _text("Valor estimado:"),
-            ),
-            Container(
-              margin: EdgeInsets.only(bottom: 8, right: 8, left: 8),
-              child: _text("R\$ $calcValorProdutoConversor"),
-            ),
-            Expanded(
-              child: Container(
-                margin: EdgeInsets.all(8),
-                child: Container(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: <Widget>[
-                      Container(
-                        width: 500,
-                        margin: EdgeInsets.all(8),
-                        child: RaisedButton(
-                          onPressed: () {
-                            if (dataFim.isBefore(dataInicio)) {
-                              _Toast(
-                                  "A data de devolução não pode ser menor que a data de retirada.",
-                                  context);
-                            } else {
-                              _alertConfirmacao(context);
-                            }
-                          },
-                          child: Text(
-                            "Reservar",
-                            style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
+                        Container(
+                          child: RaisedButton(
+                            onPressed: () {
+                              _SelecionarHorario(context, "inicio");
+                            },
+                            child: Text(
+                              "$_horarioInicio",
                             ),
                           ),
                         ),
-                      ),
-                    ],
-                  ),
+                      ],
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: <Widget>[
+                        Container(
+                          width: 100,
+                          child: _text("Devolução:"),
+                        ),
+                        Container(
+                          child: RaisedButton(
+                            onPressed: () {
+                              _SelecionarData(context, "fim");
+                            },
+                            child: Text("$_dataFim"),
+                          ),
+                        ),
+                        Container(
+                          child: RaisedButton(
+                            onPressed: () {
+                              _SelecionarHorario(context, "fim");
+                            },
+                            child: Text("$_horarioFim"),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
               ),
-            ),
-          ],
+              Container(
+                margin: EdgeInsets.only(bottom: 8, right: 8, left: 8),
+                child: _text("Valor estimado:"),
+              ),
+              Container(
+                margin: EdgeInsets.only(bottom: 8, right: 8, left: 8),
+                child: _text("R\$ $calcValorProdutoConversor"),
+              ),
+
+                Container(
+                  margin: EdgeInsets.all(8),
+                  child: Container(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: <Widget>[
+                        Container(
+                          width: 500,
+                          margin: EdgeInsets.only(top: 100, left: 8, right: 8, bottom: 8),
+                          child: RaisedButton(
+                            onPressed: () {
+                              if (dataFim.isBefore(dataInicio)) {
+                                _Toast(
+                                    "A data de devolução não pode ser menor que a data de retirada.",
+                                    context);
+                              } else {
+                                _alertConfirmacao(context);
+                              }
+                            },
+                            child: Text(
+                              "Reservar",
+                              style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+
+            ],
+          ),
         ),
       ),
     );

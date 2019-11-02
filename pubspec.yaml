@@ -17,7 +17,6 @@ environment:
   sdk: ">=2.1.0 <3.0.0"
 
 dependencies:
-  flutter_map: any
   flutter:
     sdk: flutter
 
@@ -40,6 +39,8 @@ dependencies:
   qr_flutter: ^3.0.1
   barcode_scan: ^1.0.0
   rxdart: ^0.22.1
+  flutter_map: any
+  flutter_local_notifications: ^0.8.4
 
 dev_dependencies:
   flutter_test:

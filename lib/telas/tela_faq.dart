@@ -23,46 +23,50 @@ homeFAQ() {
       child: Container(
         color: Colors.grey[300],
         child: SingleChildScrollView(
-          child: Container(
-            height: 800,
-            margin: EdgeInsets.all(20),
-            padding: EdgeInsets.all(20),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.only(
-                topRight: Radius.circular(32),
-                topLeft: Radius.circular(32),
-                bottomRight: Radius.circular(32),
-                bottomLeft: Radius.circular(32),
-              ),
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+              minHeight: 730,
             ),
-            child: Column(
-              children: <Widget>[
-                Container(
-                  child: textTitulo("FAQ"),
+            child: Container(
+              margin: EdgeInsets.all(20),
+              padding: EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.only(
+                  topRight: Radius.circular(32),
+                  topLeft: Radius.circular(32),
+                  bottomRight: Radius.circular(32),
+                  bottomLeft: Radius.circular(32),
                 ),
-                ConstrainedBox(
-                  constraints: const BoxConstraints(minWidth: double.infinity),
-                  child: Container(
-                    margin: EdgeInsets.only(
-                      top: 10,
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        _textFAQS("Pergunta 1", "Resposta"),
-                        _textFAQS("Pergunta 2", "Resposta"),
-                        _textFAQS("Pergunta 3", "Resposta"),
-                        _textFAQS("Pergunta 4", "Resposta"),
-                        _textFAQS("Pergunta 5", "Resposta"),
-                        _textFAQS("Pergunta 6", "Resposta"),
-                        _textFAQS("Pergunta 7", "Resposta"),
-                        _textFAQS("Pergunta 8", "Resposta"),
-                      ],
+              ),
+              child: Column(
+                children: <Widget>[
+                  Container(
+                    child: textTitulo("FAQ"),
+                  ),
+                  ConstrainedBox(
+                    constraints: const BoxConstraints(minWidth: double.infinity),
+                    child: Container(
+                      margin: EdgeInsets.only(
+                        top: 10,
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          _textFAQS("Pergunta 1", "Resposta"),
+                          _textFAQS("Pergunta 2", "Resposta"),
+                          _textFAQS("Pergunta 3", "Resposta"),
+                          _textFAQS("Pergunta 4", "Resposta"),
+                          _textFAQS("Pergunta 5", "Resposta"),
+                          _textFAQS("Pergunta 6", "Resposta"),
+                          _textFAQS("Pergunta 7", "Resposta"),
+                          _textFAQS("Pergunta 8", "Resposta"),
+                        ],
+                      ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),
