@@ -41,6 +41,7 @@ dependencies:
   rxdart: ^0.22.1
   flutter_map: any
   flutter_local_notifications: ^0.8.4
+  google_map_location_picker: 2.1.0
 
 dev_dependencies:
   flutter_test:
