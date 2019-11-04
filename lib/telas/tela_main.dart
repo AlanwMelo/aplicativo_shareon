@@ -1,6 +1,7 @@
 import 'package:aplicativo_shareon/layout_listas/lista_main_builder.dart';
-import 'package:aplicativo_shareon/telas/tela_map.dart';
 import 'package:flutter/material.dart';
+import 'package:google_map_location_picker/google_map_location_picker.dart';
+import 'package:toast/toast.dart';
 
 class TelaMain extends StatefulWidget {
   @override
@@ -43,10 +44,7 @@ homeMain(BuildContext context) {
                   ),
                 ),
                 GestureDetector(
-                  onTap: () => Navigator.push(context,
-                      MaterialPageRoute(builder: (BuildContext context) {
-                    return Tela_Maps();
-                  })),
+                  onTap: () => _selecionaLocalizacao(context),
                   child: Container(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -79,6 +77,16 @@ homeMain(BuildContext context) {
       ),
     ),
   );
+}
+
+Future<Null> _selecionaLocalizacao(BuildContext context) async {
+
+  LocationResult result = await LocationPicker.pickLocation(context, "AIzaSyDAVrOzCfJOoak50Fke6jDdW945_s6rv4U");
+
+  Toast.show("$result", context,
+      duration: 3,
+      gravity: Toast.BOTTOM,
+      backgroundColor: Colors.black.withOpacity(0.8));
 }
 
 _icFiltros() {
