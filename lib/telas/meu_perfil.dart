@@ -1,6 +1,10 @@
+import 'dart:async';
+
 import 'package:aplicativo_shareon/utils/shareon_appbar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+
+import '../main.dart';
 
 class MeuPerfil extends StatefulWidget {
   @override
@@ -8,6 +12,19 @@ class MeuPerfil extends StatefulWidget {
 }
 
 class _MeuPerfilState extends State<MeuPerfil> {
+  String userName = "?";
+  String userMail = "?";
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    SharedPreferencesController sharedPreferencesController =
+    new SharedPreferencesController();
+    sharedPreferencesController.getName().then(_setUserName);
+    sharedPreferencesController.getEmail().then(_setUserMail);
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return _meu_perfil();
@@ -38,9 +55,7 @@ class _MeuPerfilState extends State<MeuPerfil> {
                       ),
                     ],
                   ),
-
-                    _img(),
-
+                  _img(),
                   Container(
                     margin: EdgeInsets.only(top: 16),
                     child: _text("Jessica Alice martins", Titulo: true),
@@ -56,9 +71,14 @@ class _MeuPerfilState extends State<MeuPerfil> {
                       ],
                     ),
                   ),
+                  RaisedButton(
+                    onPressed: () {
+                      _logout(context);
+                    },
+                    child: Text("Logout"),
+                  ),
                   Container(
-                    margin: EdgeInsets.only(top: 16,
-                    bottom: 16),
+                    margin: EdgeInsets.only(top: 16, bottom: 16),
                     child: _text("Avaliações:"),
                   ),
                   ConstrainedBox(
@@ -72,7 +92,8 @@ class _MeuPerfilState extends State<MeuPerfil> {
                         child: Container(
                           padding: EdgeInsets.all(8),
                           color: Colors.white,
-                          child: _text("Você ainda não possui avaliações.", Resumo: true),
+                          child: _text("Você ainda não possui avaliações.",
+                              Resumo: true),
                         ),
                       ),
                     ),
@@ -85,73 +106,95 @@ class _MeuPerfilState extends State<MeuPerfil> {
       ),
     );
   }
-}
 
-_img() {
-  return Container(
-    child: ConstrainedBox(
-      constraints: BoxConstraints(
-        minWidth: 200,
-        minHeight: 200,
-        maxHeight: 200,
-        maxWidth: 200,
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.all(
-          Radius.circular(180),
+  void _setUserName(String name) {
+    setState(() {
+      userName = name;
+    });
+  }
+
+  void _setUserMail(String email) {
+    setState(() {
+      userMail = email;
+    });
+  }
+
+  void _logout(BuildContext context) {
+    SharedPreferencesController sharedPreferencesController =
+    new SharedPreferencesController();
+    sharedPreferencesController.setlogedState("0").then(_succesLogout);
+  }
+
+  void _succesLogout(bool value) {
+    Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => MyApp()), (Route<dynamic> route) => false,);
+  }
+
+  _img() {
+    return Container(
+      child: ConstrainedBox(
+        constraints: BoxConstraints(
+          minWidth: 200,
+          minHeight: 200,
+          maxHeight: 200,
+          maxWidth: 200,
         ),
-        child: Container(
-          child: Image.network(
-            "https://avatars2.githubusercontent.com/u/49197693?s=400&v=4",
-            fit: BoxFit.cover,
+        child: ClipRRect(
+          borderRadius: BorderRadius.all(
+            Radius.circular(180),
+          ),
+          child: Container(
+            child: Image.network(
+              "https://avatars2.githubusercontent.com/u/49197693?s=400&v=4",
+              fit: BoxFit.cover,
+            ),
           ),
         ),
       ),
-    ),
-  );
-}
-
-_text(String texto, {bool Titulo = false, bool Resumo = false}) {
-  if (Titulo == true) {
-    return Text(
-      "$texto",
-      style: TextStyle(
-        fontWeight: FontWeight.bold,
-        color: Colors.white,
-        fontSize: 30,
-      ),
-    );
-  } else if (Resumo == true) {
-    return Text(
-      "$texto",
-      style: TextStyle(
-        fontSize: 16,
-      ),
-    );
-  } else {
-    return Text(
-      "$texto",
-      style: TextStyle(
-        fontWeight: FontWeight.bold,
-        color: Colors.white,
-        fontSize: 20,
-      ),
     );
   }
-}
 
-_iconEstrela() {
-  return Icon(
-    Icons.star,
-    color: Colors.white,
-    size: 20.0,
-  );
-}
+  _text(String texto, {bool Titulo = false, bool Resumo = false}) {
+    if (Titulo == true) {
+      return Text(
+        "$texto",
+        style: TextStyle(
+          fontWeight: FontWeight.bold,
+          color: Colors.white,
+          fontSize: 30,
+        ),
+      );
+    } else if (Resumo == true) {
+      return Text(
+        "$texto",
+        style: TextStyle(
+          fontSize: 16,
+        ),
+      );
+    } else {
+      return Text(
+        "$texto",
+        style: TextStyle(
+          fontWeight: FontWeight.bold,
+          color: Colors.white,
+          fontSize: 20,
+        ),
+      );
+    }
+  }
 
-_iconEditar() {
-  return Icon(
-    Icons.edit,
-    color: Colors.white,
-    size: 25.0,
-  );
+  _iconEstrela() {
+    return Icon(
+      Icons.star,
+      color: Colors.white,
+      size: 20.0,
+    );
+  }
+
+  _iconEditar() {
+    return Icon(
+      Icons.edit,
+      color: Colors.white,
+      size: 25.0,
+    );
+  }
 }
