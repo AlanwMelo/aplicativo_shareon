@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:aplicativo_shareon/models/usuario_model.dart';
@@ -17,6 +18,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';
 
+import '../main.dart';
 import 'meu_perfil.dart';
 
 class Home extends StatefulWidget {
@@ -26,7 +28,19 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   int controllerPointer = 1;
+  String userName = "?";
+  String userMail = "?";
   GlobalKey<ScaffoldState> _drawerKey = GlobalKey();
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    SharedPreferencesController sharedPreferencesController =
+        new SharedPreferencesController();
+
+    sharedPreferencesController.getlogedState().then(_logedVerifier);
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -524,195 +538,209 @@ class _HomeState extends State<Home> {
       ),
     );
   }
-}
 
-_img() {
-  return ClipRRect(
-    borderRadius: BorderRadius.all(
-      Radius.circular(180),
-    ),
-    child: Container(
-      child: Image.network(
-        "https://cdn4.iconfinder.com/data/icons/instagram-ui-twotone/48/Paul-18-512.png",
-        fit: BoxFit.cover,
+  void _setUserName(String name) {
+    setState(() {
+      userName = name;
+    });
+  }
+
+  void _setUserMail(String email) {
+    setState(() {
+      userMail = email;
+    });
+  }
+
+  _img() {
+    return ClipRRect(
+      borderRadius: BorderRadius.all(
+        Radius.circular(180),
       ),
-    ),
-  );
-}
-
-_textnome() {
-  return ScopedModelDescendant<UserModel>(
-    builder: (context, child, model) {
-      return Text(
-        model.isLoggedIn() ? model.userData["nome"] : model.userData["nome"],
-        style: TextStyle(
-          color: Colors.white,
-          fontSize: 25,
-          fontWeight: FontWeight.bold,
+      child: Container(
+        child: Image.network(
+          "https://cdn4.iconfinder.com/data/icons/instagram-ui-twotone/48/Paul-18-512.png",
+          fit: BoxFit.cover,
         ),
-      );
-    },
-  );
-}
+      ),
+    );
+  }
 
-_textemail() {
-  return ScopedModelDescendant<UserModel>(
-    builder: (context, child, model) {
-      return Text(
-        model.isLoggedIn() ? model.userData["email"] : model.userData["email"],
-        style: TextStyle(
-          color: Colors.white,
-          fontSize: 25,
-          fontWeight: FontWeight.bold,
-        ),
-      );
-    },
-  );
-}
+  _textnome() {
+    return Text(
+      userName,
+      style: TextStyle(
+        color: Colors.white,
+        fontSize: 25,
+        fontWeight: FontWeight.bold,
+      ),
+    );
+  }
 
-_cabecalho(BuildContext context) {
-  return GestureDetector(
-    onTap: () {
-      Navigator.pop(context);
-      _onClick(context);
-    },
-    child: Container(
-      color: Colors.indigo,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Center(
-            child: Container(
-              height: 150,
-              width: 150,
-              margin: EdgeInsets.only(
-                top: 40,
-                bottom: 5,
+  _textemail() {
+    return Text(
+      userMail,
+      style: TextStyle(
+        color: Colors.white,
+        fontSize: 15,
+        fontWeight: FontWeight.normal,
+      ),
+    );
+  }
+
+  _cabecalho(BuildContext context) {
+    return GestureDetector(
+      onTap: () {
+        Navigator.pop(context);
+        _onClick(context);
+      },
+      child: Container(
+        color: Colors.indigo,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Center(
+              child: Container(
+                height: 150,
+                width: 150,
+                margin: EdgeInsets.only(
+                  top: 40,
+                  bottom: 5,
+                ),
+                child: _img(),
               ),
-              child: _img(),
             ),
-          ),
-          Container(
-            margin: EdgeInsets.only(
-              left: 10,
-              bottom: 2,
+            Container(
+              margin: EdgeInsets.only(
+                left: 10,
+                bottom: 2,
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: <Widget>[
+                  _textnome(),
+                  _textemail(),
+                ],
+              ),
             ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: <Widget>[
-                _textnome(),
-                _textemail(),
-              ],
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
-    ),
-  );
-}
+    );
+  }
 
-_text(String x) {
-  return Text(
-    x,
-    style: TextStyle(
+  _text(String x) {
+    return Text(
+      x,
+      style: TextStyle(
+        color: Colors.black54,
+        fontSize: 20,
+        fontWeight: FontWeight.bold,
+      ),
+    );
+  }
+
+  _iconAnuncios() {
+    return Icon(
+      Icons.grid_on,
       color: Colors.black54,
-      fontSize: 20,
-      fontWeight: FontWeight.bold,
-    ),
-  );
-}
+      size: 20.0,
+    );
+  }
 
-_iconAnuncios() {
-  return Icon(
-    Icons.grid_on,
-    color: Colors.black54,
-    size: 20.0,
-  );
-}
+  _iconFavoritos() {
+    return Icon(
+      Icons.star,
+      color: Colors.black54,
+      size: 20.0,
+    );
+  }
 
-_iconFavoritos() {
-  return Icon(
-    Icons.star,
-    color: Colors.black54,
-    size: 20.0,
-  );
-}
+  _iconReservas() {
+    return Icon(
+      Icons.playlist_add_check,
+      color: Colors.black54,
+      size: 20.0,
+    );
+  }
 
-_iconReservas() {
-  return Icon(
-    Icons.playlist_add_check,
-    color: Colors.black54,
-    size: 20.0,
-  );
-}
+  _iconHistorico() {
+    return Icon(
+      Icons.history,
+      color: Colors.black54,
+      size: 20.0,
+    );
+  }
 
-_iconHistorico() {
-  return Icon(
-    Icons.history,
-    color: Colors.black54,
-    size: 20.0,
-  );
-}
+  _iconMeusProdutos() {
+    return Icon(
+      Icons.assignment,
+      color: Colors.black54,
+      size: 20.0,
+    );
+  }
 
-_iconMeusProdutos() {
-  return Icon(
-    Icons.assignment,
-    color: Colors.black54,
-    size: 20.0,
-  );
-}
+  _iconChat() {
+    return Icon(
+      Icons.question_answer,
+      color: Colors.black54,
+      size: 20.0,
+    );
+  }
 
-_iconChat() {
-  return Icon(
-    Icons.question_answer,
-    color: Colors.black54,
-    size: 20.0,
-  );
-}
+  _iconSuporte() {
+    return Icon(
+      Icons.assistant,
+      color: Colors.black54,
+      size: 20.0,
+    );
+  }
 
-_iconSuporte() {
-  return Icon(
-    Icons.assistant,
-    color: Colors.black54,
-    size: 20.0,
-  );
-}
+  _iconDicas() {
+    return Icon(
+      Icons.warning,
+      color: Colors.black54,
+      size: 20.0,
+    );
+  }
 
-_iconDicas() {
-  return Icon(
-    Icons.warning,
-    color: Colors.black54,
-    size: 20.0,
-  );
-}
+  _iconFAQ() {
+    return Icon(
+      Icons.help_outline,
+      color: Colors.black54,
+      size: 20.0,
+    );
+  }
 
-_iconFAQ() {
-  return Icon(
-    Icons.help_outline,
-    color: Colors.black54,
-    size: 20.0,
-  );
-}
+  _iconConfig() {
+    return Icon(
+      Icons.settings,
+      color: Colors.black54,
+      size: 20.0,
+    );
+  }
 
-_iconConfig() {
-  return Icon(
-    Icons.settings,
-    color: Colors.black54,
-    size: 20.0,
-  );
-}
+  _iconExit() {
+    return Icon(
+      Icons.exit_to_app,
+      color: Colors.black54,
+      size: 20.0,
+    );
+  }
 
-_iconExit() {
-  return Icon(
-    Icons.exit_to_app,
-    color: Colors.black54,
-    size: 20.0,
-  );
-}
+  _onClick(BuildContext context) {
+    Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) {
+      return MeuPerfil();
+    }));
+  }
 
-_onClick(BuildContext context) {
-  Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) {
-    return MeuPerfil();
-  }));
+  void _logedVerifier(String value) {
+    if (value == "0"){
+      setState(() {
+        SharedPreferencesController sharedPreferencesController =
+        new SharedPreferencesController();
+        sharedPreferencesController.setlogedState("1");
+      });
+    }
+  }
 }
