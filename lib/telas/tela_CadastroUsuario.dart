@@ -24,8 +24,7 @@ class _CadastroUsuarioState extends State<CadastroUsuario> {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: (){
-        Navigator.pop(context);
-        return Navigator.push(context, MaterialPageRoute(builder: (BuildContext context){
+        return Navigator.pushReplacement(context, MaterialPageRoute(builder: (BuildContext context){
           return Login();
         }));
       },
