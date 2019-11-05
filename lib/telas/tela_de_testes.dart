@@ -67,7 +67,7 @@ class _Tela_TestesState extends State<Tela_Testes> {
     var platformChannelSpecifics = NotificationDetails(
         androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
     await flutterLocalNotificationsPlugin.show(
-        0, 'plain title', 'plain body', platformChannelSpecifics,
+        0, 'Título de Testes', 'Texto de teste de notificação...', platformChannelSpecifics,
         payload: 'item x');
   }
 
