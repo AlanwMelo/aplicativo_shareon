@@ -1,7 +1,4 @@
-import 'dart:async';
 import 'dart:io';
-
-import 'package:aplicativo_shareon/models/usuario_model.dart';
 import 'package:aplicativo_shareon/telas/tela_chat.dart';
 import 'package:aplicativo_shareon/telas/tela_configuracoes.dart';
 import 'package:aplicativo_shareon/telas/tela_dicas.dart';
@@ -16,8 +13,6 @@ import 'package:aplicativo_shareon/utils/floatbutton.dart';
 import 'package:aplicativo_shareon/utils/shareon_appbar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:scoped_model/scoped_model.dart';
-
 import '../main.dart';
 import 'meu_perfil.dart';
 

@@ -27,13 +27,7 @@ homeReservaProxima(BuildContext context) {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Center(
-            child: _text("Você possui uma reserva em breve com: "),
-          ),
-          Container(
-            margin: EdgeInsets.only(top: 8),
-            child: Center(
-              child: _text("Luciano"),
-            ),
+            child: _text("Você possui uma reserva em breve"),
           ),
           Container(
             height: 300,
@@ -51,13 +45,17 @@ homeReservaProxima(BuildContext context) {
           ),
           ConstrainedBox(
             constraints: BoxConstraints(
-              minHeight: 200,
+              minHeight: 250,
             ),
             child: Container(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
+                  Container(
+                    margin: EdgeInsets.only(top: 8),
+                    child: _text("Dono: Luciano"),
+                  ),
                   Container(
                     margin: EdgeInsets.only(top: 8),
                     child: _text("Retirada: 13:00"),
@@ -72,7 +70,12 @@ homeReservaProxima(BuildContext context) {
                   ),
                   Container(
                     margin: EdgeInsets.only(top: 8),
-                    child: _text("Endereço do produto."),
+                    child: ConstrainedBox(
+                      constraints: BoxConstraints(
+                        minHeight: 70,
+                      ),
+                      child: _text("Endereço do produto."),
+                    ),
                   ),
                 ],),
             ),

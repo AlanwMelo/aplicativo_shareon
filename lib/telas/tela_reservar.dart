@@ -59,12 +59,13 @@ class _Tela_ReservarState extends State<Tela_Reservar> {
       backgroundColor: Colors.indigo,
       body: SingleChildScrollView(
         child: Container(
-          margin: EdgeInsets.all(16),
+          height: 720,
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: <Widget>[
               _text("Nome do produto", Titulo: true),
               Container(
-                margin: EdgeInsets.only(top: 16, bottom: 16),
+                margin: EdgeInsets.only(top: 16, bottom: 16, right: 8, left: 8),
                 child: _img(),
               ),
               _text(
@@ -136,40 +137,36 @@ class _Tela_ReservarState extends State<Tela_Reservar> {
                 margin: EdgeInsets.only(bottom: 8, right: 8, left: 8),
                 child: _text("R\$ $calcValorProdutoConversor"),
               ),
-
-                Container(
-                  margin: EdgeInsets.all(8),
-                  child: Container(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: <Widget>[
-                        Container(
-                          width: 500,
-                          margin: EdgeInsets.only(top: 100, left: 8, right: 8, bottom: 8),
-                          child: RaisedButton(
-                            onPressed: () {
-                              if (dataFim.isBefore(dataInicio)) {
-                                _Toast(
-                                    "A data de devolução não pode ser menor que a data de retirada.",
-                                    context);
-                              } else {
-                                _alertConfirmacao(context);
-                              }
-                            },
-                            child: Text(
-                              "Reservar",
-                              style: TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
+              Container(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: <Widget>[
+                    Container(
+                      width: 500,
+                      margin:
+                          EdgeInsets.only(top: 8, left: 8, right: 8, bottom: 8),
+                      child: RaisedButton(
+                        onPressed: () {
+                          if (dataFim.isBefore(dataInicio)) {
+                            _Toast(
+                                "A data de devolução não pode ser menor que a data de retirada.",
+                                context);
+                          } else {
+                            _alertConfirmacao(context);
+                          }
+                        },
+                        child: Text(
+                          "Reservar",
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
                           ),
                         ),
-                      ],
+                      ),
                     ),
-                  ),
+                  ],
                 ),
-
+              ),
             ],
           ),
         ),
@@ -625,13 +622,15 @@ _StrgDia(int dia, int hora, int min) {
     } else if (dia > 1) {
       return "$dia Dias e ";
     }
-  }else{if (dia == 0) {
-    return "";
-  } else if (dia == 1) {
-    return "$dia Dia ";
-  } else if (dia > 1) {
-    return "$dia Dias ";
-  }}
+  } else {
+    if (dia == 0) {
+      return "";
+    } else if (dia == 1) {
+      return "$dia Dia ";
+    } else if (dia > 1) {
+      return "$dia Dias ";
+    }
+  }
 }
 
 _StrgHora(int hora, int min) {
@@ -654,14 +653,12 @@ _StrgHora(int hora, int min) {
   }
 }
 
-_StrgMin(int min){
-  if (min == 0){
+_StrgMin(int min) {
+  if (min == 0) {
     return "";
-  }
-  else if (min == 1){
+  } else if (min == 1) {
     return "$min minuto";
-  }
-  else if (min > 1){
+  } else if (min > 1) {
     return "$min minutos";
   }
 }

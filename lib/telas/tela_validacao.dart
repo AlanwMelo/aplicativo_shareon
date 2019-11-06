@@ -1,8 +1,16 @@
+import 'dart:io';
+import 'dart:typed_data';
+import 'dart:ui';
+
 import 'package:aplicativo_shareon/utils/shareon_appbar.dart';
 import 'package:barcode_scan/barcode_scan.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:qr_flutter/qr_flutter.dart';
+import 'package:toast/toast.dart';
 
 class Tela_Validacao extends StatefulWidget {
   @override
@@ -11,6 +19,7 @@ class Tela_Validacao extends StatefulWidget {
 
 class _Tela_ValidacaoState extends State<Tela_Validacao> {
   String barcode = "";
+  GlobalKey globalKey = new GlobalKey();
 
   @override
   Widget build(BuildContext context) {
@@ -24,8 +33,10 @@ class _Tela_ValidacaoState extends State<Tela_Validacao> {
   telaValidacao() {
     return SingleChildScrollView(
       child: Container(
+        height: 720,
         padding: EdgeInsets.all(12),
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: <Widget>[
             Center(
               child: Container(
@@ -34,21 +45,20 @@ class _Tela_ValidacaoState extends State<Tela_Validacao> {
               ),
             ),
             Container(
-              margin: EdgeInsets.only(top: 8),
+              margin: EdgeInsets.only(top: 8, bottom: 8),
               child: RaisedButton(
                 onPressed: () {
                   scan();
                 },
-                child: Text("Escanear",
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                ),),
+                child: Text(
+                  "Escanear",
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
               ),
             ),
-            Container(
-              margin: EdgeInsets.only(top: 8),
-              child: _QRZone(),
-            ),
+            _QRZone(""),
             Center(
               child: Container(
                 margin: EdgeInsets.only(top: 8),
@@ -91,26 +101,25 @@ class _Tela_ValidacaoState extends State<Tela_Validacao> {
                     "IMPORTANTE: Nunca deixe com que a outra pessoa saiba sua senha."),
               ),
             ),
-
-               Container(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: <Widget>[
-                    Container(
-                      width: 400,
-                      margin: EdgeInsets.only(bottom: 10, top: 100),
-                      child: RaisedButton(
-                        onPressed: () {},
-                        child: Text("Validar",
+            Container(
+              child: Column(
+                children: <Widget>[
+                  Container(
+                    width: 400,
+                    margin: EdgeInsets.only(bottom: 10, top: 8),
+                    child: RaisedButton(
+                      onPressed: () {},
+                      child: Text(
+                        "Validar",
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
-                        ),),
+                        ),
                       ),
-                    )
-                  ],
-                ),
+                    ),
+                  )
+                ],
               ),
-
+            ),
           ],
         ),
       ),
@@ -138,10 +147,32 @@ class _Tela_ValidacaoState extends State<Tela_Validacao> {
     );
   }
 
+  Future<void> generateQR() async {
+    try {
+      RenderRepaintBoundary boundary =
+          globalKey.currentContext.findRenderObject();
+      var image = await boundary.toImage();
+      ByteData byteData = await image.toByteData(format: ImageByteFormat.png);
+      Uint8List pngBytes = byteData.buffer.asUint8List();
+
+      final tempDir = await getTemporaryDirectory();
+      final file = await new File('${tempDir.path}/image.png').create();
+      await file.writeAsBytes(pngBytes);
+
+      final channel = const MethodChannel('channel:me.alfian.share/share');
+      channel.invokeMethod('shareFile', 'image.png');
+    } catch (e) {
+      print(e.toString());
+    }
+  }
+
   Future scan() async {
     try {
       String barcode = await BarcodeScanner.scan();
-      setState(() => this.barcode = barcode);
+      setState(() => Toast.show("$barcode", context,
+          duration: 3,
+          gravity: Toast.BOTTOM,
+          backgroundColor: Colors.black.withOpacity(0.8)));
     } on PlatformException catch (e) {
       if (e.code == BarcodeScanner.CameraAccessDenied) {
         setState(() {
@@ -159,7 +190,7 @@ class _Tela_ValidacaoState extends State<Tela_Validacao> {
   }
 }
 
-_QRZone() {
+_QRZone(String QRText) {
   return Container(
     child: ConstrainedBox(
       constraints: BoxConstraints(
@@ -172,8 +203,10 @@ _QRZone() {
         borderRadius: BorderRadius.all(
           Radius.circular(20),
         ),
-        child: Container(
-          color: Colors.white,
+        child: QrImage(
+          backgroundColor: Colors.white,
+          data: "Teste: Meu nome não é Batima",
+          size: 300,
         ),
       ),
     ),

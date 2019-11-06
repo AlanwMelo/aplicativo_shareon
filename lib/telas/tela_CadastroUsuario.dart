@@ -16,6 +16,8 @@ class _CadastroUsuarioState extends State<CadastroUsuario> {
   final nomeController = TextEditingController();
   final emailController = TextEditingController();
   final senhaController = TextEditingController();
+  final confirmarSenhaController = TextEditingController();
+  final cpfController = TextEditingController();
   final enderecoController = TextEditingController();
   final campos = GlobalKey<FormState>();
   final verificacao = GlobalKey<ScaffoldState>();
@@ -91,7 +93,37 @@ class _CadastroUsuarioState extends State<CadastroUsuario> {
                         }
                       },
                     ),
-                    SizedBox(height: 16.0,),
+                    SizedBox(height: 16.0),
+                    TextFormField(
+                      controller: confirmarSenhaController,
+                      decoration: InputDecoration(
+                          hintText: "Confirmar de senha"
+                      ),
+                      obscureText: true,
+                      validator: (text){
+                        if(text.isEmpty){
+                          return "Campo Confirmar Senha obrigatório";
+                        } else{
+                          return null;
+                        }
+                      },
+                    ),
+                    SizedBox(height: 16.0),
+                    TextFormField(
+                      controller: cpfController,
+                      decoration: InputDecoration(
+                          hintText: "CPF"
+                      ),
+                      obscureText: true,
+                      validator: (text){
+                        if(text.isEmpty){
+                          return "Campo CPF obrigatório";
+                        } else{
+                          return null;
+                        }
+                      },
+                    ),
+                    SizedBox(height: 16.0),
                     TextFormField(
                       controller: enderecoController,
                       decoration: InputDecoration(

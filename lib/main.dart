@@ -17,9 +17,11 @@ void main() {
 }
 
 class SharedPreferencesController {
-  String name = "sortOrder";
-  String email = "sortOrder";
-  String logedState = "0";
+  final String name = "";
+  final String email = "";
+  final String logedState = "0";
+  final String ultimaLocalizacao = "";
+  final String id = "";
 
   //GETTERS
 
