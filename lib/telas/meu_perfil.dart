@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:aplicativo_shareon/utils/shareon_appbar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-
 import '../main.dart';
 
 class MeuPerfil extends StatefulWidget {
@@ -14,6 +13,7 @@ class MeuPerfil extends StatefulWidget {
 class _MeuPerfilState extends State<MeuPerfil> {
   String userName = "?";
   String userMail = "?";
+  String userimgURL = "";
 
   @override
   void initState() {
@@ -22,6 +22,7 @@ class _MeuPerfilState extends State<MeuPerfil> {
     new SharedPreferencesController();
     sharedPreferencesController.getName().then(_setUserName);
     sharedPreferencesController.getEmail().then(_setUserMail);
+    sharedPreferencesController.getURLImg().then(_setURLImg);
     super.initState();
   }
 
@@ -58,7 +59,7 @@ class _MeuPerfilState extends State<MeuPerfil> {
                   _img(),
                   Container(
                     margin: EdgeInsets.only(top: 16),
-                    child: _text("Jessica Alice martins", Titulo: true),
+                    child: _text(userName, Titulo: true),
                   ),
                   Container(
                     margin: EdgeInsets.only(top: 16),
@@ -118,6 +119,11 @@ class _MeuPerfilState extends State<MeuPerfil> {
       userMail = email;
     });
   }
+  void _setURLImg(String urlImg) {
+    setState(() {
+      userimgURL = urlImg;
+    });
+  }
 
   void _logout(BuildContext context) {
     SharedPreferencesController sharedPreferencesController =
@@ -144,7 +150,8 @@ class _MeuPerfilState extends State<MeuPerfil> {
           ),
           child: Container(
             child: Image.network(
-              "https://avatars2.githubusercontent.com/u/49197693?s=400&v=4",
+              userimgURL
+              /*"https://avatars2.githubusercontent.com/u/49197693?s=400&v=4"*/,
               fit: BoxFit.cover,
             ),
           ),

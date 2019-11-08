@@ -11,10 +11,13 @@ import 'package:aplicativo_shareon/telas/tela_reservas.dart';
 import 'package:aplicativo_shareon/telas/tela_suporte.dart';
 import 'package:aplicativo_shareon/utils/floatbutton.dart';
 import 'package:aplicativo_shareon/utils/shareon_appbar.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import '../main.dart';
 import 'meu_perfil.dart';
+import 'dart:convert';
+
 
 class Home extends StatefulWidget {
   @override
@@ -25,6 +28,9 @@ class _HomeState extends State<Home> {
   int controllerPointer = 1;
   String userName = "?";
   String userMail = "?";
+  String userID = "";
+  String urlImgPerfil = "?";
+  final databaseReference = Firestore.instance;
   GlobalKey<ScaffoldState> _drawerKey = GlobalKey();
 
   @override
@@ -33,7 +39,12 @@ class _HomeState extends State<Home> {
     SharedPreferencesController sharedPreferencesController =
         new SharedPreferencesController();
 
+    sharedPreferencesController.getEmail().then(_setName);
+    sharedPreferencesController.getID().then(_setUserID);
+    sharedPreferencesController.getName().then(_setMail);
     sharedPreferencesController.getlogedState().then(_logedVerifier);
+    sharedPreferencesController.getURLImg().then(_setIMG);
+    getUserData();
     super.initState();
   }
 
@@ -93,6 +104,8 @@ class _HomeState extends State<Home> {
 
   _FloatActionButtonController(int controller) {
     if (controller == 1) {
+      return FloatButton();
+    } else if (controller == 5) {
       return FloatButton();
     } else {
       return Container();
@@ -367,7 +380,7 @@ class _HomeState extends State<Home> {
               ],
             ),
           ),
-          GestureDetector(
+          /* GestureDetector(
             onTap: () {
               setState(() {
                 Navigator.pop(context);
@@ -393,7 +406,7 @@ class _HomeState extends State<Home> {
                 ),
               ],
             ),
-          ),
+          ),*/
           GestureDetector(
             onTap: () {
               setState(() {
@@ -547,14 +560,23 @@ class _HomeState extends State<Home> {
   }
 
   _img() {
-    return ClipRRect(
-      borderRadius: BorderRadius.all(
-        Radius.circular(180),
+    return ConstrainedBox(
+      constraints: BoxConstraints(
+        minWidth: 200,
+        minHeight: 200,
+        maxHeight: 200,
+        maxWidth: 200,
       ),
-      child: Container(
-        child: Image.network(
-          "https://cdn4.iconfinder.com/data/icons/instagram-ui-twotone/48/Paul-18-512.png",
-          fit: BoxFit.cover,
+      child: ClipRRect(
+        borderRadius: BorderRadius.all(
+          Radius.circular(180),
+        ),
+        child: Container(
+          child: Image.network(
+            urlImgPerfil
+            /*"https://cdn4.iconfinder.com/data/icons/instagram-ui-twotone/48/Paul-18-512.png"*/,
+            fit: BoxFit.cover,
+          ),
         ),
       ),
     );
@@ -730,12 +752,50 @@ class _HomeState extends State<Home> {
   }
 
   void _logedVerifier(String value) {
-    if (value == "0"){
+    if (value == "0") {
       setState(() {
         SharedPreferencesController sharedPreferencesController =
-        new SharedPreferencesController();
+            new SharedPreferencesController();
         sharedPreferencesController.setlogedState("1");
       });
     }
+  }
+
+  void _setIMG(String value) {
+    setState(() {
+      urlImgPerfil = value;
+    });
+  }
+
+  void _setName(String value) {
+    setState(() {
+      userName = value;
+    });
+  }
+
+  void _setMail(String value) {
+    setState(() {
+      userMail = value;
+    });
+  }
+
+  void getUserData() {
+    databaseReference
+        .collection("users")
+        .where("userID", isEqualTo: "qxeEsdXbmYW1pcr6kXFdQwTliaH3")
+        .getDocuments()
+        .then((QuerySnapshot snapshot) {
+      snapshot.documents.forEach((f) {
+        var t = ('${f.data}');
+        print("Este é $t");
+
+      });
+    });
+  }
+
+  void _setUserID(String value) {
+    setState(() {
+      userID = value;
+    });
   }
 }

@@ -22,28 +22,29 @@ shareon_appbar(BuildContext context) {
   );
 }
 
-_Texto(BuildContext context){
+_Texto(BuildContext context) {
   return GestureDetector(
-    onTap: (){
-      Navigator.push(context, MaterialPageRoute(builder: (BuildContext context){
+    onTap: () {
+      Navigator.push(context,
+          MaterialPageRoute(builder: (BuildContext context) {
         return Tela_Testes();
       }));
     },
-    child: ConstrainedBox(
+    child: Container(
+      color: Colors.indigo,
+      padding: EdgeInsets.only(right: 16),
+      child: ConstrainedBox(
         constraints: BoxConstraints(
-          minHeight: 50,
-          minWidth: 100,
+          minWidth: 150,
+          minHeight: 40,
         ),
         child: Center(
-          child: Container(
-            padding: EdgeInsets.only(right: 16),
-            child: Text("TESTES",
-            style: TextStyle(
-              fontWeight: FontWeight.bold
-            ),),
+          child: Text(
+            "TESTES",
+            style: TextStyle(fontWeight: FontWeight.bold),
           ),
         ),
-
+      ),
     ),
   );
 }

@@ -24,7 +24,7 @@ class FloatButton extends StatelessWidget {
           children: <Widget>[
             Icon(Icons.camera_alt, color: Colors.white,),
             SizedBox(width: 7,),
-            Text("Anuncie Aqui!", style: TextStyle(color: Colors.white),)
+            Text("Adicionar Anúncio", style: TextStyle(color: Colors.white),)
           ],
         ),
         ),

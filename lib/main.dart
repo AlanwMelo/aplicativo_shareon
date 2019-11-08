@@ -17,30 +17,47 @@ void main() {
 }
 
 class SharedPreferencesController {
-  final String name = "";
-  final String email = "";
+  final String name = "Alan Willian";
+  final String email = "alan.wm@hotmail.com";
   final String logedState = "0";
   final String ultimaLocalizacao = "";
-  final String id = "";
+  final String userID = "";
+  final String urlImgPerfil = "https://avatars1.githubusercontent.com/u/49182765?s=400&u=3712a9e1969edcba260c1de904703057e1b0164c&v=4";
 
   //GETTERS
 
   Future <String> getName() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String result = prefs.getString("name") ?? "Default";
+    String result = prefs.getString("name") ?? name;
+    return result;
+  }
+  Future <String> getID() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String result = prefs.getString("userID") ?? userID;
     return result;
   }
   Future <String> getEmail() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getString("email") ?? "Default";
+    return prefs.getString("email") ?? email;
   }
   Future<String> getlogedState() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String result = prefs.getString("logedState") ?? "0";
+    String result = prefs.getString("logedState") ?? logedState;
+    return result;
+  }
+  Future<String> getURLImg() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String result = prefs.getString("urlImgPerfil") ?? urlImgPerfil;
     return result;
   }
 
   //SETTERS
+
+  Future<bool> setID(String value) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.setString("userID", value);
+
+  }
 
   Future<bool> setName(String value) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -56,6 +73,10 @@ class SharedPreferencesController {
   Future<bool> setlogedState(String value) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     return prefs.setString("logedState", value);
+  }
+  Future<bool> setURLImg(String value) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.setString("urlImgPerfil", value);
   }
 }
 

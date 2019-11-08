@@ -38,14 +38,6 @@ homeMeusProdutos() {
                   ),
                 ),
                 Container(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      _text("Adicionar"),
-                    ],
-                  ),
-                ),
-                Container(
                   child: Expanded(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,

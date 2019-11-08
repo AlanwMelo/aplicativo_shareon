@@ -1,10 +1,10 @@
-
+import 'dart:async';
 import 'dart:ui';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:scoped_model/scoped_model.dart';
+import '../main.dart';
 
 class UserModel extends Model{
 
@@ -90,9 +90,19 @@ class UserModel extends Model{
         DocumentSnapshot docUser =
         await Firestore.instance.collection("users").document(firebaseUser.uid).get();
         userData = docUser.data;
+        _setSharedID(firebaseUser.uid);
       }
     }
     notifyListeners();
   }
+
+
+  void _setSharedID(String value) {
+    SharedPreferencesController sharedPreferencesController =
+    new SharedPreferencesController();
+
+    sharedPreferencesController.setID(value);
+  }
+
 
 }

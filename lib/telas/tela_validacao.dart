@@ -19,6 +19,8 @@ class Tela_Validacao extends StatefulWidget {
 
 class _Tela_ValidacaoState extends State<Tela_Validacao> {
   String barcode = "";
+  int pin = 5728;
+  int pinDuration = 32;
   GlobalKey globalKey = new GlobalKey();
 
   @override
@@ -95,12 +97,10 @@ class _Tela_ValidacaoState extends State<Tela_Validacao> {
               ),
             ),
             Center(
-              child: Container(
-                margin: EdgeInsets.only(top: 8),
-                child: _textAlerta(
-                    "IMPORTANTE: Nunca deixe com que a outra pessoa saiba sua senha."),
-              ),
-            ),
+                child: Container(
+              margin: EdgeInsets.only(top: 8),
+              child: _textPin(),
+            )),
             Container(
               child: Column(
                 children: <Widget>[
@@ -186,6 +186,17 @@ class _Tela_ValidacaoState extends State<Tela_Validacao> {
           'null (User returned using the "back"-button before scanning anything. Result)');
     } catch (e) {
       setState(() => this.barcode = 'Unknown error: $e');
+    }
+  }
+
+  _textPin() {
+    if (pinDuration > 1) {
+      return _textAlerta(
+          "Seu PIN é: $pin. E é válido por mais $pinDuration minutos.");
+    }
+    else {
+      return _textAlerta(
+          "Seu PIN é: $pin. E é válido por mais $pinDuration minuto.");
     }
   }
 }
