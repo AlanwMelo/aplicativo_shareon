@@ -1,5 +1,5 @@
 import 'package:aplicativo_shareon/item_listas/lista_avaliacoes.dart';
-import 'package:aplicativo_shareon/telas/produto_selecionado.dart';
+import 'package:aplicativo_shareon/telas/tela_produto_selecionado.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 

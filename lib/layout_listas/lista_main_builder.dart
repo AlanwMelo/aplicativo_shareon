@@ -1,4 +1,4 @@
-import 'package:aplicativo_shareon/telas/produto_selecionado.dart';
+import 'package:aplicativo_shareon/telas/tela_produto_selecionado.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -40,9 +40,9 @@ class _ListaMainBuilderState extends State<ListaMainBuilder> {
     return listGen(_lista_main);
   }
 
-  _OnClick(BuildContext context) {
+  _OnClick(BuildContext context, String idx) {
     Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) {
-      return ProdutoSelecionado();
+      return ProdutoSelecionado(productID: idx);
     }));
   }
 
@@ -188,7 +188,7 @@ class _ListaMainBuilderState extends State<ListaMainBuilder> {
       itemExtent: 150,
       itemBuilder: (BuildContext context, int index) {
         return GestureDetector(
-          onTap: () => _OnClick(context),
+          onTap: () => _OnClick(context, _lista_main[index]),
           child: Container(
             decoration: BoxDecoration(
               color: Colors.grey[200],
