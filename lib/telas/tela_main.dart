@@ -70,7 +70,7 @@ homeMain(BuildContext context) {
           ),
           Container(
             child: Expanded(
-              child: lista_main_builder(),
+              child: ListaMainBuilder(),
             ),
           ),
         ],
