@@ -1,10 +1,16 @@
 import 'package:aplicativo_shareon/utils/seletor_calendario.dart';
 import 'package:aplicativo_shareon/utils/shareon_appbar.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:toast/toast.dart';
 
 class Tela_Reservar extends StatefulWidget {
+  String productID;
+  double productPrice;
+
+  Tela_Reservar({@required this.productID, @required this.productPrice});
+
   @override
   _Tela_ReservarState createState() => _Tela_ReservarState();
 }
@@ -17,6 +23,14 @@ class _Tela_ReservarState extends State<Tela_Reservar> {
   TimeOfDay timeFim = TimeOfDay.now();
   int duracao = 60;
   String Strduracao;
+  final databaseReference = Firestore.instance;
+  String productName = "";
+  String productMedia = "";
+  String productOwner = "";
+  String productOwnerID = "";
+  String productDescription = "";
+  String productIMG = "";
+  String productType = "";
 
   // Strings
   String _dataInicio = DateTime.now().day.toString() +
@@ -36,9 +50,9 @@ class _Tela_ReservarState extends State<Tela_Reservar> {
 
   // Strings
 
-  double ValordoProduto = 50;
-  double ValorEstimado = 50;
-  String calcValorProdutoConversor = 50.toStringAsFixed(2);
+  double ValordoProduto = 0;
+  double ValorEstimado = 0;
+  String calcValorProdutoConversor = 0.toStringAsFixed(2);
 
   @override
   void initState() {
@@ -50,7 +64,7 @@ class _Tela_ReservarState extends State<Tela_Reservar> {
 
   @override
   Widget build(BuildContext context) {
-    return _homeReservar(context);
+    return getProductData();
   }
 
   _homeReservar(BuildContext context) {
@@ -63,10 +77,10 @@ class _Tela_ReservarState extends State<Tela_Reservar> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: <Widget>[
-              _text("Nome do produto", Titulo: true),
+              _text(productName, Titulo: true),
               Container(
                 margin: EdgeInsets.only(top: 16, bottom: 16, right: 8, left: 8),
-                child: _img(),
+                child: _img(productIMG),
               ),
               _text(
                   "Para reservar um produto você precisa informar a data e a hora que deseja utiliza-lo para checarmos sua disponibilidade."),
@@ -369,7 +383,7 @@ class _Tela_ReservarState extends State<Tela_Reservar> {
         _Toast("A data de inicio não pode ser menor que a atual.", context);
         setState(() {
           dataInicio = DateTime.now();
-          calcValorProdutoConversor = 50.toStringAsFixed(2);
+          calcValorProdutoConversor = ValordoProduto.toStringAsFixed(2);
           _horarioConfirmado("inicio", TimeOfDay.now());
         });
       } else {
@@ -388,7 +402,7 @@ class _Tela_ReservarState extends State<Tela_Reservar> {
         setState(() {
           dataFim = DateTime.now();
           _horarioConfirmado("fim", TimeOfDay.now());
-          calcValorProdutoConversor = 50.toStringAsFixed(2);
+          calcValorProdutoConversor = ValordoProduto.toStringAsFixed(2);
         });
       } else {
         setState(() {
@@ -414,7 +428,7 @@ class _Tela_ReservarState extends State<Tela_Reservar> {
         setState(() {
           dataInicio = DateTime.now();
           _horarioConfirmado("inicio", TimeOfDay.now());
-          calcValorProdutoConversor = 50.toStringAsFixed(2);
+          calcValorProdutoConversor = ValordoProduto.toStringAsFixed(2);
           _dataInicio = dataInicio.day.toString() +
               "/" +
               dataInicio.month.toString() +
@@ -444,7 +458,7 @@ class _Tela_ReservarState extends State<Tela_Reservar> {
           dataFim = DateTime.now();
           _horarioConfirmado("fim", TimeOfDay.now());
 
-          calcValorProdutoConversor = 50.toStringAsFixed(2);
+          calcValorProdutoConversor = ValordoProduto.toStringAsFixed(2);
           _dataFim = dataFim.day.toString() +
               "/" +
               dataFim.month.toString() +
@@ -477,7 +491,7 @@ class _Tela_ReservarState extends State<Tela_Reservar> {
 
   _verificaEstimado() {
     if (dataInicio.isAfter(dataFim)) {
-      calcValorProdutoConversor = 50.toStringAsFixed(2);
+      calcValorProdutoConversor = ValordoProduto.toStringAsFixed(2);
     } else {
       _valorEstimado(ValordoProduto, dataInicio, dataFim);
     }
@@ -510,7 +524,7 @@ class _Tela_ReservarState extends State<Tela_Reservar> {
     }
   }
 
-  _img() {
+  _img(String img) {
     return Container(
       child: ConstrainedBox(
         constraints: BoxConstraints(
@@ -525,7 +539,7 @@ class _Tela_ReservarState extends State<Tela_Reservar> {
           ),
           child: Container(
             child: Image.network(
-              "https://avatars2.githubusercontent.com/u/49197693?s=400&v=4",
+              img,
               fit: BoxFit.cover,
             ),
           ),
@@ -611,54 +625,87 @@ class _Tela_ReservarState extends State<Tela_Reservar> {
       );
     }
   }
-}
 
-_StrgDia(int dia, int hora, int min) {
-  if (dia > 0 && hora == 0) {
-    if (dia == 0) {
-      return "";
-    } else if (dia == 1) {
-      return "$dia Dia e ";
-    } else if (dia > 1) {
-      return "$dia Dias e ";
-    }
-  } else {
-    if (dia == 0) {
-      return "";
-    } else if (dia == 1) {
-      return "$dia Dia ";
-    } else if (dia > 1) {
-      return "$dia Dias ";
+  Widget getProductData() {
+    return FutureBuilder(
+        future: databaseReference
+            .collection("products")
+            .where("ID", isEqualTo: (widget.productID))
+            .getDocuments()
+            .then((QuerySnapshot snapshot) {
+          snapshot.documents.forEach((f) {
+            Map productData = f.data;
+            productIMG = productData["imgs"];
+            ValordoProduto = double.parse(productData["price"]);
+            ValorEstimado = double.parse(productData["price"]);
+            productName = productData["name"];
+            productDescription = productData["description"];
+            productMedia = productData["media"];
+            productOwnerID = productData["ownerID"];
+            productType = productData["type"];
+
+
+            if (calcValorProdutoConversor == "0.00"){
+              setState(() {
+                calcValorProdutoConversor = ValordoProduto.toStringAsFixed(2);
+              });
+            }
+
+
+          });
+        }),
+        builder: (context, snapshot) {
+          return _homeReservar(context);
+        });
+  }
+
+  _StrgDia(int dia, int hora, int min) {
+    if (dia > 0 && hora == 0) {
+      if (dia == 0) {
+        return "";
+      } else if (dia == 1) {
+        return "$dia Dia e ";
+      } else if (dia > 1) {
+        return "$dia Dias e ";
+      }
+    } else {
+      if (dia == 0) {
+        return "";
+      } else if (dia == 1) {
+        return "$dia Dia ";
+      } else if (dia > 1) {
+        return "$dia Dias ";
+      }
     }
   }
-}
 
-_StrgHora(int hora, int min) {
-  if (min > 0) {
-    if (hora == 0) {
-      return "";
-    } else if (hora == 1) {
-      return "$hora Hora e ";
-    } else if (hora > 1) {
-      return "$hora Horas e ";
-    }
-  } else {
-    if (hora == 0) {
-      return "";
-    } else if (hora == 1) {
-      return "$hora Hora";
-    } else if (hora > 1) {
-      return "$hora Horas";
+  _StrgHora(int hora, int min) {
+    if (min > 0) {
+      if (hora == 0) {
+        return "";
+      } else if (hora == 1) {
+        return "$hora Hora e ";
+      } else if (hora > 1) {
+        return "$hora Horas e ";
+      }
+    } else {
+      if (hora == 0) {
+        return "";
+      } else if (hora == 1) {
+        return "$hora Hora";
+      } else if (hora > 1) {
+        return "$hora Horas";
+      }
     }
   }
-}
 
-_StrgMin(int min) {
-  if (min == 0) {
-    return "";
-  } else if (min == 1) {
-    return "$min minuto";
-  } else if (min > 1) {
-    return "$min minutos";
+  _StrgMin(int min) {
+    if (min == 0) {
+      return "";
+    } else if (min == 1) {
+      return "$min minuto";
+    } else if (min > 1) {
+      return "$min minutos";
+    }
   }
 }

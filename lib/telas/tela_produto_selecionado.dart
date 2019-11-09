@@ -7,7 +7,6 @@ import 'package:page_indicator/page_indicator.dart';
 
 class ProdutoSelecionado extends StatefulWidget {
   String productID;
-
   ProdutoSelecionado({@required this.productID});
 
   @override
@@ -149,7 +148,7 @@ class _ProdutoSelecionadoState extends State<ProdutoSelecionado> {
                               context,
                               MaterialPageRoute(
                                   builder: (BuildContext context) {
-                                return Tela_Reservar();
+                                return Tela_Reservar(productID: widget.productID, productPrice: double.parse(productPrice));
                               }),
                             );
                           },
