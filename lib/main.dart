@@ -17,8 +17,8 @@ void main() {
 }
 
 class SharedPreferencesController {
-  final String name = "Alan Willian";
-  final String email = "alan.wm@hotmail.com";
+  final String name = "";
+  final String email = "";
   final String logedState = "0";
   final String ultimaLocalizacao = "";
   final String userID = "";

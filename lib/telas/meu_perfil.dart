@@ -4,6 +4,7 @@ import 'package:aplicativo_shareon/utils/shareon_appbar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import '../main.dart';
+import 'home.dart';
 
 class MeuPerfil extends StatefulWidget {
   @override
@@ -28,7 +29,14 @@ class _MeuPerfilState extends State<MeuPerfil> {
 
   @override
   Widget build(BuildContext context) {
-    return _meu_perfil();
+    return WillPopScope(
+      onWillPop: (){
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (BuildContext context) {
+          return Home();
+        }));
+        return ;
+      },
+        child: _meu_perfil());
   }
 
   Widget _meu_perfil() {

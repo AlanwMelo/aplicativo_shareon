@@ -1,4 +1,5 @@
 import 'dart:io';
+
 import 'package:aplicativo_shareon/telas/tela_chat.dart';
 import 'package:aplicativo_shareon/telas/tela_configuracoes.dart';
 import 'package:aplicativo_shareon/telas/tela_dicas.dart';
@@ -13,15 +14,37 @@ import 'package:aplicativo_shareon/utils/floatbutton.dart';
 import 'package:aplicativo_shareon/utils/shareon_appbar.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+
 import '../main.dart';
 import 'meu_perfil.dart';
-import 'dart:convert';
-
 
 class Home extends StatefulWidget {
   @override
   _HomeState createState() => _HomeState();
+}
+
+class LifecycleEventHandler extends WidgetsBindingObserver {
+  LifecycleEventHandler({this.resumeCallBack, this.suspendingCallBack});
+
+  final AsyncCallback resumeCallBack;
+  final AsyncCallback suspendingCallBack;
+
+  @override
+  Future<Null> didChangeAppLifecycleState(AppLifecycleState state) async {
+    switch (state) {
+      case AppLifecycleState.inactive:
+      case AppLifecycleState.paused:
+      case AppLifecycleState.suspending:
+        await suspendingCallBack();
+        break;
+      case AppLifecycleState.resumed:
+        print("IM BACK BITCHES");
+        await resumeCallBack();
+        break;
+    }
+  }
 }
 
 class _HomeState extends State<Home> {
@@ -32,24 +55,29 @@ class _HomeState extends State<Home> {
   String urlImgPerfil = "?";
   final databaseReference = Firestore.instance;
   GlobalKey<ScaffoldState> _drawerKey = GlobalKey();
+  SharedPreferencesController sharedPreferencesController =
+      new SharedPreferencesController();
 
   @override
   void initState() {
     // TODO: implement initState
-    SharedPreferencesController sharedPreferencesController =
-        new SharedPreferencesController();
 
-    sharedPreferencesController.getEmail().then(_setName);
-    sharedPreferencesController.getID().then(_setUserID);
-    sharedPreferencesController.getName().then(_setMail);
-    sharedPreferencesController.getlogedState().then(_logedVerifier);
-    sharedPreferencesController.getURLImg().then(_setIMG);
     getUserData();
     super.initState();
+
+    WidgetsBinding.instance.addObserver(new LifecycleEventHandler());
   }
 
   @override
   Widget build(BuildContext context) {
+    if (userMail == "" || userMail == "?") {
+      sharedPreferencesController.getEmail().then(_setMail);
+      sharedPreferencesController.getID().then(_setUserID);
+      sharedPreferencesController.getName().then(_setName);
+      sharedPreferencesController.getlogedState().then(_logedVerifier);
+      sharedPreferencesController.getURLImg().then(_setIMG);
+    }
+
     return Scaffold(
       drawer: _Drawer(),
       key: _drawerKey,
@@ -746,7 +774,8 @@ class _HomeState extends State<Home> {
   }
 
   _onClick(BuildContext context) {
-    Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) {
+    Navigator.pushReplacement(context,
+        MaterialPageRoute(builder: (BuildContext context) {
       return MeuPerfil();
     }));
   }
@@ -786,9 +815,14 @@ class _HomeState extends State<Home> {
         .getDocuments()
         .then((QuerySnapshot snapshot) {
       snapshot.documents.forEach((f) {
-        var t = ('${f.data}');
-        print("Este é $t");
+        Map userData = f.data;
+        print(userData);
 
+        String name = userData["nome"];
+        String email = userData["email"];
+
+        sharedPreferencesController.setName(name);
+        sharedPreferencesController.setEmail(email);
       });
     });
   }

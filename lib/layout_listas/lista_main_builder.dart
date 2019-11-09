@@ -1,19 +1,36 @@
 // Classe que cria e gerencia as listas da tela principal
 
+import 'dart:async';
+
 import 'package:aplicativo_shareon/item_listas/lista_main.dart';
 import 'package:aplicativo_shareon/telas/produto_selecionado.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 lista_main_builder() {
+
+
+  final databaseReference = Firestore.instance;
+  Map productsInDB = {};
+  String id;
+  int counter = 0;
+
+  databaseReference
+      .collection("products")
+      .where("ID")
+      .getDocuments()
+      .then((QuerySnapshot snapshot) {
+    snapshot.documents.forEach((f) {
+      Map productData = f.data;
+      id = productData["ID"];
+      productsInDB[counter]= id;
+      print(productsInDB);
+      counter++;
+    });
+  });
+
   List<Widget> _lista_main = [
-    lista_main(),
-    lista_main(),
-    lista_main(),
-    lista_main(),
-    lista_main(),
-    lista_main(),
-    lista_main(),
     lista_main(),
     lista_main(),
     lista_main(),
