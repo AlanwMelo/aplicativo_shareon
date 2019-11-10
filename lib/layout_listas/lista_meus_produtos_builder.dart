@@ -34,7 +34,7 @@ class _ListaMeusProdutosBuilderState extends State<ListaMeusProdutosBuilder> {
         .collection("products")
         .where("ownerID", isEqualTo: userID)
         /*.where("insertionDate")
-        order by só funciona sobre 1 where 
+        order by só funciona sobre 1 where
         ex: where("insertionDate").orderBy("insertionDate") = OK
         ex: where("ownerID").orderBy("insertionDate") = NOK
         .orderBy("insertionDate")*/
