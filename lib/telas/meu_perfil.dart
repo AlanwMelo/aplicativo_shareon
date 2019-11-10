@@ -80,12 +80,6 @@ class _MeuPerfilState extends State<MeuPerfil> {
                       ],
                     ),
                   ),
-                  RaisedButton(
-                    onPressed: () {
-                      _logout(context);
-                    },
-                    child: Text("Logout"),
-                  ),
                   Container(
                     margin: EdgeInsets.only(top: 16, bottom: 16),
                     child: _text("Avaliações:"),
@@ -106,6 +100,14 @@ class _MeuPerfilState extends State<MeuPerfil> {
                         ),
                       ),
                     ),
+                  ),
+                  RaisedButton(
+                    onPressed: () {
+                      _logout(context);
+                    },
+                    child: Text("Logout"),
+                    textColor: Colors.white,
+                    color: Colors.indigo ,
                   ),
                 ],
               ),

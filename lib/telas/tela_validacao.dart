@@ -17,7 +17,7 @@ class Tela_Validacao extends StatefulWidget {
   _Tela_ValidacaoState createState() => _Tela_ValidacaoState();
 }
 
-class _Tela_ValidacaoState extends State<Tela_Validacao> {
+class Tela_ValidacaoState extends State<Tela_Validacao> {
   String barcode = "";
   int pin = 5728;
   int pinDuration = 32;

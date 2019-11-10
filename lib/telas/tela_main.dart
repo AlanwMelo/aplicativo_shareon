@@ -21,14 +21,14 @@ class _TelaMainState extends State<TelaMain> {
 
 homeMain(BuildContext context) {
   return Container(
-    color: Colors.white,
+    color: Colors.white60,
     child: Scaffold(
       body: Column(
         children: <Widget>[
           Container(
             padding: EdgeInsets.all(10),
             height: 50,
-            color: Colors.indigo,
+            color: Colors.indigo[300],
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: <Widget>[
@@ -84,7 +84,7 @@ Future<Null> _selecionaLocalizacao(BuildContext context) async {
   LocationResult result = await LocationPicker.pickLocation(context, "AIzaSyDAVrOzCfJOoak50Fke6jDdW945_s6rv4U");
 
   Toast.show("$result", context,
-      duration: 3,
+      duration: 4,
       gravity: Toast.BOTTOM,
       backgroundColor: Colors.black.withOpacity(0.8));
 }
