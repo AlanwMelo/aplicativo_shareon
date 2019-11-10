@@ -1,3 +1,4 @@
+
 import 'package:aplicativo_shareon/layout_listas/lista_meus_produtos_builder.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -52,7 +53,7 @@ homeMeusProdutos() {
             ),
           ),
           Expanded(
-            child: lista_meus_produtos_builder(),
+            child: ListaMeusProdutosBuilder(),
           ),
         ],
       ),

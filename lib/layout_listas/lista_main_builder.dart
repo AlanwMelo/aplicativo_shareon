@@ -13,10 +13,16 @@ class _ListaMainBuilderState extends State<ListaMainBuilder> {
   Map productsInDB = {};
   String id;
   int counter = 0;
+  List lista_main = [];
 
   @override
   void initState() {
-    databaseReference
+    getData();
+    super.initState();
+  }
+
+  getData() async {
+    await databaseReference
         .collection("products")
         .where("ID")
         .getDocuments()
@@ -24,20 +30,18 @@ class _ListaMainBuilderState extends State<ListaMainBuilder> {
       snapshot.documents.forEach((f) {
         Map productData = f.data;
         id = productData["ID"];
-        productsInDB[counter] = id;
+        setState(() {
+          productsInDB[counter] = id;
+        });
         counter++;
       });
     });
-
-    super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    List _lista_main = [];
-    _lista_main = productsInDB.values.toList();
-
-    return listGen(_lista_main);
+    lista_main = productsInDB.values.toList();
+    return listGen(lista_main);
   }
 
   _OnClick(BuildContext context, String idx) {
@@ -63,24 +67,23 @@ class _ListaMainBuilderState extends State<ListaMainBuilder> {
         });
       }),
       builder: (context, snapshot) {
-
-    return ClipRRect(
-      borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(16),
-          topRight: Radius.zero,
-          bottomRight: Radius.zero,
-          bottomLeft: Radius.circular(16)),
-      child: Container(
-        child: Image.network(
-          productMainIMG,
-          height: 150,
-          width: 150,
-          fit: BoxFit.cover,
-        ),
-      ),
+        return ClipRRect(
+          borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(16),
+              topRight: Radius.zero,
+              bottomRight: Radius.zero,
+              bottomLeft: Radius.circular(16)),
+          child: Container(
+            child: Image.network(
+              productMainIMG,
+              height: 150,
+              width: 150,
+              fit: BoxFit.cover,
+            ),
+          ),
+        );
+      },
     );
-  },
-  );
   }
 
   _textNome(String idx) {
@@ -161,17 +164,15 @@ class _ListaMainBuilderState extends State<ListaMainBuilder> {
         });
       }),
       builder: (context, snapshot) {
-
-    return Text(
-      "R\$ $productPrice",
-      style: TextStyle(
-        fontWeight: FontWeight.bold,
-        fontSize: 18,
-      ),
+        return Text(
+          "R\$ $productPrice",
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 18,
+          ),
+        );
+      },
     );
-  },
-  );
-
   }
 
   _iconEstrela() {

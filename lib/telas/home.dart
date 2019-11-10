@@ -61,7 +61,7 @@ class _HomeState extends State<Home> {
   @override
   void initState() {
     // TODO: implement initState
-
+    controllerPointer = 1;
     getUserData();
     super.initState();
 
@@ -774,7 +774,7 @@ class _HomeState extends State<Home> {
   }
 
   _onClick(BuildContext context) {
-    Navigator.pushReplacement(context,
+    Navigator.push(context,
         MaterialPageRoute(builder: (BuildContext context) {
       return MeuPerfil();
     }));
@@ -816,7 +816,6 @@ class _HomeState extends State<Home> {
         .then((QuerySnapshot snapshot) {
       snapshot.documents.forEach((f) {
         Map userData = f.data;
-        print(userData);
 
         String name = userData["nome"];
         String email = userData["email"];

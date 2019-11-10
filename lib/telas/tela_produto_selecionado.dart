@@ -7,6 +7,7 @@ import 'package:page_indicator/page_indicator.dart';
 
 class ProdutoSelecionado extends StatefulWidget {
   String productID;
+
   ProdutoSelecionado({@required this.productID});
 
   @override
@@ -125,7 +126,7 @@ class _ProdutoSelecionadoState extends State<ProdutoSelecionado> {
                       ),
                       ConstrainedBox(
                         constraints: BoxConstraints(
-                          minHeight: 235,
+                          minHeight: 180,
                         ),
                         child: Container(
                           margin: EdgeInsets.all(8),
@@ -143,12 +144,22 @@ class _ProdutoSelecionadoState extends State<ProdutoSelecionado> {
                       Container(
                         margin: EdgeInsets.only(bottom: 8),
                         child: RaisedButton(
+                          onPressed: () {},
+                          child: _text("Adcionar aos Favoritos", Resumo: true),
+                        ),
+                      ),
+                      Container(
+                        width: 400,
+                        margin: EdgeInsets.only(bottom: 8, right: 8, left: 8),
+                        child: RaisedButton(
                           onPressed: () {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
                                   builder: (BuildContext context) {
-                                return Tela_Reservar(productID: widget.productID, productPrice: double.parse(productPrice));
+                                return Tela_Reservar(
+                                    productID: widget.productID,
+                                    productPrice: double.parse(productPrice));
                               }),
                             );
                           },

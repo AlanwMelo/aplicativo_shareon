@@ -29,14 +29,7 @@ class _MeuPerfilState extends State<MeuPerfil> {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: (){
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (BuildContext context) {
-          return Home();
-        }));
-        return ;
-      },
-        child: _meu_perfil());
+    return  _meu_perfil();
   }
 
   Widget _meu_perfil() {
