@@ -70,7 +70,7 @@ class _Tela_ReservarState extends State<Tela_Reservar> {
   _homeReservar(BuildContext context) {
     return Scaffold(
       appBar: shareon_appbar(context),
-      backgroundColor: Colors.indigo,
+      backgroundColor: Colors.indigoAccent,
       body: SingleChildScrollView(
         child: Container(
           height: 720,
@@ -309,14 +309,14 @@ class _Tela_ReservarState extends State<Tela_Reservar> {
                           ),
                           Expanded(
                             child: Container(
-                              color: Colors.indigo,
+                              color: Colors.indigoAccent,
                               child: Row(
                                 children: <Widget>[
                                   Expanded(
                                     child: Container(
                                       height: 70,
                                       child: RaisedButton(
-                                        color: Colors.indigo,
+                                        color: Colors.indigoAccent,
                                         onPressed: () {
                                           setState(() {
                                             Navigator.pop(context);
@@ -337,7 +337,7 @@ class _Tela_ReservarState extends State<Tela_Reservar> {
                                     child: Container(
                                       height: 70,
                                       child: RaisedButton(
-                                        color: Colors.indigo,
+                                        color: Colors.indigoAccent,
                                         onPressed: () {
                                           setState(() {
                                             Navigator.pop(context);

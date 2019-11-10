@@ -62,7 +62,7 @@ homeFavoritos() {
             ),
           ),
           Expanded(
-            child: lista_favoritos_builder(),
+            child: ListaFavoritosBuilder(),
           )
           ,
         ],

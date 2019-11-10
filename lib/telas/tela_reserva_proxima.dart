@@ -14,7 +14,7 @@ class _Tela_Reserva_ProximaState extends State<Tela_Reserva_Proxima> {
     return Scaffold(
       appBar: shareon_appbar(context),
       body: homeReservaProxima(context),
-      backgroundColor: Colors.indigo,
+      backgroundColor: Colors.indigoAccent,
     );
   }
 }

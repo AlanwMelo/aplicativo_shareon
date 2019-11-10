@@ -1,3 +1,4 @@
+
 import 'package:aplicativo_shareon/layout_listas/lista_meus_produtos_builder.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -22,7 +23,7 @@ homeMeusProdutos() {
           Container(
             padding: EdgeInsets.all(10),
             height: 50,
-            color: Colors.indigo,
+            color: Colors.indigoAccent,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: <Widget>[
@@ -52,7 +53,7 @@ homeMeusProdutos() {
             ),
           ),
           Expanded(
-            child: lista_meus_produtos_builder(),
+            child: ListaMeusProdutosBuilder(),
           ),
         ],
       ),

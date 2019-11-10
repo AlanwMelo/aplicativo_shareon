@@ -17,7 +17,7 @@ class Tela_Validacao extends StatefulWidget {
   _Tela_ValidacaoState createState() => _Tela_ValidacaoState();
 }
 
-class Tela_ValidacaoState extends State<Tela_Validacao> {
+class _Tela_ValidacaoState extends State<Tela_Validacao> {
   String barcode = "";
   int pin = 5728;
   int pinDuration = 32;
@@ -26,7 +26,7 @@ class Tela_ValidacaoState extends State<Tela_Validacao> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.indigo,
+      backgroundColor: Colors.indigo[100],
       appBar: shareon_appbar(context),
       body: telaValidacao(),
     );

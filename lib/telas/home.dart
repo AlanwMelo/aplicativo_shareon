@@ -60,8 +60,7 @@ class _HomeState extends State<Home> {
 
   @override
   void initState() {
-    // TODO: implement initState
-
+    controllerPointer = 1;
     getUserData();
     super.initState();
 
@@ -205,7 +204,7 @@ class _HomeState extends State<Home> {
                           ),
                           Expanded(
                             child: Container(
-                              color: Colors.indigo,
+                              color: Colors.indigoAccent,
                               margin: EdgeInsets.only(
                                 top: 8,
                               ),
@@ -215,7 +214,7 @@ class _HomeState extends State<Home> {
                                     child: Container(
                                       height: 100,
                                       child: RaisedButton(
-                                        color: Colors.indigo,
+                                        color: Colors.indigoAccent,
                                         onPressed: () {
                                           setState(() {
                                             Navigator.pop(context);
@@ -235,7 +234,7 @@ class _HomeState extends State<Home> {
                                     child: Container(
                                       height: 100,
                                       child: RaisedButton(
-                                        color: Colors.indigo,
+                                        color: Colors.indigoAccent,
                                         onPressed: () {
                                           Navigator.pop(context);
                                         },
@@ -639,7 +638,7 @@ class _HomeState extends State<Home> {
         _onClick(context);
       },
       child: Container(
-        color: Colors.indigo,
+        color: Colors.indigoAccent,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
@@ -774,7 +773,7 @@ class _HomeState extends State<Home> {
   }
 
   _onClick(BuildContext context) {
-    Navigator.pushReplacement(context,
+    Navigator.push(context,
         MaterialPageRoute(builder: (BuildContext context) {
       return MeuPerfil();
     }));
@@ -816,7 +815,6 @@ class _HomeState extends State<Home> {
         .then((QuerySnapshot snapshot) {
       snapshot.documents.forEach((f) {
         Map userData = f.data;
-        print(userData);
 
         String name = userData["nome"];
         String email = userData["email"];

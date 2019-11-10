@@ -111,7 +111,7 @@ class _MyAppState extends State<MyApp> {
               Locale('en', ''),
             ],
             title: "Share On",
-            theme: ThemeData(primaryColor: Colors.indigo,), 
+            theme: ThemeData(primaryColor: Colors.indigoAccent,), 
             debugShowCheckedModeBanner: false,
             home: _logedController(context),
           );

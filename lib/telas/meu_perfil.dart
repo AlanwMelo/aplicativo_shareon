@@ -1,10 +1,7 @@
-import 'dart:async';
-
 import 'package:aplicativo_shareon/utils/shareon_appbar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import '../main.dart';
-import 'home.dart';
 
 class MeuPerfil extends StatefulWidget {
   @override
@@ -18,7 +15,6 @@ class _MeuPerfilState extends State<MeuPerfil> {
 
   @override
   void initState() {
-    // TODO: implement initState
     SharedPreferencesController sharedPreferencesController =
     new SharedPreferencesController();
     sharedPreferencesController.getName().then(_setUserName);
@@ -29,19 +25,12 @@ class _MeuPerfilState extends State<MeuPerfil> {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: (){
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (BuildContext context) {
-          return Home();
-        }));
-        return ;
-      },
-        child: _meu_perfil());
+    return  _meu_perfil();
   }
 
   Widget _meu_perfil() {
     return Scaffold(
-      backgroundColor: Colors.indigo,
+      backgroundColor: Colors.indigoAccent,
       appBar: shareon_appbar(context),
       body: SizedBox.expand(
         child: Container(
@@ -81,7 +70,7 @@ class _MeuPerfilState extends State<MeuPerfil> {
                     ),
                   ),
                   Container(
-                    margin: EdgeInsets.only(top: 16, bottom: 16),
+                    margin: EdgeInsets.only(top: 16, bottom: 24),
                     child: _text("Avaliações:"),
                   ),
                   ConstrainedBox(
@@ -91,7 +80,7 @@ class _MeuPerfilState extends State<MeuPerfil> {
                     ),
                     child: Container(
                       child: ClipRRect(
-                        borderRadius: BorderRadius.all(Radius.circular(16)),
+                        borderRadius: BorderRadius.all(Radius.circular(8)),
                         child: Container(
                           padding: EdgeInsets.all(8),
                           color: Colors.white,
@@ -101,13 +90,19 @@ class _MeuPerfilState extends State<MeuPerfil> {
                       ),
                     ),
                   ),
-                  RaisedButton(
-                    onPressed: () {
+                    new Container(
+                      width: 200.0,
+                      height: 50.0,
+                      margin: const EdgeInsets.all(95.0),
+                      child: new RaisedButton(
+                        child: new Text ('Logout'),
+                        onPressed: () {
                       _logout(context);
                     },
-                    child: Text("Logout"),
-                    textColor: Colors.white,
-                    color: Colors.indigo ,
+                    textColor: Colors.white70,
+                    color: Colors.indigoAccent,
+                    
+                    )
                   ),
                 ],
               ),

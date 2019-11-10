@@ -59,7 +59,7 @@ class _LoginState extends State<Login> {
                               hintText: "E-mail",
                               icon: Icon(
                                 Icons.mail,
-                                color: Colors.indigo,
+                                color: Colors.indigoAccent,
                               ),
                             ),
                             validator: (valor) {
@@ -81,7 +81,7 @@ class _LoginState extends State<Login> {
                               hintText: "Senha",
                               icon: Icon(
                                 Icons.lock,
-                                color: Colors.indigo,
+                                color: Colors.indigoAccent,
                               )),
                           validator: (valor) {
                             if (valor.isEmpty) {
@@ -153,7 +153,7 @@ class _LoginState extends State<Login> {
                               child: Text(
                                 "Novo por aqui? Cadastre-se",
                                 style:
-                                    TextStyle(fontSize: 15, color: Colors.indigo),
+                                    TextStyle(fontSize: 16, color: Colors.indigoAccent),
                               ),
                               onPressed: () {
                                 Navigator.of(context).pushReplacement(
@@ -229,7 +229,7 @@ class _LoginState extends State<Login> {
                           ),
                           Expanded(
                             child: Container(
-                              color: Colors.indigo,
+                              color: Colors.indigoAccent,
                               margin: EdgeInsets.only(
                                 top: 8,
                               ),
@@ -239,7 +239,7 @@ class _LoginState extends State<Login> {
                                     child: Container(
                                       height: 100,
                                       child: RaisedButton(
-                                        color: Colors.indigo,
+                                        color: Colors.indigoAccent,
                                         onPressed: () {
                                           setState(() {
                                             Navigator.pop(context);
@@ -259,7 +259,7 @@ class _LoginState extends State<Login> {
                                     child: Container(
                                       height: 100,
                                       child: RaisedButton(
-                                        color: Colors.indigo,
+                                        color: Colors.indigoAccent,
                                         onPressed: () {
                                           Navigator.pop(context);
                                         },

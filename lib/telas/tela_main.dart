@@ -1,7 +1,7 @@
+
 import 'package:aplicativo_shareon/layout_listas/lista_main_builder.dart';
 import 'package:flutter/material.dart';
 import 'package:google_map_location_picker/google_map_location_picker.dart';
-import 'package:toast/toast.dart';
 
 class TelaMain extends StatefulWidget {
   @override
@@ -28,7 +28,7 @@ homeMain(BuildContext context) {
           Container(
             padding: EdgeInsets.all(10),
             height: 50,
-            color: Colors.indigo[300],
+            color: Colors.indigoAccent,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: <Widget>[
@@ -80,13 +80,11 @@ homeMain(BuildContext context) {
 }
 
 Future<Null> _selecionaLocalizacao(BuildContext context) async {
+  LocationResult result = await LocationPicker.pickLocation(
+      context, "AIzaSyDAVrOzCfJOoak50Fke6jDdW945_s6rv4U");
 
-  LocationResult result = await LocationPicker.pickLocation(context, "AIzaSyDAVrOzCfJOoak50Fke6jDdW945_s6rv4U");
-
-  Toast.show("$result", context,
-      duration: 4,
-      gravity: Toast.BOTTOM,
-      backgroundColor: Colors.black.withOpacity(0.8));
+  var map = result.latLng.toString();
+  print(map);
 }
 
 _icFiltros() {

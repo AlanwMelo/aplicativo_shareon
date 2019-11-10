@@ -21,7 +21,7 @@ lista_historico_builder() {
         child: Container(
           decoration: BoxDecoration(
             color: Colors.grey[200],
-            borderRadius: BorderRadius.all(Radius.circular(16)),
+            borderRadius: BorderRadius.all(Radius.circular(8)),
           ),
           margin: EdgeInsets.all(6),
           child: Row(
@@ -78,10 +78,10 @@ _OnClick(BuildContext context) {
 _img() {
   return ClipRRect(
     borderRadius: BorderRadius.only(
-        topLeft: Radius.circular(16),
+        topLeft: Radius.circular(8),
         topRight: Radius.zero,
         bottomRight: Radius.zero,
-        bottomLeft: Radius.circular(16)),
+        bottomLeft: Radius.circular(8)),
     child: Container(
       child: Image.network(
         "https://i.pinimg.com/originals/64/82/0f/64820fd9ad5cce4b795ccf059e382f84.jpg",
@@ -98,8 +98,8 @@ _textNome() {
     "Nome",
     style: TextStyle(
       fontWeight: FontWeight.bold,
-      fontSize: 26,
-      color: Colors.indigo,
+      fontSize: 24,
+      color: Colors.black87,
     ),
   );
 }
@@ -109,7 +109,8 @@ _textMedia() {
     "5.0",
     style: TextStyle(
       fontWeight: FontWeight.bold,
-      fontSize: 18,
+      fontSize: 16,
+      color: Colors.black54
     ),
   );
 }
@@ -119,7 +120,8 @@ _textData() {
     "12/01/2019",
     style: TextStyle(
       fontWeight: FontWeight.bold,
-      fontSize: 14,
+      fontSize: 16,
+      color: Colors.black54
     ),
   );
 }
@@ -129,7 +131,7 @@ _textPreco() {
     "45,00",
     style: TextStyle(
       fontWeight: FontWeight.bold,
-      fontSize: 18,
+      fontSize: 16,
     ),
   );
 }
@@ -137,7 +139,7 @@ _textPreco() {
 _iconEstrela() {
   return Icon(
     Icons.star,
-    color: Colors.black,
+    color: Colors.black54,
     size: 20.0,
   );
 }

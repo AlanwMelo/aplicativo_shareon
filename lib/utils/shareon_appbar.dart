@@ -31,7 +31,7 @@ _Texto(BuildContext context) {
       }));
     },
     child: Container(
-      color: Colors.indigo,
+      color: Colors.indigoAccent,
       padding: EdgeInsets.only(right: 16),
       child: ConstrainedBox(
         constraints: BoxConstraints(
