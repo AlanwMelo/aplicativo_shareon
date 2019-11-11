@@ -57,13 +57,13 @@ class _ListaMainBuilderState extends State<ListaMainBuilder> {
 
     return FutureBuilder(
       future: databaseReference
-          .collection("products")
-          .where("ID", isEqualTo: idx)
+          .collection("productIMGs")
+          .where("productID", isEqualTo: idx)
           .getDocuments()
           .then((QuerySnapshot snapshot) {
         snapshot.documents.forEach((f) {
           Map productData = f.data;
-          productMainIMG = productData["imgs"];
+          productMainIMG = productData["productMainIMG"];
         });
       }),
       builder: (context, snapshot) {

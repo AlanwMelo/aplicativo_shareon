@@ -24,6 +24,10 @@ class _ProdutoSelecionadoState extends State<ProdutoSelecionado> {
   String productDescription = "";
   String productIMG = "";
   String productType = "";
+  String imgID = "";
+  List listaIMGS = [];
+  Map mapListaIMGS = {};
+  int counter = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -49,7 +53,61 @@ class _ProdutoSelecionadoState extends State<ProdutoSelecionado> {
           });
         }),
         builder: (context, snapshot) {
-          return getUserData();
+          return getProductIMGs();
+        });
+  }
+  Widget getProductIMGs() {
+    return FutureBuilder(
+        future: databaseReference
+            .collection("productIMGs")
+            .where("productID", isEqualTo: (widget.productID))
+            .getDocuments()
+            .then((QuerySnapshot snapshot) {
+          snapshot.documents.forEach((f) {
+            Map productIMG = f.data;
+            print(productIMG);
+            imgID = productIMG["productMainIMG"];
+            if (imgID != ""){
+              setState(() {
+                mapListaIMGS[counter] = imgID;
+              });
+            }
+            imgID = "";
+            imgID = productIMG["productIMG2"];
+            if (imgID != ""){
+              setState(() {
+                mapListaIMGS[counter] = imgID;
+              });
+            }
+            imgID = "";
+            imgID = productIMG["productIMG3"];
+            if (imgID != ""){
+              setState(() {
+                mapListaIMGS[counter] = imgID;
+              });
+            }
+            imgID = "";
+            imgID = productIMG["productIMG4"];
+            if (imgID != ""){
+              setState(() {
+                mapListaIMGS[counter] = imgID;
+              });
+            }
+            imgID = "";
+            imgID = productIMG["productIMG5"];
+            if (imgID != ""){
+              setState(() {
+                mapListaIMGS[counter] = imgID;
+              });
+            }
+            print(imgID);
+
+          });
+        }),
+        builder: (context, snapshot) {
+          listaIMGS = mapListaIMGS.values.toList();
+          print("This is $listaIMGS");
+          return _produto_selecionado(context);
         });
   }
 
