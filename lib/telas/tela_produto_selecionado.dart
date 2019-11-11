@@ -134,7 +134,7 @@ class _ProdutoSelecionadoState extends State<ProdutoSelecionado> {
       appBar: shareon_appbar(context),
       body: SizedBox.expand(
         child: Container(
-          color: Colors.indigo,
+          color: Colors.indigoAccent,
           child: SingleChildScrollView(
             child: Container(
               child: Center(

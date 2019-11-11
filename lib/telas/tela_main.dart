@@ -21,14 +21,14 @@ class _TelaMainState extends State<TelaMain> {
 
 homeMain(BuildContext context) {
   return Container(
-    color: Colors.white,
+    color: Colors.white60,
     child: Scaffold(
       body: Column(
         children: <Widget>[
           Container(
             padding: EdgeInsets.all(10),
             height: 50,
-            color: Colors.indigo,
+            color: Colors.indigoAccent,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: <Widget>[

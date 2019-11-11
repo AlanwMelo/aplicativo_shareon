@@ -29,6 +29,6 @@ lista_avaliacoes_builder() {
 
 _OnClick(BuildContext context) {
   Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) {
-    return ProdutoSelecionado();
+    return ProdutoSelecionado(productID: null,);
   }));
 }

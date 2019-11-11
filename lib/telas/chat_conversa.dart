@@ -8,12 +8,12 @@ class ChatConversa extends StatelessWidget {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 8),
       height: 70,
-      color: Colors.indigo,
+      color: Colors.indigoAccent,
       child: Row(
         children: <Widget>[
           IconButton(icon: Icon(Icons.photo),
           iconSize: 25,
-          color: Colors.indigo,
+          color: Colors.indigoAccent,
           onPressed: (){},
           ),
           Expanded(
@@ -25,7 +25,7 @@ class ChatConversa extends StatelessWidget {
           ),
           IconButton(icon: Icon(Icons.send),
           iconSize: 25,
-          color: Colors.indigo,
+          color: Colors.indigoAccent,
           onPressed: (){},
           ),
         ],

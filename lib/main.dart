@@ -99,24 +99,25 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    return ScopedModel<UserModel>(
-      model: UserModel(),
-      child: MaterialApp(
-        localizationsDelegates: const [
-          location_picker.S.delegate,
-          GlobalMaterialLocalizations.delegate,
-          GlobalWidgetsLocalizations.delegate,
-          GlobalCupertinoLocalizations.delegate,
-        ],
-        supportedLocales: const <Locale>[
-          Locale('pt', ''),
-          Locale('en', ''),
-        ],
-        title: "Share On",
-        theme: ThemeData(primaryColor: Colors.indigo),
-        debugShowCheckedModeBanner: false,
-        home: _logedController(context),
-      ),
+    var materialApp = MaterialApp(
+            localizationsDelegates: const [
+              location_picker.S.delegate,
+              GlobalMaterialLocalizations.delegate,
+              GlobalWidgetsLocalizations.delegate,
+              GlobalCupertinoLocalizations.delegate,
+            ],
+            supportedLocales: const <Locale>[
+              Locale('pt', ''),
+              Locale('en', ''),
+            ],
+            title: "Share On",
+            theme: ThemeData(primaryColor: Colors.indigoAccent,), 
+            debugShowCheckedModeBanner: false,
+            home: _logedController(context),
+          );
+        return ScopedModel<UserModel>(
+          model: UserModel(),
+          child: materialApp,
     );
   }
 

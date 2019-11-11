@@ -13,7 +13,7 @@ class _ListaMainBuilderState extends State<ListaMainBuilder> {
   Map productsInDB = {};
   String id;
   int counter = 0;
-  List lista_main = [];
+  List listaMain = [];
 
   @override
   void initState() {
@@ -40,8 +40,8 @@ class _ListaMainBuilderState extends State<ListaMainBuilder> {
 
   @override
   Widget build(BuildContext context) {
-    lista_main = productsInDB.values.toList();
-    return listGen(lista_main);
+    listaMain = productsInDB.values.toList();
+    return listGen(listaMain);
   }
 
   _OnClick(BuildContext context, String idx) {
@@ -105,8 +105,8 @@ class _ListaMainBuilderState extends State<ListaMainBuilder> {
           productName,
           style: TextStyle(
             fontWeight: FontWeight.bold,
-            fontSize: 26,
-            color: Colors.indigo,
+            fontSize: 24,
+            color: Colors.black87,
           ),
         );
       },
@@ -132,7 +132,8 @@ class _ListaMainBuilderState extends State<ListaMainBuilder> {
           productMedia,
           style: TextStyle(
             fontWeight: FontWeight.bold,
-            fontSize: 18,
+            fontSize: 16,
+            color: Colors.black54,
           ),
         );
       },
@@ -144,7 +145,8 @@ class _ListaMainBuilderState extends State<ListaMainBuilder> {
       "400m",
       style: TextStyle(
         fontWeight: FontWeight.bold,
-        fontSize: 18,
+        fontSize: 16,
+        color: Colors.black38
       ),
     );
   }
@@ -168,7 +170,7 @@ class _ListaMainBuilderState extends State<ListaMainBuilder> {
           "R\$ $productPrice",
           style: TextStyle(
             fontWeight: FontWeight.bold,
-            fontSize: 18,
+            fontSize: 16,
           ),
         );
       },
@@ -178,7 +180,7 @@ class _ListaMainBuilderState extends State<ListaMainBuilder> {
   _iconEstrela() {
     return Icon(
       Icons.star,
-      color: Colors.black,
+      color: Colors.black54,
       size: 20.0,
     );
   }

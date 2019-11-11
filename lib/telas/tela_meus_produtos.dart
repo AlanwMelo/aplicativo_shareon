@@ -23,7 +23,7 @@ homeMeusProdutos() {
           Container(
             padding: EdgeInsets.all(10),
             height: 50,
-            color: Colors.indigo,
+            color: Colors.indigoAccent,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: <Widget>[

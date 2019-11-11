@@ -111,7 +111,7 @@ _textNome() {
     style: TextStyle(
       fontWeight: FontWeight.bold,
       fontSize: 26,
-      color: Colors.indigo,
+      color: Colors.indigoAccent,
     ),
   );
 }

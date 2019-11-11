@@ -16,7 +16,7 @@ class FloatButton extends StatelessWidget {
           width: 160,
           height: 60,
           decoration: BoxDecoration(
-            color: Colors.indigo,
+            color: Colors.indigoAccent,
                 borderRadius: BorderRadius.circular(40)
           ),
         child: Row(
