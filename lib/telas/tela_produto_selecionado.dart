@@ -25,108 +25,141 @@ class _ProdutoSelecionadoState extends State<ProdutoSelecionado> {
   String productIMG = "";
   String productType = "";
   String imgID = "";
+  String mainIMG = "";
+  String pgvimg1 = "";
+  String pgvimg2 = "";
+  String pgvimg3 = "";
+  String pgvimg4 = "";
+  String pgvimg5 = "";
+  int mainIMGcontroller = 0;
+  int img2Controller = 0;
+  int img3Controller = 0;
+  int img4Controller = 0;
+  int img5Controller = 0;
+  String img2 = "";
+  String img3 = "";
+  String img4 = "";
+  String img5 = "";
   List listaIMGS = [];
   Map mapListaIMGS = {};
   int counter = 0;
 
   @override
-  Widget build(BuildContext context) {
-    return getProductData();
+  void initState() {
+    // TODO: implement initState
+    getProductData();
+    super.initState();
   }
 
-  Widget getProductData() {
-    return FutureBuilder(
-        future: databaseReference
-            .collection("products")
-            .where("ID", isEqualTo: (widget.productID))
-            .getDocuments()
-            .then((QuerySnapshot snapshot) {
-          snapshot.documents.forEach((f) {
-            Map productData = f.data;
-            productIMG = productData["imgs"];
-            productPrice = productData["price"];
-            productName = productData["name"];
-            productDescription = productData["description"];
-            productMedia = productData["media"];
-            productOwnerID = productData["ownerID"];
-            productType = productData["type"];
-          });
-        }),
-        builder: (context, snapshot) {
-          return getProductIMGs();
-        });
+  @override
+  Widget build(BuildContext context) {
+    listaIMGS = mapListaIMGS.values.toList();
+    generaPGViewer();
+    return _produto_selecionado(context);
   }
-  Widget getProductIMGs() {
-    return FutureBuilder(
-        future: databaseReference
-            .collection("productIMGs")
-            .where("productID", isEqualTo: (widget.productID))
-            .getDocuments()
-            .then((QuerySnapshot snapshot) {
-          snapshot.documents.forEach((f) {
+
+  getProductData() async {
+    await databaseReference
+        .collection("products")
+        .where("ID", isEqualTo: (widget.productID))
+        .getDocuments()
+        .then(
+      (QuerySnapshot snapshot) {
+        snapshot.documents.forEach(
+          (f) {
+            Map productData = f.data;
+            setState(() {
+              productIMG = productData["imgs"];
+              productPrice = productData["price"];
+              productName = productData["name"];
+              productDescription = productData["description"];
+              productMedia = productData["media"];
+              productOwnerID = productData["ownerID"];
+              productType = productData["type"];
+              getProductIMGs();
+              getUserData();
+            });
+          },
+        );
+      },
+    );
+  }
+
+  getProductIMGs() async {
+    listaIMGS.clear();
+    await databaseReference
+        .collection("productIMGs")
+        .where("productID", isEqualTo: (widget.productID))
+        .getDocuments()
+        .then(
+      (QuerySnapshot snapshot) {
+        snapshot.documents.forEach(
+          (f) {
             Map productIMG = f.data;
-            print(productIMG);
             imgID = productIMG["productMainIMG"];
-            if (imgID != ""){
+            if (imgID != "") {
               setState(() {
+                mainIMG = imgID;
                 mapListaIMGS[counter] = imgID;
               });
             }
             imgID = "";
             imgID = productIMG["productIMG2"];
-            if (imgID != ""){
+            if (imgID != "") {
               setState(() {
+                counter++;
+                img2 = imgID;
                 mapListaIMGS[counter] = imgID;
               });
             }
             imgID = "";
             imgID = productIMG["productIMG3"];
-            if (imgID != ""){
+            if (imgID != "") {
               setState(() {
+                counter++;
+                img3 = imgID;
                 mapListaIMGS[counter] = imgID;
               });
             }
             imgID = "";
             imgID = productIMG["productIMG4"];
-            if (imgID != ""){
+            if (imgID != "") {
               setState(() {
+                counter++;
+                img4 = imgID;
                 mapListaIMGS[counter] = imgID;
               });
             }
             imgID = "";
             imgID = productIMG["productIMG5"];
-            if (imgID != ""){
+            if (imgID != "") {
               setState(() {
+                counter++;
+                img5 = imgID;
                 mapListaIMGS[counter] = imgID;
               });
             }
-            print(imgID);
-
-          });
-        }),
-        builder: (context, snapshot) {
-          listaIMGS = mapListaIMGS.values.toList();
-          print("This is $listaIMGS");
-          return _produto_selecionado(context);
-        });
+          },
+        );
+      },
+    );
   }
 
-  Widget getUserData() {
-    return FutureBuilder(
-        future: databaseReference
-            .collection("users")
-            .where("userID", isEqualTo: productOwnerID)
-            .getDocuments()
-            .then((QuerySnapshot snapshot) {
-          snapshot.documents.forEach((f) {
-            Map userData = f.data;
-
+  getUserData() async {
+    await databaseReference
+        .collection("users")
+        .where("userID", isEqualTo: productOwnerID)
+        .getDocuments()
+        .then(
+      (QuerySnapshot snapshot) {
+        snapshot.documents.forEach((f) {
+          Map userData = f.data;
+          setState(() {
             productOwner = userData["nome"];
           });
-        }),
-        builder: (context, snapshot) {
-          return _produto_selecionado(context);
         });
+      },
+    );
   }
 
   _produto_selecionado(BuildContext context) {
@@ -144,21 +177,13 @@ class _ProdutoSelecionadoState extends State<ProdutoSelecionado> {
                       Container(
                         height: 300,
                         child: PageIndicatorContainer(
-                          length: 3,
+                          length: listaIMGS.length,
                           indicatorSpace: 10.0,
                           padding: const EdgeInsets.all(10),
                           indicatorColor: Colors.white.withOpacity(0.7),
                           indicatorSelectorColor: Colors.blue,
                           shape: IndicatorShape.circle(size: 10),
-                          child: PageView(
-                            children: <Widget>[
-                              _img(productIMG),
-                              _img(
-                                  "https://jotacortizo.files.wordpress.com/2016/11/casas-de-hogwarts.jpg"),
-                              _img(
-                                  "https://i.pinimg.com/originals/64/82/0f/64820fd9ad5cce4b795ccf059e382f84.jpg"),
-                            ],
-                          ),
+                          child:  exibePGV(),
                         ),
                       ),
                       Container(
@@ -279,5 +304,167 @@ class _ProdutoSelecionadoState extends State<ProdutoSelecionado> {
       color: Colors.white,
       size: 20.0,
     );
+  }
+
+  generaPGViewer() {
+    if (pgvimg1 == "") {
+      if (mainIMG != "" && mainIMGcontroller == 0) {
+        pgvimg1 = mainIMG;
+        mainIMGcontroller = 1;
+        generaPGViewer();
+      } else if (img2 != "" && img2Controller == 0) {
+        pgvimg1 = img2;
+        img2Controller = 1;
+        generaPGViewer();
+      } else if (img3 != "" && img3Controller == 0) {
+        pgvimg1 = img3;
+        img3Controller = 1;
+        generaPGViewer();
+      } else if (img4 != "" && img4Controller == 0) {
+        pgvimg1 = img4;
+        img4Controller = 1;
+        generaPGViewer();
+      } else if (img5 != "" && img5Controller == 0) {
+        pgvimg1 = img5;
+        img5Controller = 1;
+        generaPGViewer();
+      }
+    }
+    if (pgvimg2 == "") {
+      if (mainIMG != "" && mainIMGcontroller == 0) {
+        pgvimg2 = mainIMG;
+        mainIMGcontroller = 1;
+        generaPGViewer();
+      } else if (img2 != "" && img2Controller == 0) {
+        pgvimg2 = img2;
+        img2Controller = 1;
+        generaPGViewer();
+      } else if (img3 != "" && img3Controller == 0) {
+        pgvimg2 = img3;
+        img3Controller = 1;
+        generaPGViewer();
+      } else if (img4 != "" && img4Controller == 0) {
+        pgvimg2 = img4;
+        img4Controller = 1;
+        generaPGViewer();
+      } else if (img5 != "" && img5Controller == 0) {
+        pgvimg2 = img5;
+        img5Controller = 1;
+        generaPGViewer();
+      }
+    }
+    if (pgvimg3 == "") {
+      if (mainIMG != "" && mainIMGcontroller == 0) {
+        pgvimg3 = mainIMG;
+        mainIMGcontroller = 1;
+        generaPGViewer();
+      } else if (img2 != "" && img2Controller == 0) {
+        pgvimg3 = img2;
+        img2Controller = 1;
+        generaPGViewer();
+      } else if (img3 != "" && img3Controller == 0) {
+        pgvimg3 = img3;
+        img3Controller = 1;
+        generaPGViewer();
+      } else if (img4 != "" && img4Controller == 0) {
+        pgvimg3 = img4;
+        img4Controller = 1;
+        generaPGViewer();
+      } else if (img5 != "" && img5Controller == 0) {
+        pgvimg3 = img5;
+        img5Controller = 1;
+        generaPGViewer();
+      }
+    }
+    if (pgvimg4 == "") {
+      if (mainIMG != "" && mainIMGcontroller == 0) {
+        pgvimg4 = mainIMG;
+        mainIMGcontroller = 1;
+        generaPGViewer();
+      } else if (img2 != "" && img2Controller == 0) {
+        pgvimg4 = img2;
+        img2Controller = 1;
+        generaPGViewer();
+      } else if (img3 != "" && img3Controller == 0) {
+        pgvimg4 = img3;
+        img3Controller = 1;
+        generaPGViewer();
+      } else if (img4 != "" && img4Controller == 0) {
+        pgvimg4 = img4;
+        img4Controller = 1;
+        generaPGViewer();
+      } else if (img5 != "" && img5Controller == 0) {
+        pgvimg4 = img5;
+        img5Controller = 1;
+        generaPGViewer();
+      }
+    }
+    if (pgvimg5 == "") {
+      if (mainIMG != "" && mainIMGcontroller == 0) {
+        pgvimg5 = mainIMG;
+        mainIMGcontroller = 1;
+        generaPGViewer();
+      } else if (img2 != "" && img2Controller == 0) {
+        pgvimg5 = img2;
+        img2Controller = 1;
+        generaPGViewer();
+      } else if (img3 != "" && img3Controller == 0) {
+        pgvimg5 = img3;
+        img3Controller = 1;
+        generaPGViewer();
+      } else if (img4 != "" && img4Controller == 0) {
+        pgvimg5 = img4;
+        img4Controller = 1;
+        generaPGViewer();
+      } else if (img5 != "" && img5Controller == 0) {
+        pgvimg5 = img5;
+        img5Controller = 1;
+        generaPGViewer();
+      }
+    }
+  }
+
+  exibePGV() {
+    if (listaIMGS.length == 1) {
+      return PageView(
+        children: <Widget>[
+          _img(pgvimg1),
+        ],
+      );
+    } else if (listaIMGS.length == 2) {
+      return PageView(
+        children: <Widget>[
+          _img(pgvimg1),
+          _img(pgvimg2),
+        ],
+      );
+    } else if (listaIMGS.length == 3) {
+      return PageView(
+        children: <Widget>[
+          _img(pgvimg1),
+          _img(pgvimg2),
+          _img(pgvimg3),
+        ],
+      );
+    } else if (listaIMGS.length == 4) {
+      return PageView(
+        children: <Widget>[
+          _img(pgvimg1),
+          _img(pgvimg2),
+          _img(pgvimg3),
+          _img(pgvimg4),
+        ],
+      );
+    } else if (listaIMGS.length == 5) {
+      return PageView(
+        children: <Widget>[
+          _img(pgvimg1),
+          _img(pgvimg2),
+          _img(pgvimg3),
+          _img(pgvimg4),
+          _img(pgvimg5),
+        ],
+      );
+    }
   }
 }

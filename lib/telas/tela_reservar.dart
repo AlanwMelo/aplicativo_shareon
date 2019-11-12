@@ -64,6 +64,7 @@ class _Tela_ReservarState extends State<Tela_Reservar> {
 
   @override
   Widget build(BuildContext context) {
+    getProductIMG();
     return getProductData();
   }
 
@@ -626,7 +627,23 @@ class _Tela_ReservarState extends State<Tela_Reservar> {
     }
   }
 
-  Widget getProductData() {
+  getProductIMG() async {
+    await databaseReference
+        .collection("productIMGs")
+        .where("productID", isEqualTo: (widget.productID))
+        .getDocuments()
+        .then((QuerySnapshot snapshot) {
+      snapshot.documents.forEach((f) {
+        Map getIMG = f.data;
+        setState(() {
+          productIMG = getIMG["productMainIMG"];
+
+        });
+      });
+    });
+  }
+
+  getProductData() {
     return FutureBuilder(
         future: databaseReference
             .collection("products")
@@ -635,7 +652,6 @@ class _Tela_ReservarState extends State<Tela_Reservar> {
             .then((QuerySnapshot snapshot) {
           snapshot.documents.forEach((f) {
             Map productData = f.data;
-            productIMG = productData["imgs"];
             ValordoProduto = double.parse(productData["price"]);
             ValorEstimado = double.parse(productData["price"]);
             productName = productData["name"];
@@ -644,14 +660,11 @@ class _Tela_ReservarState extends State<Tela_Reservar> {
             productOwnerID = productData["ownerID"];
             productType = productData["type"];
 
-
-            if (calcValorProdutoConversor == "0.00"){
+            if (calcValorProdutoConversor == "0.00") {
               setState(() {
                 calcValorProdutoConversor = ValordoProduto.toStringAsFixed(2);
               });
             }
-
-
           });
         }),
         builder: (context, snapshot) {
