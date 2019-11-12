@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:aplicativo_shareon/telas/tela_reservar.dart';
 import 'package:aplicativo_shareon/utils/shareon_appbar.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -86,7 +88,6 @@ class _ProdutoSelecionadoState extends State<ProdutoSelecionado> {
   }
 
   getProductIMGs() async {
-    listaIMGS.clear();
     await databaseReference
         .collection("productIMGs")
         .where("productID", isEqualTo: (widget.productID))
@@ -176,6 +177,7 @@ class _ProdutoSelecionadoState extends State<ProdutoSelecionado> {
                     children: <Widget>[
                       Container(
                         height: 300,
+                        color: Colors.white,
                         child: PageIndicatorContainer(
                           length: listaIMGS.length,
                           indicatorSpace: 10.0,
@@ -425,6 +427,9 @@ class _ProdutoSelecionadoState extends State<ProdutoSelecionado> {
   }
 
   exibePGV() {
+    if (listaIMGS.length == 0){
+      return Center(child: CircularProgressIndicator(),);
+    }
     if (listaIMGS.length == 1) {
       return PageView(
         children: <Widget>[
