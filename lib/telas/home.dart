@@ -69,9 +69,10 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
-    if (userMail == "" || userMail == "?") {
+    if (userMail == "" || userMail == "?" || userID == "") {
       sharedPreferencesController.getEmail().then(_setMail);
       sharedPreferencesController.getName().then(_setName);
+      sharedPreferencesController.getID().then(_setUserID);
       sharedPreferencesController.getlogedState().then(_logedVerifier);
       sharedPreferencesController.getURLImg().then(_setIMG);
     }

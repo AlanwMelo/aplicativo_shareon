@@ -493,7 +493,7 @@ class _ProdutoSelecionadoState extends State<ProdutoSelecionado> {
 
   getFavoriteStatus() async {
     await databaseReference
-        .collection("favoritesProducts")
+        .collection("favoriteProducts")
         .where("productID", isEqualTo: (widget.productID))
         .where("userID", isEqualTo: userID)
         .getDocuments()
@@ -519,29 +519,55 @@ class _ProdutoSelecionadoState extends State<ProdutoSelecionado> {
     });
   }
 
-  _setFavoriteState() {
+  _setFavoriteState() async {
     Map<String, dynamic> favData = {
       "productID": (widget.productID),
       "userID": userID,
     };
 
     if (productInFavorites == false) {
-      databaseReference.collection("favoritesProducts").add(favData);
+      final newFav =
+          await databaseReference.collection("favoriteProducts").add(favData);
+      String favIDWriter = newFav.documentID;
+      Map<String, dynamic> setID = {
+        "favID": favIDWriter,
+      };
+      await databaseReference
+          .collection("favoriteProducts")
+          .document(favIDWriter)
+          .updateData(setID);
       setState(() {
         getFavoriteStatus();
       });
     } else if (productInFavorites == true) {
       databaseReference
-          .collection("favoritesProducts")
-          .where("productID", isEqualTo: (widget.productID))
+          .collection("favoriteProducts")
+          .where("productID", isEqualTo: widget.productID)
           .where("userID", isEqualTo: userID)
           .getDocuments()
-          .then(((QuerySnapshot snapshot) {
-        snapshot.documents.forEach((f) {
-          Map productData = f.data;
-          print("this isssss $productData");
-        },);
-      }),);
+          .then(
+        (QuerySnapshot snapshot) {
+          snapshot.documents.forEach((f) async {
+            Map productData = f.data;
+            String favDel = productData["favID"];
+            
+            _deleter(favDel);
+            
+          });
+        },
+      );
     }
+  }
+
+  _deleter(String favDel) async {
+    await databaseReference.collection("favoriteProducts").document(favDel).delete().then(_deleted);
+    
+  }
+
+  _deleted(void value) {
+    setState(() {
+      productInFavorites = false;
+      getFavoriteStatus();
+    });
   }
 }

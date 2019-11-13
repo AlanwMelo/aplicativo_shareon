@@ -29,21 +29,16 @@ class _ListaFavoritosBuilderState extends State<ListaFavoritosBuilder> {
 
   getData() async {
     await databaseReference
-        .collection("favoritesProducts")
+        .collection("favoriteProducts")
         .where("userID", isEqualTo: userID)
-    /*.where("insertionDate")
-        order by só funciona sobre 1 where
-        ex: where("insertionDate").orderBy("insertionDate") = OK
-        ex: where("ownerID").orderBy("insertionDate") = NOK
-        .orderBy("insertionDate")*/
         .getDocuments()
         .then((QuerySnapshot snapshot) {
       snapshot.documents.forEach((f) {
         Map productData = f.data;
         id = productData["productID"];
-        setState(() {
-          productsInDB[counter] = id;
-        });
+          setState(() {
+            productsInDB[counter] = id;
+          });
         counter++;
       });
     });
@@ -51,10 +46,8 @@ class _ListaFavoritosBuilderState extends State<ListaFavoritosBuilder> {
 
   @override
   Widget build(BuildContext context) {
-    List _lista_main = [];
-    _lista_main = productsInDB.values.toList();
-
-    return listGen(_lista_main);
+    List _lista_fav = [];
+    return listGen(_lista_fav);
   }
 
   _OnClick(BuildContext context, String idx) {
