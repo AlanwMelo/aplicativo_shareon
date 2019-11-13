@@ -1,4 +1,6 @@
 import 'package:aplicativo_shareon/utils/shareon_appbar.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import '../main.dart';
@@ -131,12 +133,17 @@ class _MeuPerfilState extends State<MeuPerfil> {
   }
 
   void _logout(BuildContext context) {
+    FirebaseAuth.instance.signOut();
     SharedPreferencesController sharedPreferencesController =
     new SharedPreferencesController();
-    sharedPreferencesController.setlogedState("0").then(_succesLogout);
+    sharedPreferencesController.setlogedState("0");
+    sharedPreferencesController.setID("");
+    sharedPreferencesController.setName("");
+    sharedPreferencesController.setEmail("");
+    _succesLogout();
   }
 
-  void _succesLogout(bool value) {
+  void _succesLogout() {
     Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => MyApp()), (Route<dynamic> route) => false,);
   }
 

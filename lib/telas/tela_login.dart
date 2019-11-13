@@ -6,6 +6,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';
 
+import '../main.dart';
 import 'home.dart';
 
 class Login extends StatefulWidget {
@@ -14,6 +15,8 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
+  SharedPreferencesController sharedPreferencesController =
+      new SharedPreferencesController();
   final emailController = TextEditingController();
   final passController = TextEditingController();
 
@@ -22,6 +25,11 @@ class _LoginState extends State<Login> {
 
   @override
   Widget build(BuildContext context) {
+    setState(() {
+      sharedPreferencesController.getName();
+      sharedPreferencesController.getID();
+      sharedPreferencesController.getEmail();
+    });
     return WillPopScope(
       onWillPop: () {
         return alertExit(context);
@@ -152,13 +160,14 @@ class _LoginState extends State<Login> {
                               padding: EdgeInsets.only(top: 12),
                               child: Text(
                                 "Novo por aqui? Cadastre-se",
-                                style:
-                                    TextStyle(fontSize: 16, color: Colors.indigoAccent),
+                                style: TextStyle(
+                                    fontSize: 16, color: Colors.indigoAccent),
                               ),
                               onPressed: () {
                                 Navigator.of(context).pushReplacement(
                                     MaterialPageRoute(
-                                        builder: (context) => CadastroUsuario()));
+                                        builder: (context) =>
+                                            CadastroUsuario()));
                               }),
                         )
                       ],
