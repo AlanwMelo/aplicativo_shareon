@@ -1,11 +1,11 @@
-import 'dart:io';
-
 import 'package:aplicativo_shareon/telas/tela_reservar.dart';
 import 'package:aplicativo_shareon/utils/shareon_appbar.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:page_indicator/page_indicator.dart';
+
+import '../main.dart';
 
 class ProdutoSelecionado extends StatefulWidget {
   String productID;
@@ -17,7 +17,11 @@ class ProdutoSelecionado extends StatefulWidget {
 }
 
 class _ProdutoSelecionadoState extends State<ProdutoSelecionado> {
+  SharedPreferencesController sharedPreferencesController =
+      new SharedPreferencesController();
   final databaseReference = Firestore.instance;
+  bool productInFavorites = false;
+  String favoriteController = "";
   String productName = "";
   String productMedia = "";
   String productPrice = "";
@@ -26,6 +30,7 @@ class _ProdutoSelecionadoState extends State<ProdutoSelecionado> {
   String productDescription = "";
   String productIMG = "";
   String productType = "";
+  String userID = "";
   String imgID = "";
   String mainIMG = "";
   String pgvimg1 = "";
@@ -50,6 +55,10 @@ class _ProdutoSelecionadoState extends State<ProdutoSelecionado> {
   void initState() {
     // TODO: implement initState
     getProductData();
+    getFavoriteStatus();
+    if (userID == "") {
+      sharedPreferencesController.getID().then(_setID);
+    }
     super.initState();
   }
 
@@ -57,6 +66,11 @@ class _ProdutoSelecionadoState extends State<ProdutoSelecionado> {
   Widget build(BuildContext context) {
     listaIMGS = mapListaIMGS.values.toList();
     generaPGViewer();
+    if (productInFavorites == false) {
+      favoriteController = "Adcionar aos Favoritos";
+    } else if (productInFavorites == true) {
+      favoriteController = "Remover dos Favoritos";
+    }
     return _produto_selecionado(context);
   }
 
@@ -185,7 +199,7 @@ class _ProdutoSelecionadoState extends State<ProdutoSelecionado> {
                           indicatorColor: Colors.white.withOpacity(0.7),
                           indicatorSelectorColor: Colors.blue,
                           shape: IndicatorShape.circle(size: 10),
-                          child:  exibePGV(),
+                          child: exibePGV(),
                         ),
                       ),
                       Container(
@@ -229,8 +243,10 @@ class _ProdutoSelecionadoState extends State<ProdutoSelecionado> {
                       Container(
                         margin: EdgeInsets.only(bottom: 8),
                         child: RaisedButton(
-                          onPressed: () {},
-                          child: _text("Adcionar aos Favoritos", Resumo: true),
+                          onPressed: () {
+                            _setFavoriteState();
+                          },
+                          child: _text(favoriteController, Resumo: true),
                         ),
                       ),
                       Container(
@@ -427,8 +443,10 @@ class _ProdutoSelecionadoState extends State<ProdutoSelecionado> {
   }
 
   exibePGV() {
-    if (listaIMGS.length == 0){
-      return Center(child: CircularProgressIndicator(),);
+    if (listaIMGS.length == 0) {
+      return Center(
+        child: CircularProgressIndicator(),
+      );
     }
     if (listaIMGS.length == 1) {
       return PageView(
@@ -470,6 +488,60 @@ class _ProdutoSelecionadoState extends State<ProdutoSelecionado> {
           _img(pgvimg5),
         ],
       );
+    }
+  }
+
+  getFavoriteStatus() async {
+    await databaseReference
+        .collection("favoritesProducts")
+        .where("productID", isEqualTo: (widget.productID))
+        .where("userID", isEqualTo: userID)
+        .getDocuments()
+        .then(
+      (QuerySnapshot snapshot) {
+        snapshot.documents.forEach(
+          (f) {
+            if (f.data.isNotEmpty) {
+              setState(() {
+                productInFavorites = true;
+              });
+            }
+          },
+        );
+      },
+    );
+  }
+
+  void _setID(String value) {
+    setState(() {
+      userID = value;
+      getFavoriteStatus();
+    });
+  }
+
+  _setFavoriteState() {
+    Map<String, dynamic> favData = {
+      "productID": (widget.productID),
+      "userID": userID,
+    };
+
+    if (productInFavorites == false) {
+      databaseReference.collection("favoritesProducts").add(favData);
+      setState(() {
+        getFavoriteStatus();
+      });
+    } else if (productInFavorites == true) {
+      databaseReference
+          .collection("favoritesProducts")
+          .where("productID", isEqualTo: (widget.productID))
+          .where("userID", isEqualTo: userID)
+          .getDocuments()
+          .then(((QuerySnapshot snapshot) {
+        snapshot.documents.forEach((f) {
+          Map productData = f.data;
+          print("this isssss $productData");
+        },);
+      }),);
     }
   }
 }

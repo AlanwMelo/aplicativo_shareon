@@ -61,7 +61,7 @@ class _HomeState extends State<Home> {
   @override
   void initState() {
     controllerPointer = 1;
-    getUserData();
+    sharedPreferencesController.getID().then(_setUserID);
     super.initState();
 
     WidgetsBinding.instance.addObserver(new LifecycleEventHandler());
@@ -71,7 +71,6 @@ class _HomeState extends State<Home> {
   Widget build(BuildContext context) {
     if (userMail == "" || userMail == "?") {
       sharedPreferencesController.getEmail().then(_setMail);
-      sharedPreferencesController.getID().then(_setUserID);
       sharedPreferencesController.getName().then(_setName);
       sharedPreferencesController.getlogedState().then(_logedVerifier);
       sharedPreferencesController.getURLImg().then(_setIMG);
@@ -574,18 +573,6 @@ class _HomeState extends State<Home> {
     );
   }
 
-  void _setUserName(String name) {
-    setState(() {
-      userName = name;
-    });
-  }
-
-  void _setUserMail(String email) {
-    setState(() {
-      userMail = email;
-    });
-  }
-
   _img() {
     return ConstrainedBox(
       constraints: BoxConstraints(
@@ -773,8 +760,7 @@ class _HomeState extends State<Home> {
   }
 
   _onClick(BuildContext context) {
-    Navigator.push(context,
-        MaterialPageRoute(builder: (BuildContext context) {
+    Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) {
       return MeuPerfil();
     }));
   }
@@ -782,8 +768,6 @@ class _HomeState extends State<Home> {
   void _logedVerifier(String value) {
     if (value == "0") {
       setState(() {
-        SharedPreferencesController sharedPreferencesController =
-            new SharedPreferencesController();
         sharedPreferencesController.setlogedState("1");
       });
     }
@@ -807,10 +791,10 @@ class _HomeState extends State<Home> {
     });
   }
 
-  void getUserData() {
-    databaseReference
+  Future getUserData() async {
+    await databaseReference
         .collection("users")
-        .where("userID", isEqualTo: "qxeEsdXbmYW1pcr6kXFdQwTliaH3")
+        .where("userID", isEqualTo: userID)
         .getDocuments()
         .then((QuerySnapshot snapshot) {
       snapshot.documents.forEach((f) {
@@ -828,6 +812,7 @@ class _HomeState extends State<Home> {
   void _setUserID(String value) {
     setState(() {
       userID = value;
+      getUserData();
     });
   }
 }

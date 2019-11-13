@@ -21,7 +21,6 @@ class _ListaFavoritosBuilderState extends State<ListaFavoritosBuilder> {
 
   @override
   void initState() {
-    print(userID);
     if (userID == "") {
       sharedPreferencesController.getID().then(_setID);
     }

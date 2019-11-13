@@ -90,19 +90,22 @@ class UserModel extends Model{
         DocumentSnapshot docUser =
         await Firestore.instance.collection("users").document(firebaseUser.uid).get();
         userData = docUser.data;
-        _setSharedID(firebaseUser.uid);
+        Map<String, dynamic> setID = {
+          "userID": firebaseUser.uid,
+        };
+        Firestore.instance.collection("users").document(firebaseUser.uid).updateData(setID);
+
+        await _setSharedID(firebaseUser.uid);
       }
     }
     notifyListeners();
   }
 
 
-  void _setSharedID(String value) {
+  // ignore: missing_return
+  Future _setSharedID(String value) {
     SharedPreferencesController sharedPreferencesController =
     new SharedPreferencesController();
-
     sharedPreferencesController.setID(value);
   }
-
-
 }
