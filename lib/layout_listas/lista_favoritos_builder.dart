@@ -47,6 +47,7 @@ class _ListaFavoritosBuilderState extends State<ListaFavoritosBuilder> {
   @override
   Widget build(BuildContext context) {
     List _lista_fav = [];
+    _lista_fav = productsInDB.values.toList();
     return listGen(_lista_fav);
   }
 
