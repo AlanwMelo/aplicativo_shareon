@@ -11,22 +11,22 @@ class MeuPerfil extends StatefulWidget {
 }
 
 class _MeuPerfilState extends State<MeuPerfil> {
+  SharedPreferencesController sharedPreferencesController =
+  new SharedPreferencesController();
   String userName = "?";
   String userMail = "?";
-  String userimgURL = "";
+  String userimgURL = "https://cdn4.iconfinder.com/data/icons/instagram-ui-twotone/48/Paul-18-512.png";
 
   @override
   void initState() {
-    SharedPreferencesController sharedPreferencesController =
-    new SharedPreferencesController();
     sharedPreferencesController.getName().then(_setUserName);
     sharedPreferencesController.getEmail().then(_setUserMail);
-    sharedPreferencesController.getURLImg().then(_setURLImg);
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+    sharedPreferencesController.getURLImg().then(_setURLImg);
     return  _meu_perfil();
   }
 

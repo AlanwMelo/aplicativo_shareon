@@ -8,7 +8,7 @@ import 'package:page_indicator/page_indicator.dart';
 import '../main.dart';
 
 class ProdutoSelecionado extends StatefulWidget {
-  String productID;
+  final String productID;
 
   ProdutoSelecionado({@required this.productID});
 
@@ -21,6 +21,7 @@ class _ProdutoSelecionadoState extends State<ProdutoSelecionado> {
       new SharedPreferencesController();
   final databaseReference = Firestore.instance;
   bool productInFavorites = false;
+  bool myProduct = false;
   String favoriteController = "";
   String productName = "";
   String productMedia = "";
@@ -56,6 +57,7 @@ class _ProdutoSelecionadoState extends State<ProdutoSelecionado> {
     // TODO: implement initState
     getProductData();
     getFavoriteStatus();
+    getIsMyProduct();
     if (userID == "") {
       sharedPreferencesController.getID().then(_setID);
     }
@@ -71,7 +73,7 @@ class _ProdutoSelecionadoState extends State<ProdutoSelecionado> {
     } else if (productInFavorites == true) {
       favoriteController = "Remover dos Favoritos";
     }
-    return _produto_selecionado(context);
+    return _produtoSelecionado(context);
   }
 
   getProductData() async {
@@ -177,7 +179,7 @@ class _ProdutoSelecionadoState extends State<ProdutoSelecionado> {
     );
   }
 
-  _produto_selecionado(BuildContext context) {
+  _produtoSelecionado(BuildContext context) {
     return Scaffold(
       appBar: shareon_appbar(context),
       body: SizedBox.expand(
@@ -204,7 +206,7 @@ class _ProdutoSelecionadoState extends State<ProdutoSelecionado> {
                       ),
                       Container(
                         margin: EdgeInsets.only(top: 8),
-                        child: _text(productName, Titulo: true),
+                        child: _text(productName, titulo: true),
                       ),
                       Container(
                           width: 70,
@@ -235,7 +237,7 @@ class _ProdutoSelecionadoState extends State<ProdutoSelecionado> {
                               color: Colors.white,
                               width: 1000,
                               padding: EdgeInsets.all(8),
-                              child: _text(productDescription, Resumo: true),
+                              child: _text(productDescription, resumo: true),
                             ),
                           ),
                         ),
@@ -246,26 +248,13 @@ class _ProdutoSelecionadoState extends State<ProdutoSelecionado> {
                           onPressed: () {
                             _setFavoriteState();
                           },
-                          child: _text(favoriteController, Resumo: true),
+                          child: _text(favoriteController, resumo: true),
                         ),
                       ),
                       Container(
                         width: 400,
                         margin: EdgeInsets.only(bottom: 8, right: 8, left: 8),
-                        child: RaisedButton(
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (BuildContext context) {
-                                return Tela_Reservar(
-                                    productID: widget.productID,
-                                    productPrice: double.parse(productPrice));
-                              }),
-                            );
-                          },
-                          child: _text("Reservar", Resumo: true),
-                        ),
+                        child: prodDestination(),
                       ),
                     ],
                   ),
@@ -278,8 +267,8 @@ class _ProdutoSelecionadoState extends State<ProdutoSelecionado> {
     );
   }
 
-  _text(String texto, {bool Titulo = false, bool Resumo = false}) {
-    if (Titulo == true) {
+  _text(String texto, {bool titulo = false, bool resumo = false}) {
+    if (titulo == true) {
       return Text(
         "$texto",
         style: TextStyle(
@@ -288,7 +277,7 @@ class _ProdutoSelecionadoState extends State<ProdutoSelecionado> {
           fontSize: 30,
         ),
       );
-    } else if (Resumo == true) {
+    } else if (resumo == true) {
       return Text(
         "$texto",
         style: TextStyle(
@@ -516,6 +505,7 @@ class _ProdutoSelecionadoState extends State<ProdutoSelecionado> {
     setState(() {
       userID = value;
       getFavoriteStatus();
+      getIsMyProduct();
     });
   }
 
@@ -550,9 +540,8 @@ class _ProdutoSelecionadoState extends State<ProdutoSelecionado> {
           snapshot.documents.forEach((f) async {
             Map productData = f.data;
             String favDel = productData["favID"];
-            
+
             _deleter(favDel);
-            
           });
         },
       );
@@ -560,8 +549,11 @@ class _ProdutoSelecionadoState extends State<ProdutoSelecionado> {
   }
 
   _deleter(String favDel) async {
-    await databaseReference.collection("favoriteProducts").document(favDel).delete().then(_deleted);
-    
+    await databaseReference
+        .collection("favoriteProducts")
+        .document(favDel)
+        .delete()
+        .then(_deleted);
   }
 
   _deleted(void value) {
@@ -569,5 +561,52 @@ class _ProdutoSelecionadoState extends State<ProdutoSelecionado> {
       productInFavorites = false;
       getFavoriteStatus();
     });
+  }
+
+  prodDestination() {
+    if (myProduct == null) {
+      return Container();
+    } else if (myProduct == true) {
+      return RaisedButton(
+        onPressed: () {},
+        child: _text("Editar", resumo: true),
+      );
+    }
+    if (myProduct == false) {
+      return RaisedButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (BuildContext context) {
+              return Tela_Reservar(
+                  productID: widget.productID,
+                  productPrice: double.parse(productPrice));
+            }),
+          );
+        },
+        child: _text("Reservar", resumo: true),
+      );
+    }
+  }
+
+  getIsMyProduct() async {
+    await databaseReference
+        .collection("products")
+        .where("ID", isEqualTo: (widget.productID))
+        .where("ownerID", isEqualTo: userID)
+        .getDocuments()
+        .then(
+      (QuerySnapshot snapshot) {
+        snapshot.documents.forEach(
+          (f) {
+            if (f.data.isNotEmpty) {
+              setState(() {
+                myProduct = true;
+              });
+            }
+          },
+        );
+      },
+    );
   }
 }

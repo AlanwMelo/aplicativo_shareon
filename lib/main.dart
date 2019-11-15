@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:aplicativo_shareon/telas/home.dart';
 import 'package:aplicativo_shareon/telas/tela_login.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -22,10 +23,9 @@ class SharedPreferencesController {
   final String logedState = "0";
   final String ultimaLocalizacao = "";
   final String userID = "";
-  final String urlImgPerfil = "https://avatars1.githubusercontent.com/u/49182765?s=400&u=3712a9e1969edcba260c1de904703057e1b0164c&v=4";
+  final String urlImgPerfil = "";
 
   //GETTERS
-
   Future <String> getName() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String result = prefs.getString("name") ?? name;
@@ -52,7 +52,6 @@ class SharedPreferencesController {
   }
 
   //SETTERS
-
   Future<bool> setID(String value) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     return prefs.setString("userID", value);
@@ -86,6 +85,9 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+  // Conf Dispositivo para FCM
+  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
+  var showform = false;
   String loginOk = "";
 
   @override
@@ -95,6 +97,9 @@ class _MyAppState extends State<MyApp> {
         new SharedPreferencesController();
     sharedPreferencesController.getlogedState().then(_logedVerifier);
     super.initState();
+  }
+
+  void _initFCM(){
   }
 
   @override

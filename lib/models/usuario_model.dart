@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:ui';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:scoped_model/scoped_model.dart';
 import '../main.dart';
@@ -9,6 +10,7 @@ import '../main.dart';
 class UserModel extends Model{
 
   FirebaseAuth auth = FirebaseAuth.instance;
+  final databaseReference = Firestore.instance;
 
   FirebaseUser firebaseUser;
   Map<String, dynamic> userData = Map();
@@ -107,5 +109,16 @@ class UserModel extends Model{
     SharedPreferencesController sharedPreferencesController =
     new SharedPreferencesController();
     sharedPreferencesController.setID(value);
+
+    final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
+    _firebaseMessaging.getToken().then((fcmtoken) async {
+      Map<String, dynamic> setFCMToken = {
+        "fcmToken": fcmtoken,
+      };
+      await databaseReference
+          .collection("users")
+          .document(value)
+          .updateData(setFCMToken);
+    });
   }
 }

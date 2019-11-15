@@ -5,6 +5,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:toast/toast.dart';
 
+import '../main.dart';
+
 class Tela_Reservar extends StatefulWidget {
   String productID;
   double productPrice;
@@ -24,6 +26,9 @@ class _Tela_ReservarState extends State<Tela_Reservar> {
   int duracao = 60;
   String Strduracao;
   final databaseReference = Firestore.instance;
+  SharedPreferencesController sharedPreferencesController =
+      new SharedPreferencesController();
+  String userID = "";
   String productName = "";
   String productMedia = "";
   String productOwner = "";
@@ -58,6 +63,9 @@ class _Tela_ReservarState extends State<Tela_Reservar> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    if (userID == "") {
+      sharedPreferencesController.getID().then(_setID);
+    }
     getTimeString(duracao);
     _horarioFim = _horarioFimPadrao();
   }
@@ -321,6 +329,7 @@ class _Tela_ReservarState extends State<Tela_Reservar> {
                                         onPressed: () {
                                           setState(() {
                                             Navigator.pop(context);
+                                            _solicitaReserva();
                                           });
                                         },
                                         child: Text(
@@ -637,7 +646,6 @@ class _Tela_ReservarState extends State<Tela_Reservar> {
         Map getIMG = f.data;
         setState(() {
           productIMG = getIMG["productMainIMG"];
-
         });
       });
     });
@@ -720,5 +728,39 @@ class _Tela_ReservarState extends State<Tela_Reservar> {
     } else if (min > 1) {
       return "$min minutos";
     }
+  }
+
+  _solicitaReserva() async {
+    String status = "pendente";
+    Map<String, dynamic> solicitaReserva = {
+      "productID": (widget.productID),
+      "productPrice": ValordoProduto,
+      "initDate": _dataInicio,
+      "estimatedEndPrice": ValorEstimado,
+      "estimatedDuration": duracao,
+      "endDate": _dataFim,
+      "initTime": _horarioInicio,
+      "endTime": _horarioFim,
+      "userID": userID,
+      "status": status,
+    };
+
+    final newReserve = await databaseReference
+        .collection("solicitations")
+        .add(solicitaReserva);
+    String idWriter = newReserve.documentID;
+    Map<String, dynamic> setID = {
+      "soilicitationID": idWriter,
+    };
+    await databaseReference
+        .collection("solicitations")
+        .document(idWriter)
+        .updateData(setID);
+  }
+
+  void _setID(String value) {
+    setState(() {
+      userID = value;
+    });
   }
 }

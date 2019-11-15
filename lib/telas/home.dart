@@ -56,7 +56,7 @@ class _HomeState extends State<Home> {
   final databaseReference = Firestore.instance;
   GlobalKey<ScaffoldState> _drawerKey = GlobalKey();
   SharedPreferencesController sharedPreferencesController =
-      new SharedPreferencesController();
+  new SharedPreferencesController();
 
   @override
   void initState() {
@@ -69,7 +69,8 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
-    if (userMail == "" || userMail == "?" || userID == "") {
+    if (userMail == "" || userMail == "?" || userID == "" ||
+        urlImgPerfil == "?") {
       sharedPreferencesController.getEmail().then(_setMail);
       sharedPreferencesController.getName().then(_setName);
       sharedPreferencesController.getID().then(_setUserID);
@@ -588,8 +589,7 @@ class _HomeState extends State<Home> {
         ),
         child: Container(
           child: Image.network(
-            urlImgPerfil
-            /*"https://cdn4.iconfinder.com/data/icons/instagram-ui-twotone/48/Paul-18-512.png"*/,
+            urlImgPerfil,
             fit: BoxFit.cover,
           ),
         ),
@@ -775,9 +775,16 @@ class _HomeState extends State<Home> {
   }
 
   void _setIMG(String value) {
+    if (value == "") {
     setState(() {
-      urlImgPerfil = value;
+      urlImgPerfil = "https://cdn4.iconfinder.com/data/icons/instagram-ui-twotone/48/Paul-18-512.png";
     });
+    }
+    else {
+      setState(() {
+        urlImgPerfil = value;
+      });
+    }
   }
 
   void _setName(String value) {
@@ -803,8 +810,10 @@ class _HomeState extends State<Home> {
 
         String name = userData["nome"];
         String email = userData["email"];
+        String img = userData["imgURL"];
 
         sharedPreferencesController.setName(name);
+        sharedPreferencesController.setURLImg(img);
         sharedPreferencesController.setEmail(email);
       });
     });
