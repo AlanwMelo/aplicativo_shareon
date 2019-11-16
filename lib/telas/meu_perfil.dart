@@ -1,5 +1,4 @@
 import 'package:aplicativo_shareon/utils/shareon_appbar.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -27,10 +26,10 @@ class _MeuPerfilState extends State<MeuPerfil> {
   @override
   Widget build(BuildContext context) {
     sharedPreferencesController.getURLImg().then(_setURLImg);
-    return  _meu_perfil();
+    return  _meuPerfil();
   }
 
-  Widget _meu_perfil() {
+  Widget _meuPerfil() {
     return Scaffold(
       backgroundColor: Colors.indigoAccent,
       appBar: shareon_appbar(context),
@@ -58,7 +57,7 @@ class _MeuPerfilState extends State<MeuPerfil> {
                   _img(),
                   Container(
                     margin: EdgeInsets.only(top: 16),
-                    child: _text(userName, Titulo: true),
+                    child: _text(userName, titulo: true),
                   ),
                   Container(
                     margin: EdgeInsets.only(top: 16),
@@ -87,7 +86,7 @@ class _MeuPerfilState extends State<MeuPerfil> {
                           padding: EdgeInsets.all(8),
                           color: Colors.white,
                           child: _text("Você ainda não possui avaliações.",
-                              Resumo: true),
+                              resumo: true),
                         ),
                       ),
                     ),
@@ -172,8 +171,8 @@ class _MeuPerfilState extends State<MeuPerfil> {
     );
   }
 
-  _text(String texto, {bool Titulo = false, bool Resumo = false}) {
-    if (Titulo == true) {
+  _text(String texto, {bool titulo = false, bool resumo = false}) {
+    if (titulo == true) {
       return Text(
         "$texto",
         style: TextStyle(
@@ -182,7 +181,7 @@ class _MeuPerfilState extends State<MeuPerfil> {
           fontSize: 30,
         ),
       );
-    } else if (Resumo == true) {
+    } else if (resumo == true) {
       return Text(
         "$texto",
         style: TextStyle(

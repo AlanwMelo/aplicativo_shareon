@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:aplicativo_shareon/telas/tela_chat.dart';
 import 'package:aplicativo_shareon/telas/tela_configuracoes.dart';
+import 'package:aplicativo_shareon/telas/tela_creditos.dart';
 import 'package:aplicativo_shareon/telas/tela_dicas.dart';
 import 'package:aplicativo_shareon/telas/tela_faq.dart';
 import 'package:aplicativo_shareon/telas/tela_favoritos.dart';
@@ -56,7 +57,7 @@ class _HomeState extends State<Home> {
   final databaseReference = Firestore.instance;
   GlobalKey<ScaffoldState> _drawerKey = GlobalKey();
   SharedPreferencesController sharedPreferencesController =
-  new SharedPreferencesController();
+      new SharedPreferencesController();
 
   @override
   void initState() {
@@ -69,7 +70,9 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
-    if (userMail == "" || userMail == "?" || userID == "" ||
+    if (userMail == "" ||
+        userMail == "?" ||
+        userID == "" ||
         urlImgPerfil == "?") {
       sharedPreferencesController.getEmail().then(_setMail);
       sharedPreferencesController.getName().then(_setName);
@@ -79,12 +82,12 @@ class _HomeState extends State<Home> {
     }
 
     return Scaffold(
-      drawer: _Drawer(),
+      drawer: _drawer(),
       key: _drawerKey,
       appBar: shareon_appbar(context),
       body: homeController(),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      floatingActionButton: _FloatActionButtonController(controllerPointer),
+      floatingActionButton: _floatActionButtonController(controllerPointer),
     );
   }
 
@@ -127,10 +130,12 @@ class _HomeState extends State<Home> {
       return homeConfigurcoes();
     } else if (controllerPointer == 10) {
       return homeFAQ();
+    } else if (controllerPointer == 11) {
+      return Creditos();
     }
   }
 
-  _FloatActionButtonController(int controller) {
+  _floatActionButtonController(int controller) {
     if (controller == 1) {
       return FloatButton();
     } else if (controller == 5) {
@@ -140,7 +145,7 @@ class _HomeState extends State<Home> {
     }
   }
 
-  _Drawer() {
+  _drawer() {
     return Drawer(
       child: SingleChildScrollView(
         child: Container(
@@ -272,6 +277,34 @@ class _HomeState extends State<Home> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: <Widget>[
+          GestureDetector(
+            onTap: () {
+              setState(() {
+                Navigator.pop(context);
+                controllerPointer = 11;
+              });
+            },
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: <Widget>[
+                Container(
+                  margin: EdgeInsets.only(
+                    left: 10,
+                  ),
+                  child: _iconCreditos(),
+                ),
+                SizedBox(
+                  width: 270,
+                  child: Container(
+                    margin: EdgeInsets.only(
+                      left: 15,
+                    ),
+                    child: _text("Meus créditos"),
+                  ),
+                ),
+              ],
+            ),
+          ),
           GestureDetector(
             onTap: () {
               setState(() {
@@ -680,6 +713,14 @@ class _HomeState extends State<Home> {
     );
   }
 
+  _iconCreditos() {
+    return Icon(
+      Icons.monetization_on,
+      color: Colors.black54,
+      size: 20.0,
+    );
+  }
+
   _iconFavoritos() {
     return Icon(
       Icons.star,
@@ -776,11 +817,11 @@ class _HomeState extends State<Home> {
 
   void _setIMG(String value) {
     if (value == "") {
-    setState(() {
-      urlImgPerfil = "https://cdn4.iconfinder.com/data/icons/instagram-ui-twotone/48/Paul-18-512.png";
-    });
-    }
-    else {
+      setState(() {
+        urlImgPerfil =
+            "https://cdn4.iconfinder.com/data/icons/instagram-ui-twotone/48/Paul-18-512.png";
+      });
+    } else {
       setState(() {
         urlImgPerfil = value;
       });

@@ -46,7 +46,6 @@ class _LoginState extends State<Login> {
               return Center(
                 child: CircularProgressIndicator(),
               );
-
             return Container(
               padding: EdgeInsets.all(16),
               height: double.infinity,
