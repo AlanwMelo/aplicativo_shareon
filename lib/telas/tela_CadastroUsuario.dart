@@ -97,12 +97,12 @@ class _CadastroUsuarioState extends State<CadastroUsuario> {
                     TextFormField(
                       controller: confirmarSenhaController,
                       decoration: InputDecoration(
-                          hintText: "Confirmar de senha"
+                          hintText: "Confirmar senha"
                       ),
                       obscureText: true,
                       validator: (text){
                         if(text.isEmpty){
-                          return "Campo Confirmar Senha obrigatório";
+                          return "Campo confirmar senha obrigatório";
                         } else{
                           return null;
                         }
@@ -185,7 +185,7 @@ class _CadastroUsuarioState extends State<CadastroUsuario> {
     );
     Future.delayed(Duration(seconds: 2)).then((_){
       Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (context)=>Home())
+          MaterialPageRoute(builder: (context)=>Login())
       );
     });
   }

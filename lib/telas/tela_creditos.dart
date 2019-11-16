@@ -56,7 +56,7 @@ class _CreditosState extends State<Creditos> {
                                 bottom: 32, top: 32, right: 8, left: 8),
                             child: Text(
                               "Os créditos do Share On são adicionados através do Mercado Pago. \n"
-                              "Informe um dos seguintes valores e você será redirecionado para a página de pagamento",
+                              "Informe um dos seguintes valores e você será redirecionado para a página de pagamento.",
                               style: TextStyle(
                                 fontFamily: 'RobotoMono',
                                 decoration: TextDecoration.none,

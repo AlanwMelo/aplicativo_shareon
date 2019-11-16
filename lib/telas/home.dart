@@ -245,7 +245,7 @@ class _HomeState extends State<Home> {
                                           Navigator.pop(context);
                                         },
                                         child: Text(
-                                          "voltar",
+                                          "Cancelar",
                                           style: TextStyle(
                                             color: Colors.white,
                                           ),
