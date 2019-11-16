@@ -1,7 +1,11 @@
+import 'dart:async';
+
 import 'package:aplicativo_shareon/telas/tela_produto_selecionado.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+
+import '../main.dart';
 
 class ListaMainBuilder extends StatefulWidget {
   @override
@@ -9,15 +13,20 @@ class ListaMainBuilder extends StatefulWidget {
 }
 
 class _ListaMainBuilderState extends State<ListaMainBuilder> {
+  SharedPreferencesController sharedPreferencesController = new SharedPreferencesController();
   final databaseReference = Firestore.instance;
   Map productsInDB = {};
-  String id;
+  String productID;
+  String userID = "";
   int counter = 0;
   List listaMain = [];
 
   @override
   void initState() {
-    getData();
+    if (userID == "") {
+      sharedPreferencesController.getID().then(_setUserID);
+    }
+
     super.initState();
   }
 
@@ -29,11 +38,14 @@ class _ListaMainBuilderState extends State<ListaMainBuilder> {
         .then((QuerySnapshot snapshot) {
       snapshot.documents.forEach((f) {
         Map productData = f.data;
-        id = productData["ID"];
-        setState(() {
-          productsInDB[counter] = id;
-        });
-        counter++;
+        productID = productData["ID"];
+        String aux = productData["ownerID"];
+        if (aux != userID){
+          setState(() {
+            productsInDB[counter] = productID;
+          });
+          counter++;
+        }
       });
     });
   }
@@ -44,7 +56,7 @@ class _ListaMainBuilderState extends State<ListaMainBuilder> {
     return listGen(listaMain);
   }
 
-  _OnClick(BuildContext context, String idx) {
+  _onClick(BuildContext context, String idx) {
     Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) {
       return ProdutoSelecionado(productID: idx);
     }));
@@ -106,7 +118,7 @@ class _ListaMainBuilderState extends State<ListaMainBuilder> {
           style: TextStyle(
             fontWeight: FontWeight.bold,
             fontSize: 24,
-            color: Colors.black87,
+            color: Colors.indigoAccent,
           ),
         );
       },
@@ -191,7 +203,7 @@ class _ListaMainBuilderState extends State<ListaMainBuilder> {
       itemExtent: 150,
       itemBuilder: (BuildContext context, int index) {
         return GestureDetector(
-          onTap: () => _OnClick(context, _lista_main[index]),
+          onTap: () => _onClick(context, _lista_main[index]),
           child: Container(
             decoration: BoxDecoration(
               color: Colors.grey[200],
@@ -209,29 +221,37 @@ class _ListaMainBuilderState extends State<ListaMainBuilder> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: <Widget>[
-                        _textNome(_lista_main[index]),
                         Row(
                           children: <Widget>[
-                            _textMedia(_lista_main[index]),
-                            _iconEstrela(),
+                            _textNome(_lista_main[index]),
                           ],
+                        ),
+                        Container(
+                          margin: EdgeInsets.only(top: 8),
+                          child: Row(
+                            children: <Widget>[
+                              _textMedia(_lista_main[index]),
+                              _iconEstrela(),
+                            ],
+                          ),
                         ),
                         Row(
                           children: <Widget>[
                             _textDistancia(),
+                            Expanded(
+                              child: Container(
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: <Widget>[
+                                    _textPreco(_lista_main[index]),
+                                  ],
+                                ),
+                              ),
+                            ),
                           ],
                         ),
                       ],
                     ),
-                  ),
-                ),
-                Container(
-                  padding: EdgeInsets.all(12),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: <Widget>[
-                      _textPreco(_lista_main[index]),
-                    ],
                   ),
                 ),
               ],
@@ -240,5 +260,12 @@ class _ListaMainBuilderState extends State<ListaMainBuilder> {
         );
       },
     );
+  }
+
+   _setUserID(String value) {
+     setState(() {
+       userID = value;
+       getData();
+     });
   }
 }

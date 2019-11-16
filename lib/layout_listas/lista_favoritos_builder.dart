@@ -12,7 +12,7 @@ class ListaFavoritosBuilder extends StatefulWidget {
 
 class _ListaFavoritosBuilderState extends State<ListaFavoritosBuilder> {
   SharedPreferencesController sharedPreferencesController =
-  new SharedPreferencesController();
+      new SharedPreferencesController();
   final databaseReference = Firestore.instance;
   Map productsInDB = {};
   String id;
@@ -36,9 +36,9 @@ class _ListaFavoritosBuilderState extends State<ListaFavoritosBuilder> {
       snapshot.documents.forEach((f) {
         Map productData = f.data;
         id = productData["productID"];
-          setState(() {
-            productsInDB[counter] = id;
-          });
+        setState(() {
+          productsInDB[counter] = id;
+        });
         counter++;
       });
     });
@@ -46,12 +46,12 @@ class _ListaFavoritosBuilderState extends State<ListaFavoritosBuilder> {
 
   @override
   Widget build(BuildContext context) {
-    List _lista_fav = [];
-    _lista_fav = productsInDB.values.toList();
-    return listGen(_lista_fav);
+    List _listaFav = [];
+    _listaFav = productsInDB.values.toList();
+    return listGen(_listaFav);
   }
 
-  _OnClick(BuildContext context, String idx) {
+  _onClick(BuildContext context, String idx) {
     Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) {
       return ProdutoSelecionado(productID: idx);
     }));
@@ -112,8 +112,8 @@ class _ListaFavoritosBuilderState extends State<ListaFavoritosBuilder> {
           productName,
           style: TextStyle(
             fontWeight: FontWeight.bold,
-            fontSize: 26,
-            color: Colors.indigo,
+            fontSize: 24,
+            color: Colors.indigoAccent,
           ),
         );
       },
@@ -134,9 +134,9 @@ class _ListaFavoritosBuilderState extends State<ListaFavoritosBuilder> {
           Map productData = f.data;
           insertionDateRecieved = productData["insertionDate"];
           String day =
-          ("${insertionDateRecieved.toDate().day}").padLeft(2, "0");
+              ("${insertionDateRecieved.toDate().day}").padLeft(2, "0");
           String month =
-          ("${insertionDateRecieved.toDate().month}").padLeft(2, "0");
+              ("${insertionDateRecieved.toDate().month}").padLeft(2, "0");
           String year = ("${insertionDateRecieved.toDate().year}");
           insertionDate = ("$day/$month/$year");
         });
@@ -173,6 +173,7 @@ class _ListaFavoritosBuilderState extends State<ListaFavoritosBuilder> {
           style: TextStyle(
             fontWeight: FontWeight.bold,
             fontSize: 18,
+            color: Colors.black54,
           ),
         );
       },
@@ -208,7 +209,7 @@ class _ListaFavoritosBuilderState extends State<ListaFavoritosBuilder> {
   _iconEstrela() {
     return Icon(
       Icons.star,
-      color: Colors.black,
+      color: Colors.black54,
       size: 20.0,
     );
   }
@@ -221,13 +222,13 @@ class _ListaFavoritosBuilderState extends State<ListaFavoritosBuilder> {
     );
   }
 
-  Widget listGen(List _lista_main) {
+  Widget listGen(List _listaFav) {
     return ListView.builder(
-      itemCount: _lista_main.length,
+      itemCount: _listaFav.length,
       itemExtent: 150,
       itemBuilder: (BuildContext context, int index) {
         return GestureDetector(
-          onTap: () => _OnClick(context, _lista_main[index]),
+          onTap: () => _onClick(context, _listaFav[index]),
           child: Container(
             decoration: BoxDecoration(
               color: Colors.grey[200],
@@ -237,7 +238,7 @@ class _ListaFavoritosBuilderState extends State<ListaFavoritosBuilder> {
             child: Row(
               mainAxisSize: MainAxisSize.max,
               children: <Widget>[
-                _img(_lista_main[index]),
+                _img(_listaFav[index]),
                 Expanded(
                   child: Container(
                     padding: EdgeInsets.all(12),
@@ -245,31 +246,33 @@ class _ListaFavoritosBuilderState extends State<ListaFavoritosBuilder> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: <Widget>[
-                        _textNome(_lista_main[index]),
-                        Row(
-                          children: <Widget>[
-                            _textMedia(_lista_main[index]),
-                            _iconEstrela(),
-                          ],
+                        _textNome(_listaFav[index]),
+                        Container(
+                          margin: EdgeInsets.only(top: 8),
+                          child: Row(
+                            children: <Widget>[
+                              _textMedia(_listaFav[index]),
+                              _iconEstrela(),
+                            ],
+                          ),
                         ),
                         Row(
                           children: <Widget>[
-                            _textPreco(_lista_main[index]),
+                            _textPreco(_listaFav[index]),
+                            Expanded(
+                              child: Container(
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: <Widget>[
+                                    _icFavoritos(),
+                                  ],
+                                ),
+                              ),
+                            ),
                           ],
                         ),
                       ],
                     ),
-                  ),
-                ),
-                Container(
-                  padding: EdgeInsets.all(12),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: <Widget>[
-                      _icFavoritos(),
-
-                    ],
                   ),
                 ),
               ],

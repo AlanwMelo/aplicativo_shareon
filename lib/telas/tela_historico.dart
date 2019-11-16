@@ -62,7 +62,7 @@ homeHistorico() {
             ),
           ),
           Expanded(
-            child: lista_historico_builder(),
+            child: ListaHistoricoBuilder(),
           ),
         ],
       ),

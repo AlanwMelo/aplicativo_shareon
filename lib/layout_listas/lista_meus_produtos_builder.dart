@@ -120,7 +120,7 @@ class _ListaMeusProdutosBuilderState extends State<ListaMeusProdutosBuilder> {
           productName,
           style: TextStyle(
             fontWeight: FontWeight.bold,
-            fontSize: 26,
+            fontSize: 24,
             color: Colors.indigoAccent,
           ),
         );
@@ -155,6 +155,7 @@ class _ListaMeusProdutosBuilderState extends State<ListaMeusProdutosBuilder> {
           style: TextStyle(
             fontWeight: FontWeight.bold,
             fontSize: 14,
+            color: Colors.black54,
           ),
         );
       },
@@ -181,6 +182,7 @@ class _ListaMeusProdutosBuilderState extends State<ListaMeusProdutosBuilder> {
           style: TextStyle(
             fontWeight: FontWeight.bold,
             fontSize: 18,
+            color: Colors.black54,
           ),
         );
       },
@@ -216,7 +218,7 @@ class _ListaMeusProdutosBuilderState extends State<ListaMeusProdutosBuilder> {
   _iconEstrela() {
     return Icon(
       Icons.star,
-      color: Colors.black,
+      color: Colors.black54,
       size: 20.0,
     );
   }
@@ -248,45 +250,43 @@ class _ListaMeusProdutosBuilderState extends State<ListaMeusProdutosBuilder> {
                 _img(_lista_main[index]),
                 Expanded(
                   child: Container(
-                    padding: EdgeInsets.all(12),
+                    padding: EdgeInsets.all(8),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: <Widget>[
                         _textNome(_lista_main[index]),
-                        Row(
-                          children: <Widget>[
-                            _textMedia(_lista_main[index]),
-                            _iconEstrela(),
-                          ],
+                        Container(
+                          margin: EdgeInsets.only(top: 8),
+                          child: Row(
+                            children: <Widget>[
+                              _textMedia(_lista_main[index]),
+                              _iconEstrela(),
+                            ],
+                          ),
                         ),
                         Row(
                           children: <Widget>[
                             _textPreco(_lista_main[index]),
                           ],
                         ),
+                        Row(
+                          children: <Widget>[
+                            _textData(_lista_main[index]),
+                            Expanded(
+                              child: Container(
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: <Widget>[
+                                    _iconDeletar(),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
                       ],
                     ),
-                  ),
-                ),
-                Container(
-                  padding: EdgeInsets.all(12),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: <Widget>[
-                      _textData(_lista_main[index]),
-                      Expanded(
-                        child: Container(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: <Widget>[
-                              _iconDeletar(),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ],
                   ),
                 ),
               ],

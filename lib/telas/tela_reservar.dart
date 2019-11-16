@@ -741,7 +741,7 @@ class _Tela_ReservarState extends State<Tela_Reservar> {
       "endDate": _dataFim,
       "initTime": _horarioInicio,
       "endTime": _horarioFim,
-      "userID": userID,
+      "requesterID": userID,
       "status": status,
     };
 
@@ -750,7 +750,7 @@ class _Tela_ReservarState extends State<Tela_Reservar> {
         .add(solicitaReserva);
     String idWriter = newReserve.documentID;
     Map<String, dynamic> setID = {
-      "soilicitationID": idWriter,
+      "solicitationID": idWriter,
     };
     await databaseReference
         .collection("solicitations")
