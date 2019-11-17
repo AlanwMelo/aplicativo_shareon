@@ -1,3 +1,6 @@
+import 'dart:async';
+import 'dart:math';
+
 import 'package:aplicativo_shareon/telas/tela_produto_selecionado.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
@@ -15,8 +18,9 @@ class _Products {
   String name;
   String media;
   String preco;
+  double distance;
 
-  _Products(this.productID, this.name, this.preco, this.media);
+  _Products(this.productID, this.name, this.preco, this.media, this.distance);
 }
 
 class _ListaMainBuilderState extends State<ListaMainBuilder> {
@@ -28,14 +32,27 @@ class _ListaMainBuilderState extends State<ListaMainBuilder> {
   String userID = "";
   int counter = 0;
   List<_Products> _listaMain = [];
+  GeoPoint userLocation;
+  ScrollController _controller;
 
   @override
-  void initState() {
+  initState() {
+    _controller = ScrollController();
+    _controller.addListener(_scrollListener);
     if (userID == "") {
-      sharedPreferencesController.getID().then(_setUserID);
+      sharedPreferencesController.getGeo().then(_setLocation);
     }
-
     super.initState();
+  }
+
+  _scrollListener() {
+    if (!_controller.position.atEdge) {
+      print("sai do topo");
+    }
+    if (_controller.offset <= _controller.position.minScrollExtent &&
+        !_controller.position.outOfRange) {
+      print("voltei ao topo");
+    }
   }
 
   getData() async {
@@ -46,15 +63,18 @@ class _ListaMainBuilderState extends State<ListaMainBuilder> {
         .then((QuerySnapshot snapshot) {
       snapshot.documents.forEach((f) {
         Map productData = f.data;
-        if (productData["ownerID"] != userID){
+        if (productData["ownerID"] != userID) {
           setState(() {
+            GeoPoint aux = productData["location"];
             _listaMain.add(new _Products(
               productData["ID"],
               productData["name"],
               productData["price"],
               productData["media"],
+              _calcDist(userLocation.latitude, userLocation.longitude,
+                  aux.latitude, aux.longitude),
             ));
-            // _listaMain.sort((a, b) => a.addDate.compareTo(b.addDate));
+            _listaMain.sort((a, b) => a.distance.compareTo(b.distance));
           });
         }
       });
@@ -130,12 +150,26 @@ class _ListaMainBuilderState extends State<ListaMainBuilder> {
     );
   }
 
-  _textDistancia() {
-    return Text(
-      "400m",
-      style: TextStyle(
-          fontWeight: FontWeight.bold, fontSize: 16, color: Colors.black38),
-    );
+  _textDistancia(double distancia) {
+    if (distancia > 0) {
+      return Text(
+        "${distancia.toInt()} km",
+        style: TextStyle(
+            fontWeight: FontWeight.bold, fontSize: 16, color: Colors.black38),
+      );
+    } else if (distancia < 0) {
+      return Text(
+        "${distancia.toInt()}m",
+        style: TextStyle(
+            fontWeight: FontWeight.bold, fontSize: 16, color: Colors.black38),
+      );
+    } else if (distancia == 0) {
+      return Text(
+        "1000m",
+        style: TextStyle(
+            fontWeight: FontWeight.bold, fontSize: 16, color: Colors.black38),
+      );
+    }
   }
 
   _textPreco(String idx) {
@@ -158,6 +192,7 @@ class _ListaMainBuilderState extends State<ListaMainBuilder> {
 
   Widget listGen(List<_Products> _listaMain) {
     return ListView.builder(
+      controller: _controller,
       itemCount: _listaMain.length,
       itemExtent: 150,
       itemBuilder: (BuildContext context, int index) {
@@ -196,7 +231,7 @@ class _ListaMainBuilderState extends State<ListaMainBuilder> {
                         ),
                         Row(
                           children: <Widget>[
-                            _textDistancia(),
+                            _textDistancia(_listaMain[index].distance),
                             Expanded(
                               child: Container(
                                 child: Row(
@@ -225,6 +260,26 @@ class _ListaMainBuilderState extends State<ListaMainBuilder> {
     setState(() {
       userID = value;
       getData();
+    });
+  }
+
+  _calcDist(double userLat, double userLong, double prodLat, double prodLong) {
+    var p = 0.017453292519943295;
+    var c = cos;
+    var a = 0.5 -
+        c((prodLat - userLat) * p) / 2 +
+        c(userLat * p) *
+            c(prodLat * p) *
+            (1 - c((prodLong - userLong) * p)) /
+            2;
+
+    return 12742 * asin(sqrt(a));
+  }
+
+  FutureOr _setLocation(GeoPoint value) {
+    setState(() {
+      userLocation = GeoPoint(value.latitude, value.longitude);
+      sharedPreferencesController.getID().then(_setUserID);
     });
   }
 }

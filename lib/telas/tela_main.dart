@@ -15,11 +15,11 @@ class _TelaMainState extends State<TelaMain> {
   SharedPreferencesController sharedPreferencesController =
       new SharedPreferencesController();
   int mainControllerPointer = 0;
-  GeoPoint location;
+  GeoPoint userLocation;
 
   @override
   void initState() {
-    if (location == null) {
+    if (userLocation == null) {
       sharedPreferencesController.getGeo().then(_setLocation);
     }
     // TODO: implement initState
@@ -28,7 +28,7 @@ class _TelaMainState extends State<TelaMain> {
 
   @override
   Widget build(BuildContext context) {
-    if (location == GeoPoint(0.0, 0.0)) {
+    if (userLocation == GeoPoint(0.0, 0.0)) {
       return Scaffold(
         body: undefinedLocation(context),
       );
@@ -41,7 +41,7 @@ class _TelaMainState extends State<TelaMain> {
 
   FutureOr _setLocation(GeoPoint value) {
     setState(() {
-      location = GeoPoint(value.latitude, value.longitude);
+      userLocation = GeoPoint(value.latitude, value.longitude);
     });
   }
 
