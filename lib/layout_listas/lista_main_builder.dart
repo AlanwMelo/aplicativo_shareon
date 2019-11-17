@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:aplicativo_shareon/telas/tela_produto_selecionado.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
@@ -12,14 +10,24 @@ class ListaMainBuilder extends StatefulWidget {
   _ListaMainBuilderState createState() => _ListaMainBuilderState();
 }
 
+class _Products {
+  String productID;
+  String name;
+  String media;
+  String preco;
+
+  _Products(this.productID, this.name, this.preco, this.media);
+}
+
 class _ListaMainBuilderState extends State<ListaMainBuilder> {
-  SharedPreferencesController sharedPreferencesController = new SharedPreferencesController();
+  SharedPreferencesController sharedPreferencesController =
+      new SharedPreferencesController();
   final databaseReference = Firestore.instance;
   Map productsInDB = {};
   String productID;
   String userID = "";
   int counter = 0;
-  List listaMain = [];
+  List<_Products> _listaMain = [];
 
   @override
   void initState() {
@@ -38,13 +46,16 @@ class _ListaMainBuilderState extends State<ListaMainBuilder> {
         .then((QuerySnapshot snapshot) {
       snapshot.documents.forEach((f) {
         Map productData = f.data;
-        productID = productData["ID"];
-        String aux = productData["ownerID"];
-        if (aux != userID){
+        if (productData["ownerID"] != userID){
           setState(() {
-            productsInDB[counter] = productID;
+            _listaMain.add(new _Products(
+              productData["ID"],
+              productData["name"],
+              productData["price"],
+              productData["media"],
+            ));
+            // _listaMain.sort((a, b) => a.addDate.compareTo(b.addDate));
           });
-          counter++;
         }
       });
     });
@@ -52,8 +63,7 @@ class _ListaMainBuilderState extends State<ListaMainBuilder> {
 
   @override
   Widget build(BuildContext context) {
-    listaMain = productsInDB.values.toList();
-    return listGen(listaMain);
+    return listGen(_listaMain);
   }
 
   _onClick(BuildContext context, String idx) {
@@ -99,56 +109,24 @@ class _ListaMainBuilderState extends State<ListaMainBuilder> {
   }
 
   _textNome(String idx) {
-    String productName = "";
-
-    return FutureBuilder(
-      future: databaseReference
-          .collection("products")
-          .where("ID", isEqualTo: idx)
-          .getDocuments()
-          .then((QuerySnapshot snapshot) {
-        snapshot.documents.forEach((f) {
-          Map productData = f.data;
-          productName = productData["name"];
-        });
-      }),
-      builder: (context, snapshot) {
-        return Text(
-          productName,
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 24,
-            color: Colors.indigoAccent,
-          ),
-        );
-      },
+    return Text(
+      idx,
+      style: TextStyle(
+        fontWeight: FontWeight.bold,
+        fontSize: 24,
+        color: Colors.indigoAccent,
+      ),
     );
   }
 
   _textMedia(String idx) {
-    String productMedia = "";
-
-    return FutureBuilder(
-      future: databaseReference
-          .collection("products")
-          .where("ID", isEqualTo: idx)
-          .getDocuments()
-          .then((QuerySnapshot snapshot) {
-        snapshot.documents.forEach((f) {
-          Map productData = f.data;
-          productMedia = productData["media"];
-        });
-      }),
-      builder: (context, snapshot) {
-        return Text(
-          productMedia,
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 16,
-            color: Colors.black54,
-          ),
-        );
-      },
+    return Text(
+      idx,
+      style: TextStyle(
+        fontWeight: FontWeight.bold,
+        fontSize: 16,
+        color: Colors.black54,
+      ),
     );
   }
 
@@ -156,36 +134,17 @@ class _ListaMainBuilderState extends State<ListaMainBuilder> {
     return Text(
       "400m",
       style: TextStyle(
-        fontWeight: FontWeight.bold,
-        fontSize: 16,
-        color: Colors.black38
-      ),
+          fontWeight: FontWeight.bold, fontSize: 16, color: Colors.black38),
     );
   }
 
   _textPreco(String idx) {
-    String productPrice = "";
-
-    return FutureBuilder(
-      future: databaseReference
-          .collection("products")
-          .where("ID", isEqualTo: idx)
-          .getDocuments()
-          .then((QuerySnapshot snapshot) {
-        snapshot.documents.forEach((f) {
-          Map productData = f.data;
-          productPrice = productData["price"];
-        });
-      }),
-      builder: (context, snapshot) {
-        return Text(
-          "R\$ $productPrice",
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 16,
-          ),
-        );
-      },
+    return Text(
+      "R\$ $idx",
+      style: TextStyle(
+        fontWeight: FontWeight.bold,
+        fontSize: 16,
+      ),
     );
   }
 
@@ -197,13 +156,13 @@ class _ListaMainBuilderState extends State<ListaMainBuilder> {
     );
   }
 
-  Widget listGen(List _lista_main) {
+  Widget listGen(List<_Products> _listaMain) {
     return ListView.builder(
-      itemCount: _lista_main.length,
+      itemCount: _listaMain.length,
       itemExtent: 150,
       itemBuilder: (BuildContext context, int index) {
         return GestureDetector(
-          onTap: () => _onClick(context, _lista_main[index]),
+          onTap: () => _onClick(context, _listaMain[index].productID),
           child: Container(
             decoration: BoxDecoration(
               color: Colors.grey[200],
@@ -213,7 +172,7 @@ class _ListaMainBuilderState extends State<ListaMainBuilder> {
             child: Row(
               mainAxisSize: MainAxisSize.max,
               children: <Widget>[
-                _img(_lista_main[index]),
+                _img(_listaMain[index].productID),
                 Expanded(
                   child: Container(
                     padding: EdgeInsets.all(12),
@@ -223,14 +182,14 @@ class _ListaMainBuilderState extends State<ListaMainBuilder> {
                       children: <Widget>[
                         Row(
                           children: <Widget>[
-                            _textNome(_lista_main[index]),
+                            _textNome(_listaMain[index].name),
                           ],
                         ),
                         Container(
                           margin: EdgeInsets.only(top: 8),
                           child: Row(
                             children: <Widget>[
-                              _textMedia(_lista_main[index]),
+                              _textMedia(_listaMain[index].media),
                               _iconEstrela(),
                             ],
                           ),
@@ -243,7 +202,7 @@ class _ListaMainBuilderState extends State<ListaMainBuilder> {
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.end,
                                   children: <Widget>[
-                                    _textPreco(_lista_main[index]),
+                                    _textPreco(_listaMain[index].preco),
                                   ],
                                 ),
                               ),
@@ -262,10 +221,10 @@ class _ListaMainBuilderState extends State<ListaMainBuilder> {
     );
   }
 
-   _setUserID(String value) {
-     setState(() {
-       userID = value;
-       getData();
-     });
+  _setUserID(String value) {
+    setState(() {
+      userID = value;
+      getData();
+    });
   }
 }

@@ -25,16 +25,13 @@ class _ListaMeusProdutosBuilderState extends State<ListaMeusProdutosBuilder> {
   SharedPreferencesController sharedPreferencesController =
   new SharedPreferencesController();
   final databaseReference = Firestore.instance;
-  Map productsInDB = {};
   List<_MyProducts> _listaMeusProdutos = [];
   String id;
   String userID = "";
   int counter = 0;
-  List teste;
 
   @override
   void initState() {
-    print(userID);
     if (userID == "") {
       sharedPreferencesController.getID().then(_setID);
     }
@@ -51,7 +48,6 @@ class _ListaMeusProdutosBuilderState extends State<ListaMeusProdutosBuilder> {
         Map productData = f.data;
 
         setState(() {
-          print("add");
           _listaMeusProdutos.add(new _MyProducts(
               productData["ID"],
               productData["name"],
