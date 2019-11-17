@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:aplicativo_shareon/telas/home.dart';
 import 'package:aplicativo_shareon/telas/tela_login.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -24,8 +25,18 @@ class SharedPreferencesController {
   final String ultimaLocalizacao = "";
   final String userID = "";
   final String urlImgPerfil = "";
+  final double lat = 0;
+  final double lng = 0;
 
   //GETTERS
+  Future<GeoPoint> getGeo() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    var lastLat = prefs.get("lat") ?? lat;
+    var lastLng = prefs.get("lng") ?? lng;
+    GeoPoint userLastLocation = new GeoPoint(lastLat, lastLng);
+    return userLastLocation;
+  }
+
   Future <String> getName() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String result = prefs.getString("name") ?? name;
@@ -52,10 +63,16 @@ class SharedPreferencesController {
   }
 
   //SETTERS
+  Future<bool> setGeo(double lat, double lng) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setDouble("lat", lat);
+    prefs.setDouble("lng", lng);
+    return true;
+  }
+
   Future<bool> setID(String value) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     return prefs.setString("userID", value);
-
   }
 
   Future<bool> setName(String value) async {

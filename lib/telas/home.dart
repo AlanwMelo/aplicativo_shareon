@@ -111,7 +111,7 @@ class _HomeState extends State<Home> {
 
   homeController1() {
     if (controllerPointer == 1) {
-      return homeMain(context);
+      return TelaMain();
     } else if (controllerPointer == 2) {
       return homeFavoritos();
     } else if (controllerPointer == 3) {
