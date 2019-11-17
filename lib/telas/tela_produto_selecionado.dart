@@ -3,6 +3,7 @@ import 'package:aplicativo_shareon/utils/shareon_appbar.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:page_indicator/page_indicator.dart';
 
 import '../main.dart';
@@ -510,9 +511,11 @@ class _ProdutoSelecionadoState extends State<ProdutoSelecionado> {
   }
 
   _setFavoriteState() async {
+    Timestamp addDate = Timestamp.now();
     Map<String, dynamic> favData = {
       "productID": (widget.productID),
       "userID": userID,
+      "addDate": addDate,
     };
 
     if (productInFavorites == false) {

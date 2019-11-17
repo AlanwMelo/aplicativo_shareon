@@ -10,14 +10,24 @@ class ListaFavoritosBuilder extends StatefulWidget {
   _ListaFavoritosBuilderState createState() => _ListaFavoritosBuilderState();
 }
 
+class _FavoritesData {
+  String productID;
+  String name;
+  String media;
+  String preco;
+  Timestamp addDate;
+
+  _FavoritesData(
+      this.productID, this.name, this.preco, this.media, this.addDate);
+}
+
 class _ListaFavoritosBuilderState extends State<ListaFavoritosBuilder> {
   SharedPreferencesController sharedPreferencesController =
       new SharedPreferencesController();
   final databaseReference = Firestore.instance;
-  Map productsInDB = {};
-  String id;
   String userID = "";
   int counter = 0;
+  List<_FavoritesData> _listaFav = [];
 
   @override
   void initState() {
@@ -35,19 +45,13 @@ class _ListaFavoritosBuilderState extends State<ListaFavoritosBuilder> {
         .then((QuerySnapshot snapshot) {
       snapshot.documents.forEach((f) {
         Map productData = f.data;
-        id = productData["productID"];
-        setState(() {
-          productsInDB[counter] = id;
-        });
-        counter++;
+        listHelper(productData["productID"], productData["addDate"]);
       });
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    List _listaFav = [];
-    _listaFav = productsInDB.values.toList();
     return listGen(_listaFav);
   }
 
@@ -94,115 +98,51 @@ class _ListaFavoritosBuilderState extends State<ListaFavoritosBuilder> {
   }
 
   _textNome(String idx) {
-    String productName = "";
-
-    return FutureBuilder(
-      future: databaseReference
-          .collection("products")
-          .where("ID", isEqualTo: idx)
-          .getDocuments()
-          .then((QuerySnapshot snapshot) {
-        snapshot.documents.forEach((f) {
-          Map productData = f.data;
-          productName = productData["name"];
-        });
-      }),
-      builder: (context, snapshot) {
-        return Text(
-          productName,
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 24,
-            color: Colors.indigoAccent,
-          ),
-        );
-      },
+    return Text(
+      idx,
+      style: TextStyle(
+        fontWeight: FontWeight.bold,
+        fontSize: 24,
+        color: Colors.indigoAccent,
+      ),
     );
   }
 
-  _textData(String idx) {
-    Timestamp insertionDateRecieved;
-    String insertionDate = "";
+  _textData(Timestamp idx) {
+    int convertedDay = idx.toDate().day;
+    int convertedMonth = idx.toDate().month;
+    int convertedYear = idx.toDate().year;
+    String convertedTS =
+        "${convertedDay.toString().padLeft(2, "0")}/${convertedMonth.toString().padLeft(2, "0")}/$convertedYear";
 
-    return FutureBuilder(
-      future: databaseReference
-          .collection("products")
-          .where("ID", isEqualTo: idx)
-          .getDocuments()
-          .then((QuerySnapshot snapshot) {
-        snapshot.documents.forEach((f) {
-          Map productData = f.data;
-          insertionDateRecieved = productData["insertionDate"];
-          String day =
-              ("${insertionDateRecieved.toDate().day}").padLeft(2, "0");
-          String month =
-              ("${insertionDateRecieved.toDate().month}").padLeft(2, "0");
-          String year = ("${insertionDateRecieved.toDate().year}");
-          insertionDate = ("$day/$month/$year");
-        });
-      }),
-      builder: (context, snapshot) {
-        return Text(
-          insertionDate,
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 14,
-          ),
-        );
-      },
+    return Text(
+      convertedTS,
+      style: TextStyle(
+        fontWeight: FontWeight.bold,
+        fontSize: 14,
+        color: Colors.black54,
+      ),
     );
   }
 
   _textMedia(String idx) {
-    String productMedia = "";
-
-    return FutureBuilder(
-      future: databaseReference
-          .collection("products")
-          .where("ID", isEqualTo: idx)
-          .getDocuments()
-          .then((QuerySnapshot snapshot) {
-        snapshot.documents.forEach((f) {
-          Map productData = f.data;
-          productMedia = productData["media"];
-        });
-      }),
-      builder: (context, snapshot) {
-        return Text(
-          productMedia,
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 18,
-            color: Colors.black54,
-          ),
-        );
-      },
+    return Text(
+      idx,
+      style: TextStyle(
+        fontWeight: FontWeight.bold,
+        fontSize: 18,
+        color: Colors.black54,
+      ),
     );
   }
 
   _textPreco(String idx) {
-    String productPrice = "";
-
-    return FutureBuilder(
-      future: databaseReference
-          .collection("products")
-          .where("ID", isEqualTo: idx)
-          .getDocuments()
-          .then((QuerySnapshot snapshot) {
-        snapshot.documents.forEach((f) {
-          Map productData = f.data;
-          productPrice = productData["price"];
-        });
-      }),
-      builder: (context, snapshot) {
-        return Text(
-          "R\$ $productPrice",
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 18,
-          ),
-        );
-      },
+    return Text(
+      "R\$ $idx",
+      style: TextStyle(
+        fontWeight: FontWeight.bold,
+        fontSize: 18,
+      ),
     );
   }
 
@@ -222,13 +162,13 @@ class _ListaFavoritosBuilderState extends State<ListaFavoritosBuilder> {
     );
   }
 
-  Widget listGen(List _listaFav) {
+  Widget listGen(List<_FavoritesData> _listaFav) {
     return ListView.builder(
       itemCount: _listaFav.length,
       itemExtent: 150,
       itemBuilder: (BuildContext context, int index) {
         return GestureDetector(
-          onTap: () => _onClick(context, _listaFav[index]),
+          onTap: () => _onClick(context, _listaFav[index].productID),
           child: Container(
             decoration: BoxDecoration(
               color: Colors.grey[200],
@@ -238,27 +178,32 @@ class _ListaFavoritosBuilderState extends State<ListaFavoritosBuilder> {
             child: Row(
               mainAxisSize: MainAxisSize.max,
               children: <Widget>[
-                _img(_listaFav[index]),
+                _img(_listaFav[index].productID),
                 Expanded(
                   child: Container(
-                    padding: EdgeInsets.all(12),
+                    padding: EdgeInsets.all(8),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: <Widget>[
-                        _textNome(_listaFav[index]),
+                        _textNome(_listaFav[index].name),
                         Container(
                           margin: EdgeInsets.only(top: 8),
                           child: Row(
                             children: <Widget>[
-                              _textMedia(_listaFav[index]),
+                              _textMedia(_listaFav[index].media),
                               _iconEstrela(),
                             ],
                           ),
                         ),
                         Row(
                           children: <Widget>[
-                            _textPreco(_listaFav[index]),
+                            _textPreco(_listaFav[index].preco),
+                          ],
+                        ),
+                        Row(
+                          children: <Widget>[
+                            _textData(_listaFav[index].addDate),
                             Expanded(
                               child: Container(
                                 child: Row(
@@ -287,6 +232,23 @@ class _ListaFavoritosBuilderState extends State<ListaFavoritosBuilder> {
     setState(() {
       userID = value;
       getData();
+    });
+  }
+
+  listHelper(String id, Timestamp addDate) {
+    databaseReference
+        .collection("products")
+        .where("ID", isEqualTo: id)
+        .getDocuments()
+        .then((QuerySnapshot snapshot) {
+      snapshot.documents.forEach((f) {
+        Map productData = f.data;
+        setState(() {
+          _listaFav.add(new _FavoritesData(id, productData["name"],
+              productData["price"], productData["media"], addDate));
+          _listaFav.sort((a, b) => b.addDate.compareTo(a.addDate));
+        });
+      });
     });
   }
 }

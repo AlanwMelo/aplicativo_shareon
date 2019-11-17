@@ -46,7 +46,6 @@ class _ListaMeusProdutosBuilderState extends State<ListaMeusProdutosBuilder> {
         .then((QuerySnapshot snapshot) {
       snapshot.documents.forEach((f) {
         Map productData = f.data;
-
         setState(() {
           _listaMeusProdutos.add(new _MyProducts(
               productData["ID"],
