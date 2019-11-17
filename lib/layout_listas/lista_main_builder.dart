@@ -46,13 +46,14 @@ class _ListaMainBuilderState extends State<ListaMainBuilder> {
   }
 
   _scrollListener() {
-    if (!_controller.position.atEdge) {
-      print("sai do topo");
-    }
-    if (_controller.offset <= _controller.position.minScrollExtent &&
+    /*   if (_controller.offset <= _controller.position.maxScrollExtent &&
         !_controller.position.outOfRange) {
-      print("voltei ao topo");
+      print("cheguei ao topo");
     }
+    if (_controller.offset >= _controller.position.maxScrollExtent &&
+        !_controller.position.outOfRange) {
+      print("voltei ao fim");
+    }*/
   }
 
   getData() async {
@@ -165,7 +166,7 @@ class _ListaMainBuilderState extends State<ListaMainBuilder> {
       );
     } else if (distancia == 0) {
       return Text(
-        "1000m",
+        "1 km",
         style: TextStyle(
             fontWeight: FontWeight.bold, fontSize: 16, color: Colors.black38),
       );

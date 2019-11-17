@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:aplicativo_shareon/layout_listas/lista_main_builder.dart';
 import 'package:aplicativo_shareon/main.dart';
+import 'package:aplicativo_shareon/telas/home.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_map_location_picker/google_map_location_picker.dart';
@@ -59,6 +60,10 @@ class _TelaMainState extends State<TelaMain> {
         result.latLng.latitude, result.latLng.longitude);
 
     _setLocation(selected);
+    Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+            builder: (context) =>
+                Home()));
   }
 
   undefinedLocation(BuildContext context) {
