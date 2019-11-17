@@ -11,14 +11,26 @@ class ListaMeusProdutosBuilder extends StatefulWidget {
       _ListaMeusProdutosBuilderState();
 }
 
+class _MyProducts {
+  String productID;
+  String name;
+  String media;
+  String preco;
+  Timestamp addDate;
+
+  _MyProducts(this.productID, this.name, this.preco, this.media, this.addDate);
+}
+
 class _ListaMeusProdutosBuilderState extends State<ListaMeusProdutosBuilder> {
   SharedPreferencesController sharedPreferencesController =
-      new SharedPreferencesController();
+  new SharedPreferencesController();
   final databaseReference = Firestore.instance;
   Map productsInDB = {};
+  List<_MyProducts> _listaMeusProdutos = [];
   String id;
   String userID = "";
   int counter = 0;
+  List teste;
 
   @override
   void initState() {
@@ -33,33 +45,31 @@ class _ListaMeusProdutosBuilderState extends State<ListaMeusProdutosBuilder> {
     await databaseReference
         .collection("products")
         .where("ownerID", isEqualTo: userID)
-        /*.where("insertionDate")
-        order by só funciona sobre 1 where
-        ex: where("insertionDate").orderBy("insertionDate") = OK
-        ex: where("ownerID").orderBy("insertionDate") = NOK
-        .orderBy("insertionDate")*/
         .getDocuments()
         .then((QuerySnapshot snapshot) {
       snapshot.documents.forEach((f) {
         Map productData = f.data;
-        id = productData["ID"];
+
         setState(() {
-          productsInDB[counter] = id;
+          print("add");
+          _listaMeusProdutos.add(new _MyProducts(
+              productData["ID"],
+              productData["name"],
+              productData["media"],
+              productData["price"],
+              productData["insertionDate"]));
+          _listaMeusProdutos.sort((a, b) => a.addDate.compareTo(b.addDate));
         });
-        counter++;
       });
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    List _lista_main = [];
-    _lista_main = productsInDB.values.toList();
-
-    return listGen(_lista_main);
+    return listGen(_listaMeusProdutos);
   }
 
-  _OnClick(BuildContext context, String idx) {
+  _onClick(BuildContext context, String idx) {
     Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) {
       return ProdutoSelecionado(productID: idx);
     }));
@@ -102,116 +112,55 @@ class _ListaMeusProdutosBuilderState extends State<ListaMeusProdutosBuilder> {
   }
 
   _textNome(String idx) {
-    String productName = "";
-
-    return FutureBuilder(
-      future: databaseReference
-          .collection("products")
-          .where("ID", isEqualTo: idx)
-          .getDocuments()
-          .then((QuerySnapshot snapshot) {
-        snapshot.documents.forEach((f) {
-          Map productData = f.data;
-          productName = productData["name"];
-        });
-      }),
-      builder: (context, snapshot) {
-        return Text(
-          productName,
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 24,
-            color: Colors.indigoAccent,
-          ),
-        );
-      },
+    return Text(
+      idx,
+      style: TextStyle(
+        fontWeight: FontWeight.bold,
+        fontSize: 24,
+        color: Colors.indigoAccent,
+      ),
     );
   }
 
-  _textData(String idx) {
-    Timestamp insertionDateRecieved;
-    String insertionDate = "";
+  _textData(Timestamp idx) {
+    int convertedDay = idx
+        .toDate()
+        .day;
+    int convertedMonth = idx
+        .toDate()
+        .month;
+    int convertedYear = idx
+        .toDate()
+        .year;
+    String convertedTS = "${convertedDay.toString().padLeft(2, "0")}/${convertedMonth.toString().padLeft(2, "0")}/$convertedYear";
 
-    return FutureBuilder(
-      future: databaseReference
-          .collection("products")
-          .where("ID", isEqualTo: idx)
-          .getDocuments()
-          .then((QuerySnapshot snapshot) {
-        snapshot.documents.forEach((f) {
-          Map productData = f.data;
-          insertionDateRecieved = productData["insertionDate"];
-          String day =
-              ("${insertionDateRecieved.toDate().day}").padLeft(2, "0");
-          String month =
-              ("${insertionDateRecieved.toDate().month}").padLeft(2, "0");
-          String year = ("${insertionDateRecieved.toDate().year}");
-          insertionDate = ("$day/$month/$year");
-        });
-      }),
-      builder: (context, snapshot) {
-        return Text(
-          insertionDate,
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 14,
-            color: Colors.black54,
-          ),
-        );
-      },
-    );
+    return Text(
+      convertedTS,
+      style: TextStyle(
+      fontWeight: FontWeight.bold,
+      fontSize: 14,
+      color: Colors.black54,
+    ),);
   }
 
   _textMedia(String idx) {
-    String productMedia = "";
-
-    return FutureBuilder(
-      future: databaseReference
-          .collection("products")
-          .where("ID", isEqualTo: idx)
-          .getDocuments()
-          .then((QuerySnapshot snapshot) {
-        snapshot.documents.forEach((f) {
-          Map productData = f.data;
-          productMedia = productData["media"];
-        });
-      }),
-      builder: (context, snapshot) {
-        return Text(
-          productMedia,
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 18,
-            color: Colors.black54,
-          ),
-        );
-      },
+    return Text(
+      idx,
+      style: TextStyle(
+        fontWeight: FontWeight.bold,
+        fontSize: 18,
+        color: Colors.black54,
+      ),
     );
   }
 
   _textPreco(String idx) {
-    String productPrice = "";
-
-    return FutureBuilder(
-      future: databaseReference
-          .collection("products")
-          .where("ID", isEqualTo: idx)
-          .getDocuments()
-          .then((QuerySnapshot snapshot) {
-        snapshot.documents.forEach((f) {
-          Map productData = f.data;
-          productPrice = productData["price"];
-        });
-      }),
-      builder: (context, snapshot) {
-        return Text(
-          "R\$ $productPrice",
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 18,
-          ),
-        );
-      },
+    return Text(
+      "R\$ $idx",
+      style: TextStyle(
+        fontWeight: FontWeight.bold,
+        fontSize: 18,
+      ),
     );
   }
 
@@ -231,13 +180,13 @@ class _ListaMeusProdutosBuilderState extends State<ListaMeusProdutosBuilder> {
     );
   }
 
-  Widget listGen(List _lista_main) {
+  Widget listGen(List<_MyProducts> _listaMeusProdutos) {
     return ListView.builder(
-      itemCount: _lista_main.length,
+      itemCount: _listaMeusProdutos.length,
       itemExtent: 150,
       itemBuilder: (BuildContext context, int index) {
         return GestureDetector(
-          onTap: () => _OnClick(context, _lista_main[index]),
+          onTap: () => _onClick(context, _listaMeusProdutos[index].productID),
           child: Container(
             decoration: BoxDecoration(
               color: Colors.grey[200],
@@ -247,7 +196,7 @@ class _ListaMeusProdutosBuilderState extends State<ListaMeusProdutosBuilder> {
             child: Row(
               mainAxisSize: MainAxisSize.max,
               children: <Widget>[
-                _img(_lista_main[index]),
+                _img(_listaMeusProdutos[index].productID),
                 Expanded(
                   child: Container(
                     padding: EdgeInsets.all(8),
@@ -255,24 +204,24 @@ class _ListaMeusProdutosBuilderState extends State<ListaMeusProdutosBuilder> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: <Widget>[
-                        _textNome(_lista_main[index]),
+                        _textNome(_listaMeusProdutos[index].name),
                         Container(
                           margin: EdgeInsets.only(top: 8),
                           child: Row(
                             children: <Widget>[
-                              _textMedia(_lista_main[index]),
+                              _textMedia(_listaMeusProdutos[index].media),
                               _iconEstrela(),
                             ],
                           ),
                         ),
                         Row(
                           children: <Widget>[
-                            _textPreco(_lista_main[index]),
+                            _textPreco(_listaMeusProdutos[index].preco),
                           ],
                         ),
                         Row(
                           children: <Widget>[
-                            _textData(_lista_main[index]),
+                            _textData(_listaMeusProdutos[index].addDate),
                             Expanded(
                               child: Container(
                                 child: Row(
