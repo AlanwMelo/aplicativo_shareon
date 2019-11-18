@@ -63,6 +63,7 @@ class _TelaReservarState extends State<TelaReservar> {
 
   @override
   void initState() {
+    dataFim = dataInicio.add(Duration(minutes: 60));
     super.initState();
     if (userID == "") {
       sharedPreferencesController.getID().then(_setID);
@@ -508,7 +509,10 @@ class _TelaReservarState extends State<TelaReservar> {
                                         onPressed: () {
                                           setState(() {
                                             Navigator.pop(context);
-                                           Navigator.of(context).push(MaterialPageRoute(builder: (context)=> Creditos()));
+                                            Navigator.of(context).push(
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        Creditos()));
                                           });
                                         },
                                         child: Text(
@@ -925,12 +929,10 @@ class _TelaReservarState extends State<TelaReservar> {
     Map<String, dynamic> solicitaReserva = {
       "productID": (widget.productID),
       "productPrice": valordoDoProduto,
-      "programedInitDate": _dataInicio,
+      "programedInitDate": Timestamp.fromDate(dataInicio),
+      "programedEndDate": Timestamp.fromDate(dataFim),
       "estimatedEndPrice": valorEstimado,
       "estimatedDuration": duracao,
-      "programedEndDate": _dataFim,
-      "programedInitTime": _horarioInicio,
-      "programedEndTime": _horarioFim,
       "requesterID": userID,
       "status": status,
     };

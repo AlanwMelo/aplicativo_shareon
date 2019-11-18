@@ -63,13 +63,13 @@ homeFavoritos() {
           ),
           Expanded(
             child: ListaFavoritosBuilder(),
-          )
-          ,
+          ),
         ],
       ),
     ),
   );
 }
+
 _icFiltros() {
   return Icon(
     Icons.filter_list,

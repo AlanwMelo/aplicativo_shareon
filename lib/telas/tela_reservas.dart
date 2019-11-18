@@ -19,52 +19,129 @@ class _TelaReservasState extends State<TelaReservas> {
 homeReservas() {
   return Scaffold(
     body: Container(
-      child: Column(
-        children: <Widget>[
-          Container(
-            padding: EdgeInsets.all(10),
-            height: 50,
-            color: Colors.indigoAccent,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: <Widget>[
-                Container(
-                  child: Expanded(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        _icPesquisar(),
-                      ],
-                    ),
-                  ),
-                ),
-                Container(
+      color: Colors.indigoAccent,
+      child: Column(children: <Widget>[
+        Container(
+          padding: EdgeInsets.all(10),
+          height: 50,
+          color: Colors.indigoAccent,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: <Widget>[
+              Container(
+                child: Expanded(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      _text("Reservas"),
+                      _icPesquisar(),
                     ],
                   ),
                 ),
-                Container(
-                  child: Expanded(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: <Widget>[
-                        _icFiltros(),
-                      ],
-                    ),
+              ),
+              Container(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    _text("Reservas"),
+                  ],
+                ),
+              ),
+              Container(
+                child: Expanded(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: <Widget>[
+                      _icFiltros(),
+                    ],
                   ),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
-          Expanded(
-            child: listaReservasBuilder(),
+        ),
+        Container(
+          margin: EdgeInsets.only(bottom: 8),
+          child: Column(
+            children: <Widget>[
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: <Widget>[
+                  Column(
+                    children: <Widget>[
+                      Row(
+                        children: <Widget>[
+                          Container(
+                            margin: EdgeInsets.only(right: 8),
+                            child: _icSquare(Colors.lightBlueAccent),
+                          ),
+                          Container(
+                            child: _textLegenda("Aprovado"),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                  Column(
+                    children: <Widget>[
+                      Row(
+                        children: <Widget>[
+                          Container(
+                            margin: EdgeInsets.only(right: 8),
+                            child: _icSquare(Colors.green),
+                          ),
+                          Container(
+                            child: _textLegenda("Em andamento"),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                  Column(
+                    children: <Widget>[
+                      Row(
+                        children: <Widget>[
+                          Container(
+                            margin: EdgeInsets.only(right: 8),
+                            child: _icSquare(Colors.orange),
+                          ),
+                          Container(
+                            child: _textLegenda("Pendente"),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ],
           ),
-        ],
+        ),
+        Expanded(
+          child: Container(
+              color: Colors.white,
+              child: ListaReservasBuilder()),
+        ),
+      ],),
+    ),
+  );
+}
+
+_icSquare(Color color) {
+  return ConstrainedBox(
+    constraints: BoxConstraints(
+      minWidth: 18,
+      minHeight: 18,
+      maxHeight: 18,
+      maxWidth: 18,
+    ),
+    child: ClipRRect(
+      borderRadius: BorderRadius.all(
+        Radius.circular(180),
+      ),
+      child: Container(
+        color: color,
       ),
     ),
   );
@@ -94,6 +171,17 @@ _text(String x) {
       color: Colors.white,
       fontSize: 20,
       fontWeight: FontWeight.bold,
+    ),
+  );
+}
+
+_textLegenda(String x) {
+  return Text(
+    x,
+    style: TextStyle(
+      color: Colors.white,
+      fontSize: 14,
+      fontWeight: FontWeight.normal,
     ),
   );
 }
