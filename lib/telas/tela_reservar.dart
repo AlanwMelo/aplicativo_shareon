@@ -925,10 +925,10 @@ class _TelaReservarState extends State<TelaReservar> {
     Map<String, dynamic> solicitaReserva = {
       "productID": (widget.productID),
       "productPrice": valordoDoProduto,
-      "initDate": _dataInicio,
+      "programedInitDate": _dataInicio,
       "estimatedEndPrice": valorEstimado,
       "estimatedDuration": duracao,
-      "endDate": _dataFim,
+      "programedEndDate": _dataFim,
       "programedInitTime": _horarioInicio,
       "programedEndTime": _horarioFim,
       "requesterID": userID,

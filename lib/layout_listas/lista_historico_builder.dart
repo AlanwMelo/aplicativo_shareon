@@ -16,8 +16,9 @@ class _ProductsHist {
   String media;
   String preco;
   String status;
+  Timestamp endDate;
 
-  _ProductsHist(this.productID, this.name, this.preco, this.media, this.status);
+  _ProductsHist(this.productID, this.name, this.preco, this.media, this.status, this.endDate);
 }
 
 class _ListaHistoricoBuilderState extends State<ListaHistoricoBuilder> {
@@ -48,7 +49,7 @@ class _ListaHistoricoBuilderState extends State<ListaHistoricoBuilder> {
         .then((QuerySnapshot snapshot) {
       snapshot.documents.forEach((f) {
         Map productData = f.data;
-        listHelper(productData["productID"], productData["status"]);
+        listHelper(productData["productID"], productData["status"], productData["finalEndDate"]);
       });
     });
   }
@@ -144,9 +145,21 @@ class _ListaHistoricoBuilderState extends State<ListaHistoricoBuilder> {
     );
   }
 
-  _textDistancia() {
+  _textData(Timestamp idx) {
+    int convertedDay = idx
+        .toDate()
+        .day;
+    int convertedMonth = idx
+        .toDate()
+        .month;
+    int convertedYear = idx
+        .toDate()
+        .year;
+    String convertedTS = "${convertedDay.toString().padLeft(2, "0")}/${convertedMonth.toString().padLeft(2, "0")}/$convertedYear";
+
+
     return Text(
-      "400m",
+      convertedTS,
       style: TextStyle(
           fontWeight: FontWeight.bold, fontSize: 16, color: Colors.black38),
     );
@@ -207,7 +220,7 @@ class _ListaHistoricoBuilderState extends State<ListaHistoricoBuilder> {
                         ),
                         Row(
                           children: <Widget>[
-                            _textDistancia(),
+                            _textData(_listaHist[index].endDate),
                             Expanded(
                               child: Container(
                                 child: Row(
@@ -239,7 +252,7 @@ class _ListaHistoricoBuilderState extends State<ListaHistoricoBuilder> {
     });
   }
 
-  listHelper(String id, String status) {
+  listHelper(String id, String status, Timestamp endDate) {
     databaseReference
         .collection("products")
         .where("ID", isEqualTo: id)
@@ -249,7 +262,8 @@ class _ListaHistoricoBuilderState extends State<ListaHistoricoBuilder> {
         Map productData = f.data;
         setState(() {
           _listaHistorico.add(new _ProductsHist(id, productData["name"],
-              productData["price"], productData["media"], status));
+              productData["price"], productData["media"], status, endDate));
+          _listaHistorico.sort((a, b) => a.endDate.compareTo(b.endDate));
         });
       });
     });
