@@ -1,3 +1,4 @@
+import 'package:aplicativo_shareon/telas/tela_creditos.dart';
 import 'package:aplicativo_shareon/utils/seletor_calendario.dart';
 import 'package:aplicativo_shareon/utils/shareon_appbar.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -36,6 +37,7 @@ class _TelaReservarState extends State<TelaReservar> {
   String productDescription = "";
   String productIMG = "";
   String productType = "";
+  double userDebit;
 
   // Strings
   String _dataInicio = DateTime.now().day.toString() +
@@ -108,7 +110,8 @@ class _TelaReservarState extends State<TelaReservar> {
                             onPressed: () {
                               _selecionarData(context, "inicio");
                             },
-                            child: Text("$_dataInicio"),
+                            child: Text("$_dataInicio",
+                                style: TextStyle(fontWeight: FontWeight.bold)),
                           ),
                         ),
                         Container(
@@ -116,9 +119,8 @@ class _TelaReservarState extends State<TelaReservar> {
                             onPressed: () {
                               _selecionarHorario(context, "inicio");
                             },
-                            child: Text(
-                              "$_horarioInicio",
-                            ),
+                            child: Text("$_horarioInicio",
+                                style: TextStyle(fontWeight: FontWeight.bold)),
                           ),
                         ),
                       ],
@@ -135,7 +137,8 @@ class _TelaReservarState extends State<TelaReservar> {
                             onPressed: () {
                               _selecionarData(context, "fim");
                             },
-                            child: Text("$_dataFim"),
+                            child: Text("$_dataFim",
+                                style: TextStyle(fontWeight: FontWeight.bold)),
                           ),
                         ),
                         Container(
@@ -143,7 +146,8 @@ class _TelaReservarState extends State<TelaReservar> {
                             onPressed: () {
                               _selecionarHorario(context, "fim");
                             },
-                            child: Text("$_horarioFim"),
+                            child: Text("$_horarioFim",
+                                style: TextStyle(fontWeight: FontWeight.bold)),
                           ),
                         ),
                       ],
@@ -173,6 +177,9 @@ class _TelaReservarState extends State<TelaReservar> {
                             _toast(
                                 "A data de devolução não pode ser menor que a data de retirada.",
                                 context);
+                          } else if (double.parse(calcValorProdutoConversor) >
+                              userDebit) {
+                            _semSaldo(context);
                           } else {
                             _alertConfirmacao(context);
                           }
@@ -354,6 +361,179 @@ class _TelaReservarState extends State<TelaReservar> {
                                         },
                                         child: Text(
                                           "Cancelar",
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  _semSaldo(BuildContext context) {
+    return showDialog(
+      context: context,
+      builder: (context) {
+        return Container(
+          padding: EdgeInsets.all(16),
+          color: Colors.white.withOpacity(0.1),
+          child: Center(
+            child: ClipRRect(
+              borderRadius: BorderRadius.all(Radius.circular(16)),
+              child: GestureDetector(
+                onTap: () => null,
+                child: Container(
+                  height: 380,
+                  child: Container(
+                    color: Colors.white,
+                    child: Container(
+                      color: Colors.grey[200],
+                      child: Column(
+                        children: <Widget>[
+                          Container(
+                            margin: EdgeInsets.only(bottom: 8, top: 8),
+                            child: Text(
+                              "Saldo insuficiente",
+                              style: TextStyle(
+                                decoration: TextDecoration.none,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                                fontSize: 25,
+                              ),
+                            ),
+                          ),
+                          Container(
+                            padding: EdgeInsets.all(12),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                Container(
+                                  margin: EdgeInsets.only(
+                                      right: 8, left: 8, bottom: 8),
+                                  child: Row(
+                                    children: <Widget>[
+                                      _textConfirmacao("Saldo atual:",
+                                          titulo: true),
+                                    ],
+                                  ),
+                                ),
+                                Container(
+                                  margin: EdgeInsets.only(
+                                      right: 8, left: 8, bottom: 8),
+                                  child: Row(
+                                    children: <Widget>[
+                                      _textConfirmacao("$userDebit"),
+                                    ],
+                                  ),
+                                ),
+                                Container(
+                                  margin: EdgeInsets.only(
+                                      right: 8, left: 8, bottom: 8),
+                                  child: Row(
+                                    children: <Widget>[
+                                      _textConfirmacao(
+                                          "Valor estimado do aluguel:",
+                                          titulo: true),
+                                    ],
+                                  ),
+                                ),
+                                Container(
+                                  margin: EdgeInsets.only(
+                                      right: 8, left: 8, bottom: 8),
+                                  child: Row(
+                                    children: <Widget>[
+                                      _textConfirmacao(
+                                          "$calcValorProdutoConversor"),
+                                    ],
+                                  ),
+                                ),
+                                Container(
+                                  margin: EdgeInsets.only(
+                                      right: 8, left: 8, bottom: 8),
+                                  child: Row(
+                                    children: <Widget>[
+                                      _textConfirmacao("Duração: ",
+                                          titulo: true),
+                                    ],
+                                  ),
+                                ),
+                                Container(
+                                  margin: EdgeInsets.only(
+                                      right: 8, left: 8, bottom: 8),
+                                  child: Row(
+                                    children: <Widget>[
+                                      _textConfirmacao("$strgduracao"),
+                                    ],
+                                  ),
+                                ),
+                                Divider(
+                                  thickness: 3,
+                                ),
+                                Container(
+                                  margin: EdgeInsets.only(
+                                      right: 8, left: 8, bottom: 8),
+                                  child: _textConfirmacao(
+                                      "Você deve comprar mais créditos ou ajustar as datas para continuar.",
+                                      center: true),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Expanded(
+                            child: Container(
+                              color: Colors.indigoAccent,
+                              child: Row(
+                                children: <Widget>[
+                                  Expanded(
+                                    child: Container(
+                                      height: 70,
+                                      child: RaisedButton(
+                                        color: Colors.indigoAccent,
+                                        onPressed: () {
+                                          setState(() {
+                                            Navigator.pop(context);
+                                           Navigator.of(context).push(MaterialPageRoute(builder: (context)=> Creditos()));
+                                          });
+                                        },
+                                        child: Text(
+                                          "Comprar mais créditos",
+                                          textAlign: TextAlign.center,
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  Expanded(
+                                    child: Container(
+                                      height: 70,
+                                      child: RaisedButton(
+                                        color: Colors.indigoAccent,
+                                        onPressed: () {
+                                          setState(() {
+                                            Navigator.pop(context);
+                                          });
+                                        },
+                                        child: Text(
+                                          "Ajustar",
                                           style: TextStyle(
                                             fontWeight: FontWeight.bold,
                                             color: Colors.white,
@@ -611,13 +791,24 @@ class _TelaReservarState extends State<TelaReservar> {
         backgroundColor: Colors.black.withOpacity(0.8));
   }
 
-  _textConfirmacao(String texto, {bool titulo = false}) {
+  _textConfirmacao(String texto, {bool titulo = false, bool center = false}) {
     if (titulo) {
       return Text(
         "$texto",
         style: TextStyle(
           fontWeight: FontWeight.bold,
           color: Colors.red,
+          fontSize: 16,
+          decoration: TextDecoration.none,
+        ),
+      );
+    } else if (center == true) {
+      return Text(
+        "$texto",
+        textAlign: TextAlign.center,
+        style: TextStyle(
+          fontWeight: FontWeight.normal,
+          color: Colors.black,
           fontSize: 16,
           decoration: TextDecoration.none,
         ),
@@ -760,6 +951,23 @@ class _TelaReservarState extends State<TelaReservar> {
   void _setID(String value) {
     setState(() {
       userID = value;
+      getSaldo();
+    });
+  }
+
+  getSaldo() async {
+    await databaseReference
+        .collection("users")
+        .where("userID", isEqualTo: userID)
+        .getDocuments()
+        .then((QuerySnapshot snapshot) {
+      snapshot.documents.forEach((f) {
+        Map productData = f.data;
+        var aux = productData["debit"];
+        setState(() {
+          userDebit = aux.toDouble();
+        });
+      });
     });
   }
 }
