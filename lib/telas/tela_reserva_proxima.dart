@@ -3,12 +3,12 @@ import 'package:aplicativo_shareon/utils/shareon_appbar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-class Tela_Reserva_Proxima extends StatefulWidget {
+class TelaReservaProxima extends StatefulWidget {
   @override
-  _Tela_Reserva_ProximaState createState() => _Tela_Reserva_ProximaState();
+  _TelaReservaProximaState createState() => _TelaReservaProximaState();
 }
 
-class _Tela_Reserva_ProximaState extends State<Tela_Reserva_Proxima> {
+class _TelaReservaProximaState extends State<TelaReservaProxima> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -40,7 +40,7 @@ homeReservaProxima(BuildContext context) {
           Center(
             child: Container(
               margin: EdgeInsets.only(top: 16),
-              child: _text("Nome do Produto", Titulo: true),
+              child: _text("Nome do Produto", titulo: true),
             ),
           ),
           ConstrainedBox(
@@ -91,7 +91,7 @@ homeReservaProxima(BuildContext context) {
                       onPressed: () {
                         Navigator.push(context,
                             MaterialPageRoute(builder: (BuildContext context) {
-                              return Tela_Validacao();
+                              return TelaValidacao();
                             }));
                       },
                       child: Text(
@@ -112,8 +112,8 @@ homeReservaProxima(BuildContext context) {
   );
 }
 
-_text(String texto, {bool Titulo = false, bool Resumo = false}) {
-  if (Titulo == true) {
+_text(String texto, {bool titulo = false, bool resumo = false}) {
+  if (titulo == true) {
     return Text(
       "$texto",
       style: TextStyle(
@@ -122,7 +122,7 @@ _text(String texto, {bool Titulo = false, bool Resumo = false}) {
         fontSize: 30,
       ),
     );
-  } else if (Resumo == true) {
+  } else if (resumo == true) {
     return Text(
       "$texto",
       style: TextStyle(

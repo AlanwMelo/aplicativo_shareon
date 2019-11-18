@@ -41,7 +41,7 @@ class _Tela_TestesState extends State<Tela_Testes> {
                 onPressed: () {
                   Navigator.push(context,
                       MaterialPageRoute(builder: (BuildContext context) {
-                    return Tela_Reserva_Proxima();
+                    return TelaReservaProxima();
                   }));
                 },
                 child: Text("Tela \"Reserva Próxima\""),

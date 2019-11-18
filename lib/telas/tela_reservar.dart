@@ -7,17 +7,17 @@ import 'package:toast/toast.dart';
 
 import '../main.dart';
 
-class Tela_Reservar extends StatefulWidget {
-  String productID;
-  double productPrice;
+class TelaReservar extends StatefulWidget {
+  final String productID;
+  final productPrice;
 
-  Tela_Reservar({@required this.productID, @required this.productPrice});
+  TelaReservar({@required this.productID, @required this.productPrice});
 
   @override
-  _Tela_ReservarState createState() => _Tela_ReservarState();
+  _TelaReservarState createState() => _TelaReservarState();
 }
 
-class _Tela_ReservarState extends State<Tela_Reservar> {
+class _TelaReservarState extends State<TelaReservar> {
   DateTime dataBase = DateTime.now();
   DateTime dataInicio = DateTime.now();
   DateTime dataFim = DateTime.now();
@@ -55,13 +55,12 @@ class _Tela_ReservarState extends State<Tela_Reservar> {
 
   // Strings
 
-  double ValordoProduto = 0;
-  double ValorEstimado = 0;
+  double valordoDoProduto = 0;
+  double valorEstimado = 0;
   String calcValorProdutoConversor = 0.toStringAsFixed(2);
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     if (userID == "") {
       sharedPreferencesController.getID().then(_setID);
@@ -86,7 +85,7 @@ class _Tela_ReservarState extends State<Tela_Reservar> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: <Widget>[
-              _text(productName, Titulo: true),
+              _text(productName, titulo: true),
               Container(
                 margin: EdgeInsets.only(top: 16, bottom: 16, right: 8, left: 8),
                 child: _img(productIMG),
@@ -107,7 +106,7 @@ class _Tela_ReservarState extends State<Tela_Reservar> {
                         Container(
                           child: RaisedButton(
                             onPressed: () {
-                              _SelecionarData(context, "inicio");
+                              _selecionarData(context, "inicio");
                             },
                             child: Text("$_dataInicio"),
                           ),
@@ -115,7 +114,7 @@ class _Tela_ReservarState extends State<Tela_Reservar> {
                         Container(
                           child: RaisedButton(
                             onPressed: () {
-                              _SelecionarHorario(context, "inicio");
+                              _selecionarHorario(context, "inicio");
                             },
                             child: Text(
                               "$_horarioInicio",
@@ -134,7 +133,7 @@ class _Tela_ReservarState extends State<Tela_Reservar> {
                         Container(
                           child: RaisedButton(
                             onPressed: () {
-                              _SelecionarData(context, "fim");
+                              _selecionarData(context, "fim");
                             },
                             child: Text("$_dataFim"),
                           ),
@@ -142,7 +141,7 @@ class _Tela_ReservarState extends State<Tela_Reservar> {
                         Container(
                           child: RaisedButton(
                             onPressed: () {
-                              _SelecionarHorario(context, "fim");
+                              _selecionarHorario(context, "fim");
                             },
                             child: Text("$_horarioFim"),
                           ),
@@ -171,7 +170,7 @@ class _Tela_ReservarState extends State<Tela_Reservar> {
                       child: RaisedButton(
                         onPressed: () {
                           if (dataFim.isBefore(dataInicio)) {
-                            _Toast(
+                            _toast(
                                 "A data de devolução não pode ser menor que a data de retirada.",
                                 context);
                           } else {
@@ -239,8 +238,8 @@ class _Tela_ReservarState extends State<Tela_Reservar> {
                                       right: 8, left: 8, bottom: 8),
                                   child: Row(
                                     children: <Widget>[
-                                      _TextConfirmacao("Data de retirada:",
-                                          Titulo: true),
+                                      _textConfirmacao("Data de retirada:",
+                                          titulo: true),
                                     ],
                                   ),
                                 ),
@@ -249,7 +248,7 @@ class _Tela_ReservarState extends State<Tela_Reservar> {
                                       right: 8, left: 8, bottom: 8),
                                   child: Row(
                                     children: <Widget>[
-                                      _TextConfirmacao(
+                                      _textConfirmacao(
                                           "$_dataInicio $_horarioInicio"),
                                     ],
                                   ),
@@ -259,8 +258,8 @@ class _Tela_ReservarState extends State<Tela_Reservar> {
                                       right: 8, left: 8, bottom: 8),
                                   child: Row(
                                     children: <Widget>[
-                                      _TextConfirmacao("Data de devolução:",
-                                          Titulo: true),
+                                      _textConfirmacao("Data de devolução:",
+                                          titulo: true),
                                     ],
                                   ),
                                 ),
@@ -269,7 +268,7 @@ class _Tela_ReservarState extends State<Tela_Reservar> {
                                       right: 8, left: 8, bottom: 8),
                                   child: Row(
                                     children: <Widget>[
-                                      _TextConfirmacao(
+                                      _textConfirmacao(
                                           "$_dataFim $_horarioFim"),
                                     ],
                                   ),
@@ -279,8 +278,8 @@ class _Tela_ReservarState extends State<Tela_Reservar> {
                                       right: 8, left: 8, bottom: 8),
                                   child: Row(
                                     children: <Widget>[
-                                      _TextConfirmacao("Duração: ",
-                                          Titulo: true),
+                                      _textConfirmacao("Duração: ",
+                                          titulo: true),
                                     ],
                                   ),
                                 ),
@@ -289,7 +288,7 @@ class _Tela_ReservarState extends State<Tela_Reservar> {
                                       right: 8, left: 8, bottom: 8),
                                   child: Row(
                                     children: <Widget>[
-                                      _TextConfirmacao("$Strduracao"),
+                                      _textConfirmacao("$Strduracao"),
                                     ],
                                   ),
                                 ),
@@ -298,8 +297,8 @@ class _Tela_ReservarState extends State<Tela_Reservar> {
                                       right: 8, left: 8, bottom: 8),
                                   child: Row(
                                     children: <Widget>[
-                                      _TextConfirmacao("Valor estimado: ",
-                                          Titulo: true),
+                                      _textConfirmacao("Valor estimado: ",
+                                          titulo: true),
                                     ],
                                   ),
                                 ),
@@ -308,7 +307,7 @@ class _Tela_ReservarState extends State<Tela_Reservar> {
                                       right: 8, left: 8, bottom: 8),
                                   child: Row(
                                     children: <Widget>[
-                                      _TextConfirmacao(
+                                      _textConfirmacao(
                                           "R\$ $calcValorProdutoConversor"),
                                     ],
                                   ),
@@ -380,7 +379,7 @@ class _Tela_ReservarState extends State<Tela_Reservar> {
     );
   }
 
-  Future<Null> _SelecionarHorario(
+  Future<Null> _selecionarHorario(
       BuildContext context, String inicioFim) async {
     final TimeOfDay horarioSelecionado = await showTimePicker(
       context: context,
@@ -390,10 +389,10 @@ class _Tela_ReservarState extends State<Tela_Reservar> {
       dataInicio = DateTime(dataInicio.year, dataInicio.month, dataInicio.day,
           horarioSelecionado.hour, horarioSelecionado.minute);
       if (dataInicio.isBefore(dataBase)) {
-        _Toast("A data de inicio não pode ser menor que a atual.", context);
+        _toast("A data de inicio não pode ser menor que a atual.", context);
         setState(() {
           dataInicio = DateTime.now();
-          calcValorProdutoConversor = ValordoProduto.toStringAsFixed(2);
+          calcValorProdutoConversor = valordoDoProduto.toStringAsFixed(2);
           _horarioConfirmado("inicio", TimeOfDay.now());
         });
       } else {
@@ -407,12 +406,12 @@ class _Tela_ReservarState extends State<Tela_Reservar> {
       dataFim = DateTime(dataFim.year, dataFim.month, dataFim.day,
           horarioSelecionado.hour, horarioSelecionado.minute);
       if (dataFim.isBefore(dataInicio)) {
-        _Toast("A data de devolução não pode ser menor que a data de retirada.",
+        _toast("A data de devolução não pode ser menor que a data de retirada.",
             context);
         setState(() {
           dataFim = DateTime.now();
           _horarioConfirmado("fim", TimeOfDay.now());
-          calcValorProdutoConversor = ValordoProduto.toStringAsFixed(2);
+          calcValorProdutoConversor = valordoDoProduto.toStringAsFixed(2);
         });
       } else {
         setState(() {
@@ -423,22 +422,22 @@ class _Tela_ReservarState extends State<Tela_Reservar> {
     }
   }
 
-  Future<Null> _SelecionarData(BuildContext context, String inicioFim) async {
-    final DateTime DiaSelecionado = await showSeletorCalendario(
+  Future<Null> _selecionarData(BuildContext context, String inicioFim) async {
+    final DateTime diaSelecionado = await showSeletorCalendario(
       context: context,
       initialDate: DateTime.now(),
       firstDate: new DateTime(2018),
       lastDate: new DateTime(2022),
     );
-    if (DiaSelecionado != null && inicioFim == "inicio") {
-      dataInicio = DateTime(DiaSelecionado.year, DiaSelecionado.month,
-          DiaSelecionado.day, dataInicio.hour, dataInicio.minute);
+    if (diaSelecionado != null && inicioFim == "inicio") {
+      dataInicio = DateTime(diaSelecionado.year, diaSelecionado.month,
+          diaSelecionado.day, dataInicio.hour, dataInicio.minute);
       if (dataInicio.isBefore(dataBase)) {
-        _Toast("A data de inicio não pode ser menor que a atual.", context);
+        _toast("A data de inicio não pode ser menor que a atual.", context);
         setState(() {
           dataInicio = DateTime.now();
           _horarioConfirmado("inicio", TimeOfDay.now());
-          calcValorProdutoConversor = ValordoProduto.toStringAsFixed(2);
+          calcValorProdutoConversor = valordoDoProduto.toStringAsFixed(2);
           _dataInicio = dataInicio.day.toString() +
               "/" +
               dataInicio.month.toString() +
@@ -448,27 +447,27 @@ class _Tela_ReservarState extends State<Tela_Reservar> {
       } else {
         setState(() {
           _verificaEstimado();
-          _dataInicio = DiaSelecionado.day.toString() +
+          _dataInicio = diaSelecionado.day.toString() +
               "/" +
-              DiaSelecionado.month.toString() +
+              diaSelecionado.month.toString() +
               "/" +
-              DiaSelecionado.year.toString();
+              diaSelecionado.year.toString();
         });
       }
     }
 
-    if (DiaSelecionado != null && inicioFim == "fim") {
-      dataFim = DateTime(DiaSelecionado.year, DiaSelecionado.month,
-          DiaSelecionado.day, dataFim.hour, dataFim.minute);
+    if (diaSelecionado != null && inicioFim == "fim") {
+      dataFim = DateTime(diaSelecionado.year, diaSelecionado.month,
+          diaSelecionado.day, dataFim.hour, dataFim.minute);
       if (dataFim.isBefore(dataInicio)) {
-        _Toast("A data de devolução não pode ser menor que a data de retirada.",
+        _toast("A data de devolução não pode ser menor que a data de retirada.",
             context);
         setState(() {
           dataFim = DateTime.now();
           dataFim = DateTime.now();
           _horarioConfirmado("fim", TimeOfDay.now());
 
-          calcValorProdutoConversor = ValordoProduto.toStringAsFixed(2);
+          calcValorProdutoConversor = valordoDoProduto.toStringAsFixed(2);
           _dataFim = dataFim.day.toString() +
               "/" +
               dataFim.month.toString() +
@@ -478,32 +477,32 @@ class _Tela_ReservarState extends State<Tela_Reservar> {
       } else {
         setState(() {
           _verificaEstimado();
-          _dataFim = DiaSelecionado.day.toString() +
+          _dataFim = diaSelecionado.day.toString() +
               "/" +
-              DiaSelecionado.month.toString() +
+              diaSelecionado.month.toString() +
               "/" +
-              DiaSelecionado.year.toString();
+              diaSelecionado.year.toString();
         });
       }
     }
   }
 
   getTimeString(int value) {
-    double tot_mins = value.toDouble();
-    double dias = tot_mins / 1440;
-    double horas = (tot_mins % 1440) / 60;
-    double min = tot_mins % 60;
+    double totalOfMins = value.toDouble();
+    double dias = totalOfMins / 1440;
+    double horas = (totalOfMins % 1440) / 60;
+    double min = totalOfMins % 60;
 
-    Strduracao = "${_StrgDia(dias.toInt(), horas.toInt(), min.toInt())}"
-        "${_StrgHora(horas.toInt(), min.toInt())}"
-        "${_StrgMin(min.toInt())}";
+    Strduracao = "${_strgDia(dias.toInt(), horas.toInt(), min.toInt())}"
+        "${_strgHora(horas.toInt(), min.toInt())}"
+        "${_strgMin(min.toInt())}";
   }
 
   _verificaEstimado() {
     if (dataInicio.isAfter(dataFim)) {
-      calcValorProdutoConversor = ValordoProduto.toStringAsFixed(2);
+      calcValorProdutoConversor = valordoDoProduto.toStringAsFixed(2);
     } else {
-      _valorEstimado(ValordoProduto, dataInicio, dataFim);
+      _valorEstimado(valordoDoProduto, dataInicio, dataFim);
     }
   }
 
@@ -511,11 +510,11 @@ class _Tela_ReservarState extends State<Tela_Reservar> {
     DateTime retirada = dataInicio;
     DateTime devolucao = dataFim;
     duracao = (devolucao.difference(retirada).inMinutes);
-    valordoProduto = ValordoProduto / (60);
+    valordoProduto = valordoDoProduto / (60);
     double calcValorProduto = duracao.toDouble() * valordoProduto;
     getTimeString(duracao);
     calcValorProdutoConversor = calcValorProduto.toStringAsFixed(2);
-    ValorEstimado = calcValorProduto;
+    valorEstimado = calcValorProduto;
   }
 
   _horarioConfirmado(String inicioFim, TimeOfDay time) {
@@ -558,8 +557,8 @@ class _Tela_ReservarState extends State<Tela_Reservar> {
     );
   }
 
-  _text(String texto, {bool Titulo = false, bool Resumo = false}) {
-    if (Titulo == true) {
+  _text(String texto, {bool titulo = false, bool resumo = false}) {
+    if (titulo == true) {
       return Text(
         "$texto",
         style: TextStyle(
@@ -568,7 +567,7 @@ class _Tela_ReservarState extends State<Tela_Reservar> {
           fontSize: 30,
         ),
       );
-    } else if (Resumo == true) {
+    } else if (resumo == true) {
       return Text(
         "$texto",
         style: TextStyle(
@@ -605,15 +604,15 @@ class _Tela_ReservarState extends State<Tela_Reservar> {
     return hora;
   }
 
-  _Toast(String texto, BuildContext context) {
+  _toast(String texto, BuildContext context) {
     Toast.show("$texto", context,
         duration: 3,
         gravity: Toast.BOTTOM,
         backgroundColor: Colors.black.withOpacity(0.8));
   }
 
-  _TextConfirmacao(String texto, {bool Titulo = false}) {
-    if (Titulo) {
+  _textConfirmacao(String texto, {bool titulo = false}) {
+    if (titulo) {
       return Text(
         "$texto",
         style: TextStyle(
@@ -660,8 +659,8 @@ class _Tela_ReservarState extends State<Tela_Reservar> {
             .then((QuerySnapshot snapshot) {
           snapshot.documents.forEach((f) {
             Map productData = f.data;
-            ValordoProduto = double.parse(productData["price"]);
-            ValorEstimado = double.parse(productData["price"]);
+            valordoDoProduto = double.parse(productData["price"]);
+            valorEstimado = double.parse(productData["price"]);
             productName = productData["name"];
             productDescription = productData["description"];
             productMedia = productData["media"];
@@ -670,7 +669,7 @@ class _Tela_ReservarState extends State<Tela_Reservar> {
 
             if (calcValorProdutoConversor == "0.00") {
               setState(() {
-                calcValorProdutoConversor = ValordoProduto.toStringAsFixed(2);
+                calcValorProdutoConversor = valordoDoProduto.toStringAsFixed(2);
               });
             }
           });
@@ -680,7 +679,7 @@ class _Tela_ReservarState extends State<Tela_Reservar> {
         });
   }
 
-  _StrgDia(int dia, int hora, int min) {
+  _strgDia(int dia, int hora, int min) {
     if (dia > 0 && hora == 0) {
       if (dia == 0) {
         return "";
@@ -700,7 +699,7 @@ class _Tela_ReservarState extends State<Tela_Reservar> {
     }
   }
 
-  _StrgHora(int hora, int min) {
+  _strgHora(int hora, int min) {
     if (min > 0) {
       if (hora == 0) {
         return "";
@@ -720,7 +719,7 @@ class _Tela_ReservarState extends State<Tela_Reservar> {
     }
   }
 
-  _StrgMin(int min) {
+  _strgMin(int min) {
     if (min == 0) {
       return "";
     } else if (min == 1) {
@@ -734,9 +733,9 @@ class _Tela_ReservarState extends State<Tela_Reservar> {
     String status = "pendente";
     Map<String, dynamic> solicitaReserva = {
       "productID": (widget.productID),
-      "productPrice": ValordoProduto,
+      "productPrice": valordoDoProduto,
       "initDate": _dataInicio,
-      "estimatedEndPrice": ValorEstimado,
+      "estimatedEndPrice": valorEstimado,
       "estimatedDuration": duracao,
       "endDate": _dataFim,
       "initTime": _horarioInicio,

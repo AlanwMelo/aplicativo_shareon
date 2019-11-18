@@ -581,7 +581,7 @@ class _ProdutoSelecionadoState extends State<ProdutoSelecionado> {
           Navigator.push(
             context,
             MaterialPageRoute(builder: (BuildContext context) {
-              return Tela_Reservar(
+              return TelaReservar(
                   productID: widget.productID,
                   productPrice: double.parse(productPrice));
             }),

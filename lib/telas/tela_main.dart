@@ -6,6 +6,7 @@ import 'package:aplicativo_shareon/telas/home.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_map_location_picker/google_map_location_picker.dart';
+import 'package:toast/toast.dart';
 
 class TelaMain extends StatefulWidget {
   @override
@@ -43,6 +44,12 @@ class _TelaMainState extends State<TelaMain> {
   FutureOr _setLocation(GeoPoint value) {
     setState(() {
       userLocation = GeoPoint(value.latitude, value.longitude);
+      if (userLocation != GeoPoint(0.0, 0.0)){
+        Toast.show("Utilizando última localização conhecida", context,
+            duration: 3,
+            gravity: Toast.BOTTOM,
+            backgroundColor: Colors.black.withOpacity(0.8));
+      }
     });
   }
 
@@ -60,10 +67,8 @@ class _TelaMainState extends State<TelaMain> {
         result.latLng.latitude, result.latLng.longitude);
 
     _setLocation(selected);
-    Navigator.of(context).pushReplacement(
-        MaterialPageRoute(
-            builder: (context) =>
-                Home()));
+    Navigator.of(context)
+        .pushReplacement(MaterialPageRoute(builder: (context) => Home()));
   }
 
   undefinedLocation(BuildContext context) {

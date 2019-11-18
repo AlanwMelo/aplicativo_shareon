@@ -12,12 +12,12 @@ import 'package:path_provider/path_provider.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:toast/toast.dart';
 
-class Tela_Validacao extends StatefulWidget {
+class TelaValidacao extends StatefulWidget {
   @override
-  _Tela_ValidacaoState createState() => _Tela_ValidacaoState();
+  _TelaValidacaoState createState() => _TelaValidacaoState();
 }
 
-class _Tela_ValidacaoState extends State<Tela_Validacao> {
+class _TelaValidacaoState extends State<TelaValidacao> {
   String barcode = "";
   int pin = 5728;
   int pinDuration = 32;
@@ -60,7 +60,7 @@ class _Tela_ValidacaoState extends State<Tela_Validacao> {
                 ),
               ),
             ),
-            _QRZone(""),
+            _qrZone(""),
             Center(
               child: Container(
                 margin: EdgeInsets.only(top: 8),
@@ -201,7 +201,7 @@ class _Tela_ValidacaoState extends State<Tela_Validacao> {
   }
 }
 
-_QRZone(String QRText) {
+_qrZone(String qrText) {
   return Container(
     child: ConstrainedBox(
       constraints: BoxConstraints(
@@ -234,8 +234,8 @@ _textAlerta(String texto) {
   );
 }
 
-_text(String texto, {bool Titulo = false, bool Resumo = false}) {
-  if (Titulo == true) {
+_text(String texto, {bool titulo = false, bool resumo = false}) {
+  if (titulo == true) {
     return Text(
       "$texto",
       style: TextStyle(
@@ -244,7 +244,7 @@ _text(String texto, {bool Titulo = false, bool Resumo = false}) {
         fontSize: 30,
       ),
     );
-  } else if (Resumo == true) {
+  } else if (resumo == true) {
     return Text(
       "$texto",
       style: TextStyle(

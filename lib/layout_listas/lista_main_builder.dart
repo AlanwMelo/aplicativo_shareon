@@ -152,19 +152,21 @@ class _ListaMainBuilderState extends State<ListaMainBuilder> {
   }
 
   _textDistancia(double distancia) {
-    if (distancia > 0) {
+    if (distancia > 1) {
       return Text(
         "${distancia.toInt()} km",
         style: TextStyle(
             fontWeight: FontWeight.bold, fontSize: 16, color: Colors.black38),
       );
-    } else if (distancia < 0) {
+    } else if (distancia < 1) {
+      String auxMetros = distancia.toStringAsFixed(2);
+      double metros = double.parse(auxMetros)*1000;
       return Text(
-        "${distancia.toInt()}m",
+        "${metros.toInt()}m",
         style: TextStyle(
             fontWeight: FontWeight.bold, fontSize: 16, color: Colors.black38),
       );
-    } else if (distancia == 0) {
+    } else if (distancia == 1) {
       return Text(
         "1 km",
         style: TextStyle(

@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
-class Tela_Configuracoes extends StatefulWidget {
+class TelaConfiguracoes extends StatefulWidget {
   @override
-  _Tela_ConfiguracoesState createState() => _Tela_ConfiguracoesState();
+  _TelaConfiguracoesState createState() => _TelaConfiguracoesState();
 }
 
-class _Tela_ConfiguracoesState extends State<Tela_Configuracoes> {
+class _TelaConfiguracoesState extends State<TelaConfiguracoes> {
   @override
   Widget build(BuildContext context) {
     return homeConfigurcoes();
