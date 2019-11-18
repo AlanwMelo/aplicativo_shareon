@@ -154,7 +154,8 @@ class _CadastroUsuarioState extends State<CadastroUsuario> {
                             Map<String, dynamic> userData = {
                               "nome": nomeController.text,
                               "email": emailController.text,
-                              "endereco": enderecoController.text
+                              "endereco": enderecoController.text,
+                              "debit": 0,
                             };
 
                             model.signUp(

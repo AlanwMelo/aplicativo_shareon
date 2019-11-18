@@ -24,7 +24,7 @@ class _TelaReservarState extends State<TelaReservar> {
   TimeOfDay timeInicio = TimeOfDay.now();
   TimeOfDay timeFim = TimeOfDay.now();
   int duracao = 60;
-  String Strduracao;
+  String strgduracao;
   final databaseReference = Firestore.instance;
   SharedPreferencesController sharedPreferencesController =
       new SharedPreferencesController();
@@ -288,7 +288,7 @@ class _TelaReservarState extends State<TelaReservar> {
                                       right: 8, left: 8, bottom: 8),
                                   child: Row(
                                     children: <Widget>[
-                                      _textConfirmacao("$Strduracao"),
+                                      _textConfirmacao("$strgduracao"),
                                     ],
                                   ),
                                 ),
@@ -493,7 +493,7 @@ class _TelaReservarState extends State<TelaReservar> {
     double horas = (totalOfMins % 1440) / 60;
     double min = totalOfMins % 60;
 
-    Strduracao = "${_strgDia(dias.toInt(), horas.toInt(), min.toInt())}"
+    strgduracao = "${_strgDia(dias.toInt(), horas.toInt(), min.toInt())}"
         "${_strgHora(horas.toInt(), min.toInt())}"
         "${_strgMin(min.toInt())}";
   }
@@ -738,8 +738,8 @@ class _TelaReservarState extends State<TelaReservar> {
       "estimatedEndPrice": valorEstimado,
       "estimatedDuration": duracao,
       "endDate": _dataFim,
-      "initTime": _horarioInicio,
-      "endTime": _horarioFim,
+      "programedInitTime": _horarioInicio,
+      "programedEndTime": _horarioFim,
       "requesterID": userID,
       "status": status,
     };

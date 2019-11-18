@@ -24,7 +24,6 @@ class _TelaMainState extends State<TelaMain> {
     if (userLocation == null) {
       sharedPreferencesController.getGeo().then(_setLocation);
     }
-    // TODO: implement initState
     super.initState();
   }
 
@@ -41,10 +40,10 @@ class _TelaMainState extends State<TelaMain> {
     }
   }
 
-  FutureOr _setLocation(GeoPoint value) {
+  FutureOr _setLocation(GeoPoint value, {int caller}) {
     setState(() {
       userLocation = GeoPoint(value.latitude, value.longitude);
-      if (userLocation != GeoPoint(0.0, 0.0)){
+      if (userLocation != GeoPoint(0.0, 0.0) && caller == 0){
         Toast.show("Utilizando última localização conhecida", context,
             duration: 3,
             gravity: Toast.BOTTOM,
@@ -66,7 +65,7 @@ class _TelaMainState extends State<TelaMain> {
     sharedPreferencesController.setGeo(
         result.latLng.latitude, result.latLng.longitude);
 
-    _setLocation(selected);
+    _setLocation(selected, caller: 1);
     Navigator.of(context)
         .pushReplacement(MaterialPageRoute(builder: (context) => Home()));
   }

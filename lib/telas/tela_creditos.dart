@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -12,6 +13,7 @@ class Creditos extends StatefulWidget {
 class _CreditosState extends State<Creditos> {
   SharedPreferencesController sharedPreferencesController =
       new SharedPreferencesController();
+  final databaseReference = Firestore.instance;
   int saldo = 0;
   String userID = "";
 
@@ -204,6 +206,22 @@ class _CreditosState extends State<Creditos> {
   _setUserID(String value) {
     setState(() {
       userID = value;
+      getData();
+    });
+  }
+
+  getData() async {
+    await databaseReference
+        .collection("users")
+        .where("userID", isEqualTo: userID)
+        .getDocuments()
+        .then((QuerySnapshot snapshot) {
+      snapshot.documents.forEach((f) {
+        Map productData = f.data;
+        setState(() {
+          saldo = productData["debit"];
+        });
+      });
     });
   }
 

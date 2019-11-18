@@ -12,6 +12,7 @@ class MeuPerfil extends StatefulWidget {
 class _MeuPerfilState extends State<MeuPerfil> {
   SharedPreferencesController sharedPreferencesController =
   new SharedPreferencesController();
+
   String userName = "?";
   String userMail = "?";
   String userimgURL = "https://cdn4.iconfinder.com/data/icons/instagram-ui-twotone/48/Paul-18-512.png";
