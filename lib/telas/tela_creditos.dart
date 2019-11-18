@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -12,7 +13,8 @@ class Creditos extends StatefulWidget {
 class _CreditosState extends State<Creditos> {
   SharedPreferencesController sharedPreferencesController =
       new SharedPreferencesController();
-  int saldo = 0;
+  final databaseReference = Firestore.instance;
+  double saldo = 0;
   String userID = "";
 
   @override
@@ -92,17 +94,14 @@ class _CreditosState extends State<Creditos> {
                                         MainAxisAlignment.spaceEvenly,
                                     children: <Widget>[
                                       Container(
-                                        height: 80,
-                                        child: btCreditos("R\$ 300", 300)
-                                      ),
+                                          height: 80,
+                                          child: btCreditos("R\$ 300", 300)),
                                       Container(
-                                        height: 80,
-                                        child: btCreditos("R\$ 500", 500)
-                                      ),
+                                          height: 80,
+                                          child: btCreditos("R\$ 500", 500)),
                                       Container(
-                                        height: 80,
-                                        child: btCreditos("R\$ 1000", 1000)
-                                      ),
+                                          height: 80,
+                                          child: btCreditos("R\$ 1000", 1000)),
                                     ],
                                   ),
                                 ),
@@ -204,6 +203,23 @@ class _CreditosState extends State<Creditos> {
   _setUserID(String value) {
     setState(() {
       userID = value;
+      getData();
+    });
+  }
+
+  getData() async {
+    await databaseReference
+        .collection("users")
+        .where("userID", isEqualTo: userID)
+        .getDocuments()
+        .then((QuerySnapshot snapshot) {
+      snapshot.documents.forEach((f) {
+        Map productData = f.data;
+        var aux = productData["debit"];
+        setState(() {
+          saldo = aux.toDouble();
+        });
+      });
     });
   }
 
@@ -218,48 +234,54 @@ class _CreditosState extends State<Creditos> {
   }
 
   _launchURL(int valor) async {
-    if (valor == 50){
-      const url = 'https://www.mercadopago.com.br/checkout/v1/redirect?pref_id=99236958-e1c1ac19-8b7d-488c-a5c5-2b78c1b48ac5';
+    if (valor == 50) {
+      const url =
+          'https://www.mercadopago.com.br/checkout/v1/redirect?pref_id=99236958-e1c1ac19-8b7d-488c-a5c5-2b78c1b48ac5';
       if (await canLaunch(url)) {
         await launch(url);
       } else {
         throw 'Could not launch $url';
       }
     }
-    if (valor == 100){
-      const url = 'https://www.mercadopago.com.br/checkout/v1/redirect?pref_id=99236958-7609b48f-14c2-43e3-b569-5a43980f73d5';
+    if (valor == 100) {
+      const url =
+          'https://www.mercadopago.com.br/checkout/v1/redirect?pref_id=99236958-7609b48f-14c2-43e3-b569-5a43980f73d5';
       if (await canLaunch(url)) {
         await launch(url);
       } else {
         throw 'Could not launch $url';
       }
     }
-    if (valor == 200){
-      const url = 'https://www.mercadopago.com.br/checkout/v1/redirect?pref_id=99236958-8eebe6a8-979a-4697-93fa-fc33d11d4e32';
+    if (valor == 200) {
+      const url =
+          'https://www.mercadopago.com.br/checkout/v1/redirect?pref_id=99236958-8eebe6a8-979a-4697-93fa-fc33d11d4e32';
       if (await canLaunch(url)) {
         await launch(url);
       } else {
         throw 'Could not launch $url';
       }
     }
-    if (valor == 300){
-      const url = 'https://www.mercadopago.com.br/checkout/v1/redirect?pref_id=99236958-b0db2459-1f51-489e-824b-32a8d302f6f3';
+    if (valor == 300) {
+      const url =
+          'https://www.mercadopago.com.br/checkout/v1/redirect?pref_id=99236958-b0db2459-1f51-489e-824b-32a8d302f6f3';
       if (await canLaunch(url)) {
         await launch(url);
       } else {
         throw 'Could not launch $url';
       }
     }
-    if (valor == 500){
-      const url = 'https://www.mercadopago.com.br/checkout/v1/redirect?pref_id=99236958-f5d22b30-e3d7-4297-a42f-9fbb0949f288';
+    if (valor == 500) {
+      const url =
+          'https://www.mercadopago.com.br/checkout/v1/redirect?pref_id=99236958-f5d22b30-e3d7-4297-a42f-9fbb0949f288';
       if (await canLaunch(url)) {
         await launch(url);
       } else {
         throw 'Could not launch $url';
       }
     }
-    if (valor == 1000){
-      const url = 'https://www.mercadopago.com.br/checkout/v1/redirect?pref_id=99236958-d45f4ffe-9242-42d6-b60a-53d270188214';
+    if (valor == 1000) {
+      const url =
+          'https://www.mercadopago.com.br/checkout/v1/redirect?pref_id=99236958-d45f4ffe-9242-42d6-b60a-53d270188214';
       if (await canLaunch(url)) {
         await launch(url);
       } else {

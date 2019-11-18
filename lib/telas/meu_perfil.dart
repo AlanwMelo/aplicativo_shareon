@@ -11,7 +11,8 @@ class MeuPerfil extends StatefulWidget {
 
 class _MeuPerfilState extends State<MeuPerfil> {
   SharedPreferencesController sharedPreferencesController =
-      new SharedPreferencesController();
+  new SharedPreferencesController();
+
   String userName = "?";
   String userMail = "?";
   String userimgURL =
