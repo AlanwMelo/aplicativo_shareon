@@ -84,7 +84,7 @@ class _HomeState extends State<Home> {
     return Scaffold(
       drawer: _drawer(),
       key: _drawerKey,
-      appBar: shareon_appbar(context),
+      appBar: shareonAppbar(context),
       body: homeController(),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: _floatActionButtonController(controllerPointer),
@@ -753,13 +753,13 @@ class _HomeState extends State<Home> {
     );
   }
 
-  _iconChat() {
-    return Icon(
-      Icons.question_answer,
-      color: Colors.black54,
-      size: 20.0,
-    );
-  }
+  // _iconChat() {
+  //   return Icon(
+  //     Icons.question_answer,
+  //     color: Colors.black54,
+  //     size: 20.0,
+  //   );
+  // }
 
   _iconSuporte() {
     return Icon(

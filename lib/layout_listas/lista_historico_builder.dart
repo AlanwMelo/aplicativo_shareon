@@ -40,7 +40,7 @@ class _ListaHistoricoBuilderState extends State<ListaHistoricoBuilder> {
   }
 
   getData() async {
-    String helper;
+    // String helper;
     await databaseReference
         .collection("solicitations")
         .where("requesterID", isEqualTo: userID)

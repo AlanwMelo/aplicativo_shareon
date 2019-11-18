@@ -62,7 +62,7 @@ homeReservas() {
             ),
           ),
           Expanded(
-            child: lista_reservas_builder(),
+            child: listaReservasBuilder(),
           ),
         ],
       ),

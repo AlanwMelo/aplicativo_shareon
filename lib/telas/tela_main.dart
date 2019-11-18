@@ -24,7 +24,6 @@ class _TelaMainState extends State<TelaMain> {
     if (userLocation == null) {
       sharedPreferencesController.getGeo().then(_setLocation);
     }
-    // TODO: implement initState
     super.initState();
   }
 

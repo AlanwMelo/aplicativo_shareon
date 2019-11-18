@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart' show Scaffold;
 
-lista_reservas() {
+listaReservas() {
   return Scaffold();
 }

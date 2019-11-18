@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
 
-lista_historico() {
+listaHistorico() {
   return Scaffold();
 }

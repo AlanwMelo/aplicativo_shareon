@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:aplicativo_shareon/telas/home.dart';
 import 'package:aplicativo_shareon/telas/tela_login.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
+// import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -103,21 +103,21 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   // Conf Dispositivo para FCM
-  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
+  // final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
   var showform = false;
   String loginOk = "";
 
   @override
   void initState() {
-    // TODO: implement initState
+   
     SharedPreferencesController sharedPreferencesController =
         new SharedPreferencesController();
     sharedPreferencesController.getlogedState().then(_logedVerifier);
     super.initState();
   }
 
-  void _initFCM(){
-  }
+  // void _initFCM(){
+  // }
 
   @override
   Widget build(BuildContext context) {

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
 
-lista_avaliacoes() {
+listaAvaliacoes() {
   return Scaffold();
 }

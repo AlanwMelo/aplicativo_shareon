@@ -13,21 +13,21 @@ class _ShareOnAppBarState extends State<ShareOnAppBar> {
   }
 }
 
-shareon_appbar(BuildContext context) {
+shareonAppbar(BuildContext context) {
   return AppBar(
     actions: <Widget>[
-      _Texto(context),
+      _texto(context),
     ],
     title: Text("Share On"),
   );
 }
 
-_Texto(BuildContext context) {
+_texto(BuildContext context) {
   return GestureDetector(
     onTap: () {
       Navigator.push(context,
           MaterialPageRoute(builder: (BuildContext context) {
-        return Tela_Testes();
+        return tela_testes();
       }));
     },
     child: Container(

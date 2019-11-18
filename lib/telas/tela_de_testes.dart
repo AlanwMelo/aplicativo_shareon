@@ -3,18 +3,18 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
-class Tela_Testes extends StatefulWidget {
+class tela_testes extends StatefulWidget {
   @override
-  _Tela_TestesState createState() => _Tela_TestesState();
+  _tela_testes_state createState() => _tela_testes_state();
 }
 
-class _Tela_TestesState extends State<Tela_Testes> {
+class _tela_testes_state extends State<tela_testes> {
   FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
       new FlutterLocalNotificationsPlugin();
 
   @override
   void initState() {
-    // TODO: implement initState
+    
     super.initState();
     var initializationSettingsAndroid =
         new AndroidInitializationSettings('@mipmap/ic_launcher');
@@ -77,7 +77,7 @@ class _Tela_TestesState extends State<Tela_Testes> {
     }
     await Navigator.push(
       context,
-      new MaterialPageRoute(builder: (context) => new Tela_Testes()),
+      new MaterialPageRoute(builder: (context) => new tela_testes()),
     );
   }
 

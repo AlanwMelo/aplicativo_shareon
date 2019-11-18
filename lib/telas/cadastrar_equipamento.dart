@@ -1,4 +1,3 @@
-import 'package:aplicativo_shareon/utils/image_source_sheet.dart';
 import 'package:aplicativo_shareon/utils/images_widget.dart';
 import 'package:aplicativo_shareon/utils/product_bloc.dart';
 import 'package:aplicativo_shareon/validadores/product_validator.dart';
@@ -62,7 +61,6 @@ class _ProductScreenState extends State<ProductScreen> with ProductValidator {
                   initialValue: snapshot.data["images"],
                   onSaved: _productBloc.salvarImagens,
                   validator: validarImagens,
-
 
                 ),
                 TextFormField(

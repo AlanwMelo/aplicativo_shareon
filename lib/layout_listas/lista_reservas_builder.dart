@@ -4,37 +4,43 @@ import 'package:aplicativo_shareon/item_listas/lista_reservas.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-lista_reservas_builder() {
-  List<Widget> _lista_reservas = [
-    lista_reservas(),
-    lista_reservas(),
-    lista_reservas(),
-    lista_reservas(),
-    lista_reservas(),
-    lista_reservas(),
-    lista_reservas(),
-    lista_reservas(),
-    lista_reservas(),
-    lista_reservas(),
-    lista_reservas(),
-    lista_reservas(),
-    lista_reservas(),
-    lista_reservas(),
-    lista_reservas(),
-    lista_reservas(),
-    lista_reservas(),
-    lista_reservas(),
-    lista_reservas(),
-    lista_reservas(),
-    lista_reservas(),
-    lista_reservas(),
-    lista_reservas(),
-    lista_reservas(),
-    lista_reservas(),
+listaReservasBuilder() {
+  List<Widget> _listaReservas = [
+    listaReservas(),
+    listaReservas(),
+    listaReservas(),
+    listaReservas(),
+    listaReservas(),
+    listaReservas(),
+    listaReservas(),
+    listaReservas(),
+    listaReservas(),
+    listaReservas(),
+    listaReservas(),
+    listaReservas(),
+    listaReservas(),
+    listaReservas(),
+    listaReservas(),
+    listaReservas(),
+    listaReservas(),
+    listaReservas(),
+    listaReservas(),
+    listaReservas(),
+    listaReservas(),
+    listaReservas(),
+    listaReservas(),
+    listaReservas(),
+    listaReservas(),
+    listaReservas(),
+    listaReservas(),
+    listaReservas(),
+    listaReservas(),
+    listaReservas(),
+
   ];
 
   return ListView.builder(
-    itemCount: _lista_reservas.length,
+    itemCount: _listaReservas.length,
     itemExtent: 150,
     itemBuilder: (BuildContext context, int index) {
       return Container(

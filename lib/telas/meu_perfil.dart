@@ -1,7 +1,7 @@
-import 'package:aplicativo_shareon/utils/shareon_appbar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+
 import '../main.dart';
 
 class MeuPerfil extends StatefulWidget {
@@ -11,10 +11,11 @@ class MeuPerfil extends StatefulWidget {
 
 class _MeuPerfilState extends State<MeuPerfil> {
   SharedPreferencesController sharedPreferencesController =
-  new SharedPreferencesController();
+      new SharedPreferencesController();
   String userName = "?";
   String userMail = "?";
-  String userimgURL = "https://cdn4.iconfinder.com/data/icons/instagram-ui-twotone/48/Paul-18-512.png";
+  String userimgURL =
+      "https://cdn4.iconfinder.com/data/icons/instagram-ui-twotone/48/Paul-18-512.png";
 
   @override
   void initState() {
@@ -26,13 +27,27 @@ class _MeuPerfilState extends State<MeuPerfil> {
   @override
   Widget build(BuildContext context) {
     sharedPreferencesController.getURLImg().then(_setURLImg);
-    return  _meuPerfil();
+    return _meuPerfil();
   }
 
   Widget _meuPerfil() {
     return Scaffold(
       backgroundColor: Colors.indigoAccent,
-      appBar: shareon_appbar(context),
+      appBar: AppBar(
+        title: Text('Perfil'),
+        elevation: 0,
+        backgroundColor: Colors.indigoAccent,
+        leading: IconButton(
+          icon: Icon (Icons.arrow_back_ios),
+          onPressed: (){},
+      ),
+      actions:<Widget>[
+        IconButton(
+          icon: Icon(Icons.edit),
+          onPressed: (){},
+        )
+      ]
+      ),
       body: SizedBox.expand(
         child: Container(
           padding: EdgeInsets.all(16),
@@ -91,20 +106,18 @@ class _MeuPerfilState extends State<MeuPerfil> {
                       ),
                     ),
                   ),
-                    new Container(
+                  new Container(
                       width: 200.0,
                       height: 50.0,
                       margin: const EdgeInsets.all(95.0),
                       child: new RaisedButton(
-                        child: new Text ('Logout'),
+                        child: new Text('Logout'),
                         onPressed: () {
-                      _logout(context);
-                    },
-                    textColor: Colors.white70,
-                    color: Colors.indigoAccent,
-                    
-                    )
-                  ),
+                          _logout(context);
+                        },
+                        textColor: Colors.white70,
+                        color: Colors.indigoAccent,
+                      )),
                 ],
               ),
             ),
@@ -125,6 +138,7 @@ class _MeuPerfilState extends State<MeuPerfil> {
       userMail = email;
     });
   }
+
   void _setURLImg(String urlImg) {
     setState(() {
       userimgURL = urlImg;
@@ -134,7 +148,7 @@ class _MeuPerfilState extends State<MeuPerfil> {
   void _logout(BuildContext context) {
     FirebaseAuth.instance.signOut();
     SharedPreferencesController sharedPreferencesController =
-    new SharedPreferencesController();
+        new SharedPreferencesController();
     sharedPreferencesController.setlogedState("0");
     sharedPreferencesController.setID("");
     sharedPreferencesController.setName("");
@@ -143,7 +157,11 @@ class _MeuPerfilState extends State<MeuPerfil> {
   }
 
   void _succesLogout() {
-    Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => MyApp()), (Route<dynamic> route) => false,);
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(builder: (context) => MyApp()),
+      (Route<dynamic> route) => false,
+    );
   }
 
   _img() {

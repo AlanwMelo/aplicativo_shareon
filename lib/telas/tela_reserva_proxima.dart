@@ -12,7 +12,7 @@ class _TelaReservaProximaState extends State<TelaReservaProxima> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: shareon_appbar(context),
+      appBar: shareonAppbar(context),
       body: homeReservaProxima(context),
       backgroundColor: Colors.indigoAccent,
     );

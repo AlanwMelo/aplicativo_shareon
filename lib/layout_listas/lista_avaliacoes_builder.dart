@@ -3,20 +3,21 @@ import 'package:aplicativo_shareon/telas/tela_produto_selecionado.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-lista_avaliacoes_builder() {
-  List<Widget> _lista_avaliacoes = [
-    lista_avaliacoes(),
-    lista_avaliacoes(),
-    lista_avaliacoes(),
+listaAvaliacoesBuilder() {
+  List<Widget> _listaAvaliacoes = [
+    listaAvaliacoes(),
+    listaAvaliacoes(),
+    listaAvaliacoes(),
   ];
 
-  position() {
-    final listMap = _lista_avaliacoes.asMap();
+  // position()
+   {
+    final listMap = _listaAvaliacoes.asMap();
     listMap.hashCode;
   }
 
   return ListView.builder(
-    itemCount: _lista_avaliacoes.length,
+    itemCount: _listaAvaliacoes.length,
     itemExtent: 10,
     itemBuilder: (BuildContext context, int index) {
       return GestureDetector(
