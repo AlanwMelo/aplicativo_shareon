@@ -182,7 +182,7 @@ class _ProdutoSelecionadoState extends State<ProdutoSelecionado> {
 
   _produtoSelecionado(BuildContext context) {
     return Scaffold(
-      appBar: shareonAppbar(context),
+      appBar: shareonAppbar(context, ""),
       body: SizedBox.expand(
         child: Container(
           color: Colors.indigoAccent,

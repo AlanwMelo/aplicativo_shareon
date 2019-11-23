@@ -37,7 +37,6 @@ class _ListaReservasBuilderState extends State<ListaReservasBuilder> {
     if (userID == "") {
       sharedPreferencesController.getID().then(_setUserID);
     }
-
     super.initState();
   }
 
@@ -52,7 +51,7 @@ class _ListaReservasBuilderState extends State<ListaReservasBuilder> {
         Map productData = f.data;
         if (productData["status"] == "em andamento" ||
             productData["status"] == "pendente" ||
-            productData["status"] == "aprovado") {
+            productData["status"] == "aprovada") {
           listHelper(productData["productID"], productData["status"],
               productData["programedInitDate"], productData["estimatedEndPrice"]);
         }
@@ -115,7 +114,7 @@ class _ListaReservasBuilderState extends State<ListaReservasBuilder> {
     if (status == "em andamento") {
       color = Colors.green;
     }
-    if (status == "aprovado") {
+    if (status == "aprovada") {
       color = Colors.indigoAccent;
     }
     return Text(
@@ -275,7 +274,7 @@ class _ListaReservasBuilderState extends State<ListaReservasBuilder> {
   }
 
   listHelper(
-      String id, String status, Timestamp endDate, var estimatedEndPrice) {
+      String id, String status, Timestamp initDate, var estimatedEndPrice) {
     databaseReference
         .collection("products")
         .where("ID", isEqualTo: id)
@@ -285,7 +284,7 @@ class _ListaReservasBuilderState extends State<ListaReservasBuilder> {
         Map productData = f.data;
         setState(() {
           _listaReservas.add(new _Reservas(id, productData["name"],
-              estimatedEndPrice, productData["media"], status, endDate));
+              estimatedEndPrice, productData["media"], status, initDate));
           _listaReservas.sort(
               (a, b) => a.programedInitDate.compareTo(b.programedInitDate));
         });

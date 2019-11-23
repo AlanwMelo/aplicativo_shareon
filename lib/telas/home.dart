@@ -1,8 +1,10 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:aplicativo_shareon/telas/tela_chat.dart';
 import 'package:aplicativo_shareon/telas/tela_configuracoes.dart';
 import 'package:aplicativo_shareon/telas/tela_creditos.dart';
+import 'package:aplicativo_shareon/telas/tela_de_testes.dart';
 import 'package:aplicativo_shareon/telas/tela_dicas.dart';
 import 'package:aplicativo_shareon/telas/tela_faq.dart';
 import 'package:aplicativo_shareon/telas/tela_favoritos.dart';
@@ -13,6 +15,7 @@ import 'package:aplicativo_shareon/telas/tela_reservas.dart';
 import 'package:aplicativo_shareon/telas/tela_suporte.dart';
 import 'package:aplicativo_shareon/utils/floatbutton.dart';
 import 'package:aplicativo_shareon/utils/shareon_appbar.dart';
+import 'package:aplicativo_shareon/utils/timer_reserva.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
@@ -22,6 +25,10 @@ import '../main.dart';
 import 'meu_perfil.dart';
 
 class Home extends StatefulWidget {
+  final int optionalControllerPointer;
+
+  Home({this.optionalControllerPointer});
+
   @override
   _HomeState createState() => _HomeState();
 }
@@ -49,11 +56,13 @@ class LifecycleEventHandler extends WidgetsBindingObserver {
 }
 
 class _HomeState extends State<Home> {
-  int controllerPointer = 1;
   String userName = "?";
+  int controllerPointer;
   String userMail = "?";
   String userID = "";
   String urlImgPerfil = "?";
+  String timer = "";
+  String appBarText = "";
   final databaseReference = Firestore.instance;
   GlobalKey<ScaffoldState> _drawerKey = GlobalKey();
   SharedPreferencesController sharedPreferencesController =
@@ -61,7 +70,13 @@ class _HomeState extends State<Home> {
 
   @override
   void initState() {
-    controllerPointer = 1;
+    if(widget.optionalControllerPointer != null){
+      controllerPointer = widget.optionalControllerPointer;
+    }
+    else{
+      controllerPointer = 1;
+    }
+    Timer.periodic(Duration(seconds: 10), (Timer t) => timerReserva());
     sharedPreferencesController.getID().then(_setUserID);
     super.initState();
 
@@ -84,7 +99,7 @@ class _HomeState extends State<Home> {
     return Scaffold(
       drawer: _drawer(),
       key: _drawerKey,
-      appBar: shareonAppbar(context),
+      appBar: shareonAppbar(context, appBarText),
       body: homeController(),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: _floatActionButtonController(controllerPointer),
@@ -132,6 +147,8 @@ class _HomeState extends State<Home> {
       return homeFAQ();
     } else if (controllerPointer == 11) {
       return Creditos();
+    }else if (controllerPointer == 21) {
+      return tela_testes();
     }
   }
 
@@ -277,6 +294,34 @@ class _HomeState extends State<Home> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: <Widget>[
+          GestureDetector(
+            onTap: () {
+              setState(() {
+                Navigator.pop(context);
+                controllerPointer = 21;
+              });
+            },
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: <Widget>[
+                Container(
+                  margin: EdgeInsets.only(
+                    left: 10,
+                  ),
+                  child: _iconCreditos(),
+                ),
+                SizedBox(
+                  width: 270,
+                  child: Container(
+                    margin: EdgeInsets.only(
+                      left: 15,
+                    ),
+                    child: _text("BT Testes"),
+                  ),
+                ),
+              ],
+            ),
+          ),
           GestureDetector(
             onTap: () {
               setState(() {
@@ -864,6 +909,17 @@ class _HomeState extends State<Home> {
     setState(() {
       userID = value;
       getUserData();
+      timerReserva();
     });
+  }
+
+  timerReserva() async {
+    TimerReserva timerReserva = new TimerReserva();
+    String aux = await timerReserva.timerVerifier(userID, appBarText);
+    if (aux != "") {
+      setState(() {
+        appBarText = aux;
+      });
+    }
   }
 }

@@ -27,7 +27,7 @@ class _TelaValidacaoState extends State<TelaValidacao> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.indigoAccent,
-      appBar: shareonAppbar(context),
+      appBar: shareonAppbar(context, ""),
       body: telaValidacao(),
     );
   }

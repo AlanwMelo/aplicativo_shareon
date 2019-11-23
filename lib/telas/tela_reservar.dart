@@ -80,7 +80,7 @@ class _TelaReservarState extends State<TelaReservar> {
 
   _homeReservar(BuildContext context) {
     return Scaffold(
-      appBar: shareonAppbar(context),
+      appBar: shareonAppbar(context, ""),
       backgroundColor: Colors.indigoAccent,
       body: SingleChildScrollView(
         child: Container(
@@ -926,6 +926,7 @@ class _TelaReservarState extends State<TelaReservar> {
 
   _solicitaReserva() async {
     String status = "pendente";
+    String motivo = "solicitacao";
     Map<String, dynamic> solicitaReserva = {
       "productID": (widget.productID),
       "productPrice": valordoDoProduto,
@@ -935,6 +936,7 @@ class _TelaReservarState extends State<TelaReservar> {
       "estimatedDuration": duracao,
       "requesterID": userID,
       "status": status,
+      "motivoStatus": motivo,
     };
 
     final newReserve = await databaseReference

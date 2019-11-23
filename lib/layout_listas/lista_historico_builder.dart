@@ -49,7 +49,7 @@ class _ListaHistoricoBuilderState extends State<ListaHistoricoBuilder> {
         .then((QuerySnapshot snapshot) {
       snapshot.documents.forEach((f) {
         Map productData = f.data;
-        if (productData["status"] == "concluido" || productData["status"] == "falhado"){
+        if (productData["status"] == "concluido" || productData["status"] == "cancelada"){
           listHelper(productData["productID"], productData["status"], productData["finalEndDate"]);
         }
       });
