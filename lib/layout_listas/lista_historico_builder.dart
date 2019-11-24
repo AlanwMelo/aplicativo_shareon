@@ -36,7 +36,6 @@ class _ListaHistoricoBuilderState extends State<ListaHistoricoBuilder> {
     if (userID == "") {
       sharedPreferencesController.getID().then(_setUserID);
     }
-
     super.initState();
   }
 

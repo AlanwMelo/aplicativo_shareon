@@ -1,9 +1,9 @@
+import 'package:aplicativo_shareon/telas/tela_reserva_proxima.dart';
 import 'package:aplicativo_shareon/telas/tela_reservar.dart';
 import 'package:aplicativo_shareon/utils/shareon_appbar.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-// import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:page_indicator/page_indicator.dart';
 
 import '../main.dart';
@@ -15,6 +15,13 @@ class ProdutoSelecionado extends StatefulWidget {
 
   @override
   _ProdutoSelecionadoState createState() => _ProdutoSelecionadoState();
+}
+
+class _ReservaProxima {
+  String solicitationID;
+  Timestamp programedInitDate;
+
+  _ReservaProxima(this.solicitationID, this.programedInitDate);
 }
 
 class _ProdutoSelecionadoState extends State<ProdutoSelecionado> {
@@ -33,6 +40,8 @@ class _ProdutoSelecionadoState extends State<ProdutoSelecionado> {
   String productIMG = "";
   String productType = "";
   String userID = "";
+  String solicitationStatus = "";
+  String solicitationID = "";
   String imgID = "";
   String mainIMG = "";
   String pgvimg1 = "";
@@ -52,10 +61,11 @@ class _ProdutoSelecionadoState extends State<ProdutoSelecionado> {
   List listaIMGS = [];
   Map mapListaIMGS = {};
   int counter = 0;
+  List<_ReservaProxima> reservaAprovada = [];
+  List<_ReservaProxima> reservaEmAndamento = [];
 
   @override
   void initState() {
-   
     getProductData();
     getFavoriteStatus();
     getIsMyProduct();
@@ -246,6 +256,7 @@ class _ProdutoSelecionadoState extends State<ProdutoSelecionado> {
                       Container(
                         margin: EdgeInsets.only(bottom: 8),
                         child: RaisedButton(
+                          color: Colors.white,
                           onPressed: () {
                             _setFavoriteState();
                           },
@@ -502,11 +513,12 @@ class _ProdutoSelecionadoState extends State<ProdutoSelecionado> {
     );
   }
 
-  void _setID(String value) {
+   _setID(String value) {
     setState(() {
       userID = value;
       getFavoriteStatus();
       getIsMyProduct();
+      getSolicitationStatus();
     });
   }
 
@@ -567,16 +579,35 @@ class _ProdutoSelecionadoState extends State<ProdutoSelecionado> {
   }
 
   prodDestination() {
-    if (myProduct == null) {
+    if (reservaAprovada.length > 0) {
+      int timeNow = Timestamp.fromDate(DateTime.now()).millisecondsSinceEpoch;
+      int nearestTime = reservaAprovada[0].programedInitDate.millisecondsSinceEpoch;
+
+      if ((nearestTime - timeNow) <= 3600000) {
+        return RaisedButton(
+          color: Colors.white,
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (BuildContext context) {
+                return TelaReservaProxima(solicitationID: solicitationID,);
+              }),
+            );
+          },
+          child: _text("Validar retirada", resumo: true),
+        );
+      }
+    } else if (myProduct == null) {
       return Container();
     } else if (myProduct == true) {
       return RaisedButton(
+        color: Colors.white,
         onPressed: () {},
         child: _text("Editar", resumo: true),
       );
-    }
-    if (myProduct == false) {
+    } else if (myProduct == false) {
       return RaisedButton(
+        color: Colors.white,
         onPressed: () {
           Navigator.push(
             context,
@@ -611,5 +642,31 @@ class _ProdutoSelecionadoState extends State<ProdutoSelecionado> {
         );
       },
     );
+  }
+
+  getSolicitationStatus() async {
+    await databaseReference
+        .collection("solicitations")
+        .where("requesterID", isEqualTo: userID)
+        .where("productID", isEqualTo: widget.productID)
+        .getDocuments()
+        .then((QuerySnapshot snapshot) {
+        snapshot.documents.forEach(
+          (f) {
+            Map productData = f.data;
+            if (productData["status"] == "aprovada") {
+              setState(() {
+                reservaAprovada.add(new _ReservaProxima(productData["solicitationID"], productData["programedInitDate"]));
+                reservaAprovada.sort((a, b) => a.programedInitDate.compareTo(b.programedInitDate));
+              });
+            }
+            if (productData["status"] == "em andamento") {
+              reservaEmAndamento.add(productData["programedInitDate"]);
+            }
+          },
+        );
+      },
+    );
+    solicitationID = reservaAprovada[0].solicitationID;
   }
 }

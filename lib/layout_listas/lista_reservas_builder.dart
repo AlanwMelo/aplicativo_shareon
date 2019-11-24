@@ -16,10 +16,11 @@ class _Reservas {
   String media;
   var preco;
   String status;
+  String solicitationID;
   Timestamp programedInitDate;
 
   _Reservas(this.productID, this.name, this.preco, this.media, this.status,
-      this.programedInitDate);
+      this.solicitationID, this.programedInitDate);
 }
 
 class _ListaReservasBuilderState extends State<ListaReservasBuilder> {
@@ -52,8 +53,12 @@ class _ListaReservasBuilderState extends State<ListaReservasBuilder> {
         if (productData["status"] == "em andamento" ||
             productData["status"] == "pendente" ||
             productData["status"] == "aprovada") {
-          listHelper(productData["productID"], productData["status"],
-              productData["programedInitDate"], productData["estimatedEndPrice"]);
+          listHelper(
+              productData["productID"],
+              productData["status"],
+              productData["programedInitDate"],
+              productData["solicitationID"],
+              productData["estimatedEndPrice"]);
         }
       });
     });
@@ -155,6 +160,13 @@ class _ListaReservasBuilderState extends State<ListaReservasBuilder> {
   }
 
   _textData(Timestamp idx) {
+    Color color = Colors.black38;
+    int timeNow = Timestamp.fromDate(DateTime.now()).millisecondsSinceEpoch;
+    int reservedTime = idx.millisecondsSinceEpoch;
+    if ((reservedTime - timeNow) <= 3600000) {
+      color = Colors.orange;
+    }
+
     int convertedDay = idx.toDate().day;
     int convertedMonth = idx.toDate().month;
     int convertedYear = idx.toDate().year;
@@ -163,12 +175,17 @@ class _ListaReservasBuilderState extends State<ListaReservasBuilder> {
 
     return Text(
       convertedTS,
-      style: TextStyle(
-          fontWeight: FontWeight.bold, fontSize: 16, color: Colors.black38),
+      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: color),
     );
   }
 
   _textTime(Timestamp idx) {
+    Color color = Colors.black38;
+    int timeNow = Timestamp.fromDate(DateTime.now()).millisecondsSinceEpoch;
+    int reservedTime = idx.millisecondsSinceEpoch;
+    if ((reservedTime - timeNow) <= 3600000) {
+      color = Colors.orange;
+    }
     int convertedHour = idx.toDate().hour;
     int convertedMinute = idx.toDate().minute;
     String convertedTS =
@@ -176,8 +193,7 @@ class _ListaReservasBuilderState extends State<ListaReservasBuilder> {
 
     return Text(
       convertedTS,
-      style: TextStyle(
-          fontWeight: FontWeight.bold, fontSize: 16, color: Colors.black38),
+      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: color),
     );
   }
 
@@ -238,8 +254,10 @@ class _ListaReservasBuilderState extends State<ListaReservasBuilder> {
                           children: <Widget>[
                             Column(
                               children: <Widget>[
-                                _textData(_listaReservas[index].programedInitDate),
-                                _textTime(_listaReservas[index].programedInitDate),
+                                _textData(
+                                    _listaReservas[index].programedInitDate),
+                                _textTime(
+                                    _listaReservas[index].programedInitDate),
                               ],
                             ),
                             Expanded(
@@ -273,8 +291,8 @@ class _ListaReservasBuilderState extends State<ListaReservasBuilder> {
     });
   }
 
-  listHelper(
-      String id, String status, Timestamp initDate, var estimatedEndPrice) {
+  listHelper(String id, String status, Timestamp initDate,
+      String solicitationID, var estimatedEndPrice) {
     databaseReference
         .collection("products")
         .where("ID", isEqualTo: id)
@@ -283,8 +301,14 @@ class _ListaReservasBuilderState extends State<ListaReservasBuilder> {
       snapshot.documents.forEach((f) {
         Map productData = f.data;
         setState(() {
-          _listaReservas.add(new _Reservas(id, productData["name"],
-              estimatedEndPrice, productData["media"], status, initDate));
+          _listaReservas.add(new _Reservas(
+              id,
+              productData["name"],
+              estimatedEndPrice,
+              productData["media"],
+              status,
+              solicitationID,
+              initDate));
           _listaReservas.sort(
               (a, b) => a.programedInitDate.compareTo(b.programedInitDate));
         });
