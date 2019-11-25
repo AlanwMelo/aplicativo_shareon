@@ -671,7 +671,7 @@ class _CadastroProdutoState extends State<CadastroProduto> {
     LocationResult result = await LocationPicker.pickLocation(
         context, "AIzaSyDAVrOzCfJOoak50Fke6jDdW945_s6rv4U");
 
-    if (result != null) {
+    if (result.address != null) {
       setState(() {
         productAddress = result.address;
       });
