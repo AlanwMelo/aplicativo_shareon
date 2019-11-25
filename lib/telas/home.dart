@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:aplicativo_shareon/telas/tela_cadastro_produto.dart';
 import 'package:aplicativo_shareon/telas/tela_chat.dart';
 import 'package:aplicativo_shareon/telas/tela_configuracoes.dart';
 import 'package:aplicativo_shareon/telas/tela_creditos.dart';
@@ -13,7 +14,6 @@ import 'package:aplicativo_shareon/telas/tela_main.dart';
 import 'package:aplicativo_shareon/telas/tela_meus_produtos.dart';
 import 'package:aplicativo_shareon/telas/tela_reservas.dart';
 import 'package:aplicativo_shareon/telas/tela_suporte.dart';
-import 'package:aplicativo_shareon/utils/floatbutton.dart';
 import 'package:aplicativo_shareon/utils/shareon_appbar.dart';
 import 'package:aplicativo_shareon/utils/timer_reserva.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -70,10 +70,9 @@ class _HomeState extends State<Home> {
 
   @override
   void initState() {
-    if(widget.optionalControllerPointer != null){
+    if (widget.optionalControllerPointer != null) {
       controllerPointer = widget.optionalControllerPointer;
-    }
-    else{
+    } else {
       controllerPointer = 1;
     }
     Timer.periodic(Duration(seconds: 10), (Timer t) => timerReserva());
@@ -101,8 +100,6 @@ class _HomeState extends State<Home> {
       key: _drawerKey,
       appBar: shareonAppbar(context, appBarText),
       body: homeController(),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      floatingActionButton: _floatActionButtonController(controllerPointer),
     );
   }
 
@@ -147,18 +144,10 @@ class _HomeState extends State<Home> {
       return homeFAQ();
     } else if (controllerPointer == 11) {
       return Creditos();
-    }else if (controllerPointer == 21) {
+    } else if (controllerPointer == 12) {
+      return CadastroProduto(userID);
+    } else if (controllerPointer == 21) {
       return tela_testes();
-    }
-  }
-
-  _floatActionButtonController(int controller) {
-    if (controller == 1) {
-      return FloatButton();
-    } else if (controller == 5) {
-      return FloatButton();
-    } else {
-      return Container();
     }
   }
 
@@ -289,7 +278,7 @@ class _HomeState extends State<Home> {
 
   _corpo() {
     return Container(
-      height: 550,
+      height: 600,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -345,6 +334,34 @@ class _HomeState extends State<Home> {
                       left: 15,
                     ),
                     child: _text("Meus créditos"),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          GestureDetector(
+            onTap: () {
+              setState(() {
+                Navigator.pop(context);
+                controllerPointer = 12;
+              });
+            },
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: <Widget>[
+                Container(
+                  margin: EdgeInsets.only(
+                    left: 10,
+                  ),
+                  child: _iconCamera(),
+                ),
+                SizedBox(
+                  width: 270,
+                  child: Container(
+                    margin: EdgeInsets.only(
+                      left: 15,
+                    ),
+                    child: _text("Adicionar anúncio"),
                   ),
                 ),
               ],
@@ -761,6 +778,14 @@ class _HomeState extends State<Home> {
   _iconCreditos() {
     return Icon(
       Icons.monetization_on,
+      color: Colors.black54,
+      size: 20.0,
+    );
+  }
+
+  _iconCamera() {
+    return Icon(
+      Icons.camera_alt,
       color: Colors.black54,
       size: 20.0,
     );

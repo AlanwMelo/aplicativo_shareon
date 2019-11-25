@@ -17,8 +17,6 @@ class ImageSourceSheet extends StatelessWidget {
     }
   }
 
-
-
   @override
   Widget build(BuildContext context) {
     return BottomSheet(

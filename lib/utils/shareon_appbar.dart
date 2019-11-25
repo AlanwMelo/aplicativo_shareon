@@ -1,5 +1,4 @@
 import 'package:aplicativo_shareon/telas/home.dart';
-import 'package:aplicativo_shareon/telas/tela_de_testes.dart';
 import 'package:flutter/material.dart';
 
 class ShareOnAppBar extends StatefulWidget {
