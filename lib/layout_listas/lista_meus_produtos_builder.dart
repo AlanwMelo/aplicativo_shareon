@@ -135,9 +135,6 @@ class _ListaMeusProdutosBuilderState extends State<ListaMeusProdutosBuilder> {
   }
 
   _textMedia(String idx) {
-    if (idx == null){
-      idx = "-";
-    }
     return Text(
       idx,
       style: TextStyle(

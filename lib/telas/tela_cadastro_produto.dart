@@ -580,6 +580,7 @@ class _CadastroProdutoState extends State<CadastroProduto> {
       "ownerID": widget.userID,
       "price": priceController.text,
       "type": "livro",
+      "media": "-",
       "adStatus": adStatus,
     };
 
