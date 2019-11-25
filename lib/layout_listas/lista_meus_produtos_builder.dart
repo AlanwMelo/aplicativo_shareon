@@ -14,8 +14,8 @@ class ListaMeusProdutosBuilder extends StatefulWidget {
 class _MyProducts {
   String productID;
   String name;
-  String media;
   String preco;
+  String media;
   Timestamp addDate;
 
   _MyProducts(this.productID, this.name, this.preco, this.media, this.addDate);
@@ -23,7 +23,7 @@ class _MyProducts {
 
 class _ListaMeusProdutosBuilderState extends State<ListaMeusProdutosBuilder> {
   SharedPreferencesController sharedPreferencesController =
-  new SharedPreferencesController();
+      new SharedPreferencesController();
   final databaseReference = Firestore.instance;
   List<_MyProducts> _listaMeusProdutos = [];
   String id;
@@ -50,10 +50,10 @@ class _ListaMeusProdutosBuilderState extends State<ListaMeusProdutosBuilder> {
           _listaMeusProdutos.add(new _MyProducts(
               productData["ID"],
               productData["name"],
-              productData["media"],
               productData["price"],
+              productData["media"],
               productData["insertionDate"]));
-          _listaMeusProdutos.sort((a, b) => a.addDate.compareTo(b.addDate));
+          _listaMeusProdutos.sort((b, a) => a.addDate.compareTo(b.addDate));
         });
       });
     });
@@ -118,27 +118,26 @@ class _ListaMeusProdutosBuilderState extends State<ListaMeusProdutosBuilder> {
   }
 
   _textData(Timestamp idx) {
-    int convertedDay = idx
-        .toDate()
-        .day;
-    int convertedMonth = idx
-        .toDate()
-        .month;
-    int convertedYear = idx
-        .toDate()
-        .year;
-    String convertedTS = "${convertedDay.toString().padLeft(2, "0")}/${convertedMonth.toString().padLeft(2, "0")}/$convertedYear";
+    int convertedDay = idx.toDate().day;
+    int convertedMonth = idx.toDate().month;
+    int convertedYear = idx.toDate().year;
+    String convertedTS =
+        "${convertedDay.toString().padLeft(2, "0")}/${convertedMonth.toString().padLeft(2, "0")}/$convertedYear";
 
     return Text(
       convertedTS,
       style: TextStyle(
-      fontWeight: FontWeight.bold,
-      fontSize: 14,
-      color: Colors.black54,
-    ),);
+        fontWeight: FontWeight.bold,
+        fontSize: 14,
+        color: Colors.black54,
+      ),
+    );
   }
 
   _textMedia(String idx) {
+    if (idx == null){
+      idx = "-";
+    }
     return Text(
       idx,
       style: TextStyle(

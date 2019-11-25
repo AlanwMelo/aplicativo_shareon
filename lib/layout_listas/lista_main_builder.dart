@@ -60,6 +60,7 @@ class _ListaMainBuilderState extends State<ListaMainBuilder> {
     await databaseReference
         .collection("products")
         .where("ID")
+        .where("adStatus", isEqualTo: "ativo")
         .getDocuments()
         .then((QuerySnapshot snapshot) {
       snapshot.documents.forEach((f) {
@@ -160,7 +161,7 @@ class _ListaMainBuilderState extends State<ListaMainBuilder> {
       );
     } else if (distancia < 1) {
       String auxMetros = distancia.toStringAsFixed(2);
-      double metros = double.parse(auxMetros)*1000;
+      double metros = double.parse(auxMetros) * 1000;
       return Text(
         "${metros.toInt()}m",
         style: TextStyle(
