@@ -41,6 +41,12 @@ class _CadastroProdutoState extends State<CadastroProduto> {
   //int btPointer = 1 Materiais Esportivos / 2 Livros / 3 Escritorio / 4 Eletrodomesticos
 
   @override
+  void initState() {
+    print(_imgMain);
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: homeCadastroProduto(),
@@ -348,8 +354,8 @@ class _CadastroProdutoState extends State<CadastroProduto> {
                   onLongPress: _imgRemoverMain,
                   child: _imgMain != null
                       ? Container(
-                          child: Image.asset(
-                            _imgMain.path,
+                          child: new Image.file(
+                            _imgMain,
                             fit: BoxFit.cover,
                             height: 100,
                             width: 100,
@@ -360,8 +366,8 @@ class _CadastroProdutoState extends State<CadastroProduto> {
                   onLongPress: _imgRemover2,
                   child: _img2 != null
                       ? Container(
-                          child: Image.asset(
-                            _img2.path,
+                          child: new Image.file(
+                            _img2,
                             fit: BoxFit.cover,
                             height: 100,
                             width: 100,
@@ -372,8 +378,8 @@ class _CadastroProdutoState extends State<CadastroProduto> {
                   onLongPress: _imgRemover3,
                   child: _img3 != null
                       ? Container(
-                          child: Image.asset(
-                            _img3.path,
+                          child: new Image.file(
+                            _img3,
                             fit: BoxFit.cover,
                             height: 100,
                             width: 100,
@@ -392,8 +398,8 @@ class _CadastroProdutoState extends State<CadastroProduto> {
                     onLongPress: _imgRemover4,
                     child: _img4 != null
                         ? Container(
-                            child: Image.asset(
-                              _img4.path,
+                            child: new Image.file(
+                              _img4,
                               fit: BoxFit.cover,
                               height: 100,
                               width: 100,
@@ -404,8 +410,8 @@ class _CadastroProdutoState extends State<CadastroProduto> {
                     onLongPress: _imgRemover5,
                     child: _img5 != null
                         ? Container(
-                            child: Image.asset(
-                              _img5.path,
+                            child: new Image.file(
+                              _img5,
                               fit: BoxFit.cover,
                               height: 100,
                               width: 100,
@@ -653,9 +659,8 @@ class _CadastroProdutoState extends State<CadastroProduto> {
           .collection("products")
           .document(idWriter)
           .updateData(setStatus);
+
     }
-    //String aux2 = await task.events;
-    // print(aux2);
   }
 
   _icGPS() {
