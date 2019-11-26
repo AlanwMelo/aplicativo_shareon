@@ -41,6 +41,12 @@ class _CadastroProdutoState extends State<CadastroProduto> {
   //int btPointer = 1 Materiais Esportivos / 2 Livros / 3 Escritorio / 4 Eletrodomesticos
 
   @override
+  void initState() {
+    print(_imgMain);
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: homeCadastroProduto(),
@@ -348,8 +354,8 @@ class _CadastroProdutoState extends State<CadastroProduto> {
                   onLongPress: _imgRemoverMain,
                   child: _imgMain != null
                       ? Container(
-                          child: Image.asset(
-                            _imgMain.path,
+                          child: new Image.file(
+                            _imgMain,
                             fit: BoxFit.cover,
                             height: 100,
                             width: 100,
@@ -360,8 +366,8 @@ class _CadastroProdutoState extends State<CadastroProduto> {
                   onLongPress: _imgRemover2,
                   child: _img2 != null
                       ? Container(
-                          child: Image.asset(
-                            _img2.path,
+                          child: new Image.file(
+                            _img2,
                             fit: BoxFit.cover,
                             height: 100,
                             width: 100,
@@ -372,8 +378,8 @@ class _CadastroProdutoState extends State<CadastroProduto> {
                   onLongPress: _imgRemover3,
                   child: _img3 != null
                       ? Container(
-                          child: Image.asset(
-                            _img3.path,
+                          child: new Image.file(
+                            _img3,
                             fit: BoxFit.cover,
                             height: 100,
                             width: 100,
@@ -392,8 +398,8 @@ class _CadastroProdutoState extends State<CadastroProduto> {
                     onLongPress: _imgRemover4,
                     child: _img4 != null
                         ? Container(
-                            child: Image.asset(
-                              _img4.path,
+                            child: new Image.file(
+                              _img4,
                               fit: BoxFit.cover,
                               height: 100,
                               width: 100,
@@ -404,8 +410,8 @@ class _CadastroProdutoState extends State<CadastroProduto> {
                     onLongPress: _imgRemover5,
                     child: _img5 != null
                         ? Container(
-                            child: Image.asset(
-                              _img5.path,
+                            child: new Image.file(
+                              _img5,
                               fit: BoxFit.cover,
                               height: 100,
                               width: 100,
@@ -570,6 +576,7 @@ class _CadastroProdutoState extends State<CadastroProduto> {
   }
 
   _cadastraLivro() async {
+    String adStatus = "em provisionamento";
     Timestamp insertioDate = Timestamp.fromDate(DateTime.now());
     Map<String, dynamic> cadastraProduto = {
       "description": descriptionController.text,
@@ -577,25 +584,83 @@ class _CadastroProdutoState extends State<CadastroProduto> {
       "location": productLocation,
       "name": nameController.text,
       "ownerID": widget.userID,
-      "price": double.parse(priceController.text),
+      "price": priceController.text,
       "type": "livro",
+      "media": "-",
+      "adStatus": adStatus,
     };
 
     final newProduct =
         await databaseReference.collection("products").add(cadastraProduto);
     String idWriter = newProduct.documentID;
+
     Map<String, dynamic> setID = {
       "ID": idWriter,
     };
+
     await databaseReference
         .collection("products")
         .document(idWriter)
         .updateData(setID);
 
-    final StorageUploadTask uploadTask = storageRef.ref().child("productsIMG").child(idWriter).putFile(
-      File(_imgMain.toString()),
+    File aux = _imgMain;
+    File aux2 = _img2;
+    File aux3 = _img3;
+    File aux4 = _img4;
+    File aux5 = _img5;
+    String img1InDB;
+    String img2InDB;
+    String img3InDB;
+    String img4InDB;
+    String img5InDB;
 
-    );
+    if (aux5 != null) {
+      final StorageUploadTask task =
+          storageRef.ref().child("/productsIMG/$idWriter/img5").putFile(aux5);
+      img5InDB = await (await task.onComplete).ref.getDownloadURL();
+    }
+    if (aux4 != null) {
+      final StorageUploadTask task =
+          storageRef.ref().child("/productsIMG/$idWriter/img4").putFile(aux4);
+      img4InDB = await (await task.onComplete).ref.getDownloadURL();
+    }
+    if (aux3 != null) {
+      final StorageUploadTask task =
+          storageRef.ref().child("/productsIMG/$idWriter/img3").putFile(aux3);
+      img3InDB = await (await task.onComplete).ref.getDownloadURL();
+    }
+    if (aux2 != null) {
+      final StorageUploadTask task =
+          storageRef.ref().child("/productsIMG/$idWriter/img2").putFile(aux2);
+      img2InDB = await (await task.onComplete).ref.getDownloadURL();
+    }
+    if (aux != null) {
+      final StorageUploadTask task =
+          storageRef.ref().child("/productsIMG/$idWriter/mainIMG").putFile(aux);
+      img1InDB = await (await task.onComplete).ref.getDownloadURL();
+
+      await task.onComplete;
+
+      Map<String, dynamic> imgListDB = {
+        "productID": idWriter,
+        "productMainIMG": img1InDB == null ? "" : img1InDB,
+        "productIMG2": img2InDB == null ? "" : img2InDB,
+        "productIMG3": img3InDB == null ? "" : img3InDB,
+        "productIMG4": img4InDB == null ? "" : img4InDB,
+        "productIMG5": img5InDB == null ? "" : img5InDB,
+      };
+
+      await databaseReference.collection("productIMGs").add(imgListDB);
+
+      Map<String, dynamic> setStatus = {
+        "adStatus": "ativo",
+      };
+      await databaseReference
+          .collection("products")
+          .document(idWriter)
+          .updateData(setStatus);
+
+    }
   }
 
   _icGPS() {
@@ -611,9 +676,11 @@ class _CadastroProdutoState extends State<CadastroProduto> {
     LocationResult result = await LocationPicker.pickLocation(
         context, "AIzaSyDAVrOzCfJOoak50Fke6jDdW945_s6rv4U");
 
-    setState(() {
-      productAddress = result.address;
-    });
+    if (result.address != null) {
+      setState(() {
+        productAddress = result.address;
+      });
+    }
     productLocation =
         new GeoPoint(result.latLng.latitude, result.latLng.longitude);
   }
