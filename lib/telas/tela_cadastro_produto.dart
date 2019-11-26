@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_masked_text/flutter_masked_text.dart';
 import 'package:google_map_location_picker/google_map_location_picker.dart';
 import 'package:toast/toast.dart';
 
@@ -24,8 +25,8 @@ class _CadastroProdutoState extends State<CadastroProduto> {
   final camposLivros = GlobalKey<FormState>();
   final nameController = TextEditingController();
   final descriptionController = TextEditingController();
-  final priceController = TextEditingController();
-  String productAddress = "Informe onde encontrar o produto";
+  final priceController = MoneyMaskedTextController();
+  String productAddress = "Informe onde encontrar seu produto";
   GeoPoint productLocation;
 
   //livros
