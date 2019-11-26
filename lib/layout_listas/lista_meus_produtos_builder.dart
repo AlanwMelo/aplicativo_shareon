@@ -73,7 +73,7 @@ class _ListaMeusProdutosBuilderState extends State<ListaMeusProdutosBuilder> {
 //objetos
 
   _img(String idx) {
-    String productMainIMG = "";
+    String productMainIMG;
 
     return FutureBuilder(
       future: databaseReference
@@ -94,12 +94,16 @@ class _ListaMeusProdutosBuilderState extends State<ListaMeusProdutosBuilder> {
               bottomRight: Radius.zero,
               bottomLeft: Radius.circular(16)),
           child: Container(
-            child: Image.network(
-              productMainIMG,
-              height: 150,
-              width: 150,
-              fit: BoxFit.cover,
-            ),
+            child: productMainIMG == null
+                ? Center(
+                    child: CircularProgressIndicator(),
+                  )
+                : Image.network(
+                    productMainIMG,
+                    height: 150,
+                    width: 150,
+                    fit: BoxFit.cover,
+                  ),
           ),
         );
       },

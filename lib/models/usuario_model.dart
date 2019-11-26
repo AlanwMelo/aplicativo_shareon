@@ -1,14 +1,15 @@
 import 'dart:async';
 import 'dart:ui';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:scoped_model/scoped_model.dart';
+
 import '../main.dart';
 
-class UserModel extends Model{
-
+class UserModel extends Model {
   FirebaseAuth auth = FirebaseAuth.instance;
   final databaseReference = Firestore.instance;
 
@@ -17,7 +18,6 @@ class UserModel extends Model{
 
   bool carregando = false;
 
-
   @override
   void addListener(VoidCallback listener) {
     super.addListener(listener);
@@ -25,36 +25,44 @@ class UserModel extends Model{
     _loadCurrentUser();
   } //usuario atual
 
-  void signUp({@required Map<String, dynamic> userData, @required String pass,
-    @required VoidCallback onSuccess, @required VoidCallback onFail}){
-
+  void signUp(
+      {@required Map<String, dynamic> userData,
+      @required String pass,
+      @required VoidCallback onSuccess,
+      @required VoidCallback onFail}) {
     carregando = true;
     notifyListeners();
 
-    auth.createUserWithEmailAndPassword(
-        email: userData["email"],
-        password: pass
-    ).then((user) async {
+    auth
+        .createUserWithEmailAndPassword(
+            email: userData["email"], password: pass)
+        .then((user) async {
       firebaseUser = user;
 
       await saveUserData(userData);
 
       onSuccess();
       carregando = false;
+      _loadCurrentUser();
       notifyListeners();
-    }).catchError((e){
+    }).catchError((e) {
       onFail();
       carregando = false;
       notifyListeners();
     });
-
   }
 
-  void signIn({@required String email, @required String pass, @required VoidCallback onSuccess, @required VoidCallback onFail}) async{
+  void signIn(
+      {@required String email,
+      @required String pass,
+      @required VoidCallback onSuccess,
+      @required VoidCallback onFail}) async {
     carregando = true;
     notifyListeners();
 
-    auth.signInWithEmailAndPassword(email: email, password: pass).then((user) async{
+    auth
+        .signInWithEmailAndPassword(email: email, password: pass)
+        .then((user) async {
       firebaseUser = user;
 
       await _loadCurrentUser();
@@ -62,52 +70,64 @@ class UserModel extends Model{
       onSuccess();
       carregando = false;
       notifyListeners();
-
-    }).catchError((e){
+    }).catchError((e) {
       onFail();
       carregando = false;
       notifyListeners();
-
     });
   }
 
-  void recoverPass(String email){
+  void recoverPass(String email) {
     auth.sendPasswordResetEmail(email: email);
   }
 
-  bool isLoggedIn(){
+  bool isLoggedIn() {
     return firebaseUser != null;
   }
 
   Future<Null> saveUserData(Map<String, dynamic> userData) async {
     this.userData = userData;
-    await Firestore.instance.collection("users").document(firebaseUser.uid).setData(userData);
+    await Firestore.instance
+        .collection("users")
+        .document(firebaseUser.uid)
+        .setData(userData);
   }
 
-  Future<Null> _loadCurrentUser() async{
-    if(firebaseUser == null)
-      firebaseUser =  await auth.currentUser();
-    if(firebaseUser != null){
-      if(userData["nome"] == null){
-        DocumentSnapshot docUser =
-        await Firestore.instance.collection("users").document(firebaseUser.uid).get();
-        userData = docUser.data;
-        Map<String, dynamic> setID = {
-          "userID": firebaseUser.uid,
-        };
-        Firestore.instance.collection("users").document(firebaseUser.uid).updateData(setID);
+  Future<Null> _loadCurrentUser() async {
+    firebaseUser = null;
 
-        await _setSharedID(firebaseUser.uid);
+    if (firebaseUser == null) {
+
+      firebaseUser = await auth.currentUser();
+
+      await _setSharedID(firebaseUser.uid);
+
+      Map<String, dynamic> setID = {
+        "userID": firebaseUser.uid,
+      };
+      Firestore.instance
+          .collection("users")
+          .document(firebaseUser.uid)
+          .updateData(setID);
+    }
+
+    if (firebaseUser != null) {
+      if (userData["nome"] == null) {
+        DocumentSnapshot docUser = await Firestore.instance
+            .collection("users")
+            .document(firebaseUser.uid)
+            .get();
+        userData = docUser.data;
       }
     }
     notifyListeners();
   }
 
-
   // ignore: missing_return
   Future _setSharedID(String value) {
     SharedPreferencesController sharedPreferencesController =
-    new SharedPreferencesController();
+        new SharedPreferencesController();
+
     sharedPreferencesController.setID(value);
 
     final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();

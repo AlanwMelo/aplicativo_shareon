@@ -1,4 +1,5 @@
 import 'package:aplicativo_shareon/models/usuario_model.dart';
+import 'package:aplicativo_shareon/telas/home.dart';
 import 'package:aplicativo_shareon/telas/tela_login.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
@@ -236,6 +237,7 @@ class _CadastroUsuarioState extends State<CadastroUsuario> {
                                   "debit": 0,
                                   "userAddress": userAddress,
                                   "state": "criado",
+                                  "imgURL": "https://firebasestorage.googleapis.com/v0/b/shareon.appspot.com/o/DefaultIMG%2FDefaultIMG.png?alt=media&token=9fbc8d45-36a1-45cf-a53b-0c0b7c7588a0",
                                 };
 
                                 model.signUp(
@@ -265,7 +267,7 @@ class _CadastroUsuarioState extends State<CadastroUsuario> {
     ));
     Future.delayed(Duration(seconds: 2)).then((_) {
       Navigator.of(context)
-          .pushReplacement(MaterialPageRoute(builder: (context) => Login()));
+          .pushReplacement(MaterialPageRoute(builder: (context) => Home()));
     });
   }
 

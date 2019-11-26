@@ -64,7 +64,7 @@ class _ListaFavoritosBuilderState extends State<ListaFavoritosBuilder> {
 //objetos
 
   _img(String idx) {
-    String productMainIMG = "";
+    String productMainIMG;
 
     return FutureBuilder(
       future: databaseReference
@@ -85,12 +85,16 @@ class _ListaFavoritosBuilderState extends State<ListaFavoritosBuilder> {
               bottomRight: Radius.zero,
               bottomLeft: Radius.circular(16)),
           child: Container(
-            child: Image.network(
-              productMainIMG,
-              height: 150,
-              width: 150,
-              fit: BoxFit.cover,
-            ),
+            height: 150,
+            width: 150,
+            child: productMainIMG == null
+                ? Center(
+                    child: CircularProgressIndicator(),
+                  )
+                : Image.network(
+                    productMainIMG,
+                    fit: BoxFit.cover,
+                  ),
           ),
         );
       },

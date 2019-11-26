@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:page_indicator/page_indicator.dart';
+import 'package:toast/toast.dart';
 
 import '../main.dart';
 
@@ -542,6 +543,7 @@ class _ProdutoSelecionadoState extends State<ProdutoSelecionado> {
           .document(favIDWriter)
           .updateData(setID);
       setState(() {
+        _toast("Adicionado aos favoritos", context);
         getFavoriteStatus();
       });
     } else if (productInFavorites == true) {
@@ -555,7 +557,6 @@ class _ProdutoSelecionadoState extends State<ProdutoSelecionado> {
           snapshot.documents.forEach((f) async {
             Map productData = f.data;
             String favDel = productData["favID"];
-
             _deleter(favDel);
           });
         },
@@ -569,6 +570,7 @@ class _ProdutoSelecionadoState extends State<ProdutoSelecionado> {
         .document(favDel)
         .delete()
         .then(_deleted);
+    _toast("Removido dos favoritos", context);
   }
 
   _deleted(void value) {
@@ -669,4 +671,12 @@ class _ProdutoSelecionadoState extends State<ProdutoSelecionado> {
     );
     solicitationID = reservaAprovada[0].solicitationID;
   }
+
+  _toast(String texto, BuildContext context) {
+    Toast.show("$texto", context,
+        duration: 3,
+        gravity: Toast.BOTTOM,
+        backgroundColor: Colors.black.withOpacity(0.8));
+  }
+
 }

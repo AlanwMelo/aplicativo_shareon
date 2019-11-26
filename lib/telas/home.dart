@@ -60,7 +60,7 @@ class _HomeState extends State<Home> {
   int controllerPointer;
   String userMail = "?";
   String userID = "";
-  String urlImgPerfil = "?";
+  String urlImgPerfil;
   String timer = "";
   String appBarText = "";
   final databaseReference = Firestore.instance;
@@ -87,7 +87,7 @@ class _HomeState extends State<Home> {
     if (userMail == "" ||
         userMail == "?" ||
         userID == "" ||
-        urlImgPerfil == "?") {
+        urlImgPerfil == null) {
       sharedPreferencesController.getEmail().then(_setMail);
       sharedPreferencesController.getName().then(_setName);
       sharedPreferencesController.getID().then(_setUserID);
@@ -671,21 +671,28 @@ class _HomeState extends State<Home> {
   }
 
   _img() {
-    return ConstrainedBox(
-      constraints: BoxConstraints(
-        minWidth: 200,
-        minHeight: 200,
-        maxHeight: 200,
-        maxWidth: 200,
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.all(
-          Radius.circular(180),
+    return Container(
+      child: ConstrainedBox(
+        constraints: BoxConstraints(
+          minWidth: 200,
+          minHeight: 200,
+          maxHeight: 200,
+          maxWidth: 200,
         ),
-        child: Container(
-          child: Image.network(
-            urlImgPerfil,
-            fit: BoxFit.cover,
+        child: ClipRRect(
+          borderRadius: BorderRadius.all(
+            Radius.circular(180),
+          ),
+          child: Container(
+            color: Colors.white,
+            child: urlImgPerfil == null
+                ? Center(
+                    child: CircularProgressIndicator(),
+                  )
+                : Image.network(
+                    urlImgPerfil,
+                    fit: BoxFit.cover,
+                  ),
           ),
         ),
       ),
@@ -886,16 +893,9 @@ class _HomeState extends State<Home> {
   }
 
   void _setIMG(String value) {
-    if (value == "") {
-      setState(() {
-        urlImgPerfil =
-            "https://cdn4.iconfinder.com/data/icons/instagram-ui-twotone/48/Paul-18-512.png";
-      });
-    } else {
-      setState(() {
-        urlImgPerfil = value;
-      });
-    }
+    setState(() {
+      urlImgPerfil = value;
+    });
   }
 
   void _setName(String value) {

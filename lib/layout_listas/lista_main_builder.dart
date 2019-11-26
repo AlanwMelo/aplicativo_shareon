@@ -46,14 +46,14 @@ class _ListaMainBuilderState extends State<ListaMainBuilder> {
   }
 
   _scrollListener() {
-    /*   if (_controller.offset <= _controller.position.maxScrollExtent &&
-        !_controller.position.outOfRange) {
+    if (_controller.offset >= _controller.position.minScrollExtent &&
+        _controller.position.outOfRange) {
       print("cheguei ao topo");
     }
     if (_controller.offset >= _controller.position.maxScrollExtent &&
         !_controller.position.outOfRange) {
       print("voltei ao fim");
-    }*/
+    }
   }
 
   getData() async {
@@ -97,7 +97,7 @@ class _ListaMainBuilderState extends State<ListaMainBuilder> {
 //objetos
 
   _img(String idx) {
-    String productMainIMG = "";
+    String productMainIMG;
 
     return FutureBuilder(
       future: databaseReference
@@ -118,12 +118,16 @@ class _ListaMainBuilderState extends State<ListaMainBuilder> {
               bottomRight: Radius.zero,
               bottomLeft: Radius.circular(16)),
           child: Container(
-            child: Image.network(
-              productMainIMG,
-              height: 150,
-              width: 150,
-              fit: BoxFit.cover,
-            ),
+            height: 150,
+            width: 150,
+            child: productMainIMG == null
+                ? Center(
+                    child: CircularProgressIndicator(),
+                  )
+                : Image.network(
+                    productMainIMG,
+                    fit: BoxFit.cover,
+                  ),
           ),
         );
       },

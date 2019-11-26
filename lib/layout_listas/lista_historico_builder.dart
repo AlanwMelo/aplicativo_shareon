@@ -18,7 +18,8 @@ class _ProductsHist {
   String status;
   Timestamp endDate;
 
-  _ProductsHist(this.productID, this.name, this.preco, this.media, this.status, this.endDate);
+  _ProductsHist(this.productID, this.name, this.preco, this.media, this.status,
+      this.endDate);
 }
 
 class _ListaHistoricoBuilderState extends State<ListaHistoricoBuilder> {
@@ -48,8 +49,10 @@ class _ListaHistoricoBuilderState extends State<ListaHistoricoBuilder> {
         .then((QuerySnapshot snapshot) {
       snapshot.documents.forEach((f) {
         Map productData = f.data;
-        if (productData["status"] == "concluido" || productData["status"] == "cancelada"){
-          listHelper(productData["productID"], productData["status"], productData["finalEndDate"]);
+        if (productData["status"] == "concluido" ||
+            productData["status"] == "cancelada") {
+          listHelper(productData["productID"], productData["status"],
+              productData["finalEndDate"]);
         }
       });
     });
@@ -69,7 +72,7 @@ class _ListaHistoricoBuilderState extends State<ListaHistoricoBuilder> {
 //objetos
 
   _img(String idx) {
-    String productMainIMG = "";
+    String productMainIMG;
 
     return FutureBuilder(
       future: databaseReference
@@ -90,12 +93,16 @@ class _ListaHistoricoBuilderState extends State<ListaHistoricoBuilder> {
               bottomRight: Radius.zero,
               bottomLeft: Radius.circular(16)),
           child: Container(
-            child: Image.network(
-              productMainIMG,
-              height: 150,
-              width: 150,
-              fit: BoxFit.cover,
-            ),
+            height: 150,
+            width: 150,
+            child: productMainIMG == null
+                ? Center(
+                    child: CircularProgressIndicator(),
+                  )
+                : Image.network(
+                    productMainIMG,
+                    fit: BoxFit.cover,
+                  ),
           ),
         );
       },
@@ -147,17 +154,11 @@ class _ListaHistoricoBuilderState extends State<ListaHistoricoBuilder> {
   }
 
   _textData(Timestamp idx) {
-    int convertedDay = idx
-        .toDate()
-        .day;
-    int convertedMonth = idx
-        .toDate()
-        .month;
-    int convertedYear = idx
-        .toDate()
-        .year;
-    String convertedTS = "${convertedDay.toString().padLeft(2, "0")}/${convertedMonth.toString().padLeft(2, "0")}/$convertedYear";
-
+    int convertedDay = idx.toDate().day;
+    int convertedMonth = idx.toDate().month;
+    int convertedYear = idx.toDate().year;
+    String convertedTS =
+        "${convertedDay.toString().padLeft(2, "0")}/${convertedMonth.toString().padLeft(2, "0")}/$convertedYear";
 
     return Text(
       convertedTS,

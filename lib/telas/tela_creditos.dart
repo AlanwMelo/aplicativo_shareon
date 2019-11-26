@@ -14,12 +14,11 @@ class _CreditosState extends State<Creditos> {
   SharedPreferencesController sharedPreferencesController =
       new SharedPreferencesController();
   final databaseReference = Firestore.instance;
-  double saldo = 0;
+  double saldo;
   String userID = "";
 
   @override
   void initState() {
-    
     super.initState();
   }
 
@@ -138,14 +137,21 @@ class _CreditosState extends State<Creditos> {
               ),
               Container(
                 margin: EdgeInsets.only(top: 8, left: 8, right: 8),
-                child: Text(
-                  "R\$ ${saldo.toStringAsFixed(2)}",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 60,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
+                child: saldo == null
+                    ? Center(
+                        child: CircularProgressIndicator(
+                          valueColor:
+                              new AlwaysStoppedAnimation<Color>(Colors.white),
+                        ),
+                      )
+                    : Text(
+                        "R\$ ${saldo.toStringAsFixed(2)}",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 60,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
               ),
               Container(
                 margin: EdgeInsets.only(top: 32, left: 8, right: 8),
