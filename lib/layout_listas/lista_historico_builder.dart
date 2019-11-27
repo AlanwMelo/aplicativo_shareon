@@ -137,12 +137,15 @@ class _ListaHistoricoBuilderState extends State<ListaHistoricoBuilder> {
     } else {
       color = Colors.redAccent;
     }
-    return Text(
-      idx,
-      style: TextStyle(
-        fontWeight: FontWeight.bold,
-        fontSize: 24,
-        color: color,
+    return Expanded(
+      child: Text(
+        idx,
+        overflow: TextOverflow.ellipsis,
+        style: TextStyle(
+          fontWeight: FontWeight.bold,
+          fontSize: 24,
+          color: color,
+        ),
       ),
     );
   }

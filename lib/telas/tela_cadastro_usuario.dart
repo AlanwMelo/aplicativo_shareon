@@ -229,6 +229,8 @@ class _CadastroUsuarioState extends State<CadastroUsuario> {
                                 _cpfEmUso(context);
                               } else {
                                 double debit = 0;
+
+
                                 Map<String, dynamic> userData = {
                                   "nome": nomeController.text,
                                   "email": emailController.text,

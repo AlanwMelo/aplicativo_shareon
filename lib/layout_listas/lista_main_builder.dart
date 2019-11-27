@@ -91,7 +91,6 @@ class _ListaMainBuilderState extends State<ListaMainBuilder> {
 
   @override
   Widget build(BuildContext context) {
-    print("witf ${listIsEmpty} ${_listaMain.length}");
     return _listaMain.length == 0 && listIsEmpty == false
         ? Center(
             child: CircularProgressIndicator(),
@@ -157,12 +156,15 @@ class _ListaMainBuilderState extends State<ListaMainBuilder> {
   }
 
   _textNome(String idx) {
-    return Text(
-      idx,
-      style: TextStyle(
-        fontWeight: FontWeight.bold,
-        fontSize: 24,
-        color: Colors.indigoAccent,
+    return Expanded(
+      child: Text(
+        idx,
+        overflow: TextOverflow.ellipsis,
+        style: TextStyle(
+          fontWeight: FontWeight.bold,
+          fontSize: 24,
+          color: Colors.indigoAccent,
+        ),
       ),
     );
   }

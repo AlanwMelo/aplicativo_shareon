@@ -60,8 +60,8 @@ class _TelaReservarState extends State<TelaReservar> {
 
   // Strings
 
-  double valordoDoProduto = 0;
-  double valorEstimado = 0;
+  var valordoDoProduto;
+  var valorEstimado;
   String calcValorProdutoConversor = 0.toStringAsFixed(2);
 
   @override
@@ -714,15 +714,15 @@ class _TelaReservarState extends State<TelaReservar> {
     }
   }
 
-  _valorEstimado(double valordoProduto, DateTime dataInicio, DateTime dataFim) {
+  _valorEstimado(var valordoProduto, DateTime dataInicio, DateTime dataFim) {
     DateTime retirada = dataInicio;
     DateTime devolucao = dataFim;
     duracao = (devolucao.difference(retirada).inMinutes);
     valordoProduto = valordoDoProduto / (60);
-    double calcValorProduto = duracao.toDouble() * valordoProduto;
+    var calcValorProduto = duracao.toDouble() * valordoProduto;
     getTimeString(duracao);
     calcValorProdutoConversor = calcValorProduto.toStringAsFixed(2);
-    valorEstimado = calcValorProduto;
+    valorEstimado = calcValorProduto as int;
   }
 
   _horarioConfirmado(String inicioFim, TimeOfDay time) {
@@ -878,8 +878,8 @@ class _TelaReservarState extends State<TelaReservar> {
             .then((QuerySnapshot snapshot) {
           snapshot.documents.forEach((f) {
             Map productData = f.data;
-            valordoDoProduto = double.parse(productData["price"]);
-            valorEstimado = double.parse(productData["price"]);
+            valordoDoProduto = productData["price"];
+            valorEstimado = productData["price"];
             productName = productData["name"];
             productDescription = productData["description"];
             productMedia = productData["media"];

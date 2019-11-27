@@ -131,12 +131,15 @@ class _ListaMeusProdutosBuilderState extends State<ListaMeusProdutosBuilder> {
   }
 
   _textNome(String idx) {
-    return Text(
-      idx,
-      style: TextStyle(
-        fontWeight: FontWeight.bold,
-        fontSize: 24,
-        color: Colors.indigoAccent,
+    return Expanded(
+      child: Text(
+        idx,
+        overflow: TextOverflow.ellipsis,
+        style: TextStyle(
+          fontWeight: FontWeight.bold,
+          fontSize: 24,
+          color: Colors.indigoAccent,
+        ),
       ),
     );
   }

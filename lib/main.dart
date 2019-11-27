@@ -28,6 +28,7 @@ class SharedPreferencesController {
   final double lat = 0;
   final double lng = 0;
   final bool emailAuth = false;
+  final String userAddress = "";
 
   //GETTERS
   Future<GeoPoint> getGeo() async {

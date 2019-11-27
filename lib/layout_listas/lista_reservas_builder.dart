@@ -147,12 +147,15 @@ class _ListaReservasBuilderState extends State<ListaReservasBuilder> {
     if (status == "aprovada") {
       color = Colors.indigoAccent;
     }
-    return Text(
-      idx,
-      style: TextStyle(
-        fontWeight: FontWeight.bold,
-        fontSize: 24,
-        color: color,
+    return Expanded(
+      child: Text(
+        idx,
+        overflow: TextOverflow.ellipsis,
+        style: TextStyle(
+          fontWeight: FontWeight.bold,
+          fontSize: 24,
+          color: color,
+        ),
       ),
     );
   }

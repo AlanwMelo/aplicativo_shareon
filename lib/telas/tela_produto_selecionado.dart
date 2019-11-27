@@ -39,7 +39,7 @@ class _ProdutoSelecionadoState extends State<ProdutoSelecionado> {
   String favoriteController = "";
   String productName = "";
   String productMedia = "";
-  var productPrice = 0;
+  var productPrice;
   String productOwner = "";
   String productOwnerID = "";
   String productDescription = "";
