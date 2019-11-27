@@ -8,11 +8,13 @@ import 'package:page_indicator/page_indicator.dart';
 import 'package:toast/toast.dart';
 
 import '../main.dart';
+import 'home.dart';
 
 class ProdutoSelecionado extends StatefulWidget {
   final String productID;
+  final int caller;
 
-  ProdutoSelecionado({@required this.productID});
+  ProdutoSelecionado({@required this.productID, this.caller});
 
   @override
   _ProdutoSelecionadoState createState() => _ProdutoSelecionadoState();
@@ -27,7 +29,7 @@ class _ReservaProxima {
 
 class _ProdutoSelecionadoState extends State<ProdutoSelecionado> {
   SharedPreferencesController sharedPreferencesController =
-      new SharedPreferencesController();
+  new SharedPreferencesController();
   final databaseReference = Firestore.instance;
   bool productInFavorites = false;
   bool myProduct = false;
@@ -94,9 +96,9 @@ class _ProdutoSelecionadoState extends State<ProdutoSelecionado> {
         .where("ID", isEqualTo: (widget.productID))
         .getDocuments()
         .then(
-      (QuerySnapshot snapshot) {
+          (QuerySnapshot snapshot) {
         snapshot.documents.forEach(
-          (f) {
+              (f) {
             Map productData = f.data;
             setState(() {
               productIMG = productData["imgs"];
@@ -121,9 +123,9 @@ class _ProdutoSelecionadoState extends State<ProdutoSelecionado> {
         .where("productID", isEqualTo: (widget.productID))
         .getDocuments()
         .then(
-      (QuerySnapshot snapshot) {
+          (QuerySnapshot snapshot) {
         snapshot.documents.forEach(
-          (f) {
+              (f) {
             Map productIMG = f.data;
             imgID = productIMG["productMainIMG"];
             if (imgID != "") {
@@ -180,7 +182,7 @@ class _ProdutoSelecionadoState extends State<ProdutoSelecionado> {
         .where("userID", isEqualTo: productOwnerID)
         .getDocuments()
         .then(
-      (QuerySnapshot snapshot) {
+          (QuerySnapshot snapshot) {
         snapshot.documents.forEach((f) {
           Map userData = f.data;
           setState(() {
@@ -192,84 +194,98 @@ class _ProdutoSelecionadoState extends State<ProdutoSelecionado> {
   }
 
   _produtoSelecionado(BuildContext context) {
-    return Scaffold(
-      appBar: shareonAppbar(context, ""),
-      body: SizedBox.expand(
-        child: Container(
-          color: Colors.indigoAccent,
-          child: SingleChildScrollView(
-            child: Container(
-              child: Center(
-                child: Container(
-                  child: Column(
-                    children: <Widget>[
-                      Container(
-                        height: 300,
-                        color: Colors.white,
-                        child: PageIndicatorContainer(
-                          length: listaIMGS.length,
-                          indicatorSpace: 10.0,
-                          padding: const EdgeInsets.all(10),
-                          indicatorColor: Colors.white.withOpacity(0.7),
-                          indicatorSelectorColor: Colors.blue,
-                          shape: IndicatorShape.circle(size: 10),
-                          child: exibePGV(),
+    return WillPopScope(
+      onWillPop: () async {
+        if (widget.caller != null) {
+          return Navigator.push(context,
+              MaterialPageRoute(builder: (BuildContext context) {
+                return Home(optionalControllerPointer: widget.caller);
+              }));
+        }
+        else {
+          return true;
+        }
+      },
+      child: Scaffold(
+        appBar: shareonAppbar(context, ""),
+        body: SizedBox.expand(
+          child: Container(
+            color: Colors.indigoAccent,
+            child: SingleChildScrollView(
+              child: Container(
+                child: Center(
+                  child: Container(
+                    child: Column(
+                      children: <Widget>[
+                        Container(
+                          height: 300,
+                          color: Colors.white,
+                          child: PageIndicatorContainer(
+                            length: listaIMGS.length,
+                            indicatorSpace: 10.0,
+                            padding: const EdgeInsets.all(10),
+                            indicatorColor: Colors.white.withOpacity(0.7),
+                            indicatorSelectorColor: Colors.blue,
+                            shape: IndicatorShape.circle(size: 10),
+                            child: exibePGV(),
+                          ),
                         ),
-                      ),
-                      Container(
-                        margin: EdgeInsets.only(top: 8),
-                        child: _text(productName, titulo: true),
-                      ),
-                      Container(
-                          width: 70,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: <Widget>[
-                              _text(productMedia),
-                              _iconEstrela(),
-                            ],
-                          )),
-                      Container(
-                        margin: EdgeInsets.only(top: 8, left: 8, right: 8),
-                        child: _text("Produto de: $productOwner"),
-                      ),
-                      Container(
-                        margin: EdgeInsets.only(top: 8, bottom: 8),
-                        child: _text("Descrição:"),
-                      ),
-                      ConstrainedBox(
-                        constraints: BoxConstraints(
-                          minHeight: 180,
+                        Container(
+                          margin: EdgeInsets.only(top: 8),
+                          child: _text(productName, titulo: true),
                         ),
-                        child: Container(
-                          margin: EdgeInsets.all(8),
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.all(Radius.circular(16)),
-                            child: Container(
-                              color: Colors.white,
-                              width: 1000,
-                              padding: EdgeInsets.all(8),
-                              child: _text(productDescription, resumo: true),
+                        Container(
+                            width: 70,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: <Widget>[
+                                _text(productMedia),
+                                _iconEstrela(),
+                              ],
+                            )),
+                        Container(
+                          margin: EdgeInsets.only(top: 8, left: 8, right: 8),
+                          child: _text("Produto de: $productOwner"),
+                        ),
+                        Container(
+                          margin: EdgeInsets.only(top: 8, bottom: 8),
+                          child: _text("Descrição:"),
+                        ),
+                        ConstrainedBox(
+                          constraints: BoxConstraints(
+                            minHeight: 180,
+                          ),
+                          child: Container(
+                            margin: EdgeInsets.all(8),
+                            child: ClipRRect(
+                              borderRadius:
+                              BorderRadius.all(Radius.circular(16)),
+                              child: Container(
+                                color: Colors.white,
+                                width: 1000,
+                                padding: EdgeInsets.all(8),
+                                child: _text(productDescription, resumo: true),
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                      Container(
-                        margin: EdgeInsets.only(bottom: 8),
-                        child: RaisedButton(
-                          color: Colors.white,
-                          onPressed: () {
-                            _setFavoriteState();
-                          },
-                          child: _text(favoriteController, resumo: true),
+                        Container(
+                          margin: EdgeInsets.only(bottom: 8),
+                          child: RaisedButton(
+                            color: Colors.white,
+                            onPressed: () {
+                              _setFavoriteState();
+                            },
+                            child: _text(favoriteController, resumo: true),
+                          ),
                         ),
-                      ),
-                      Container(
-                        width: 400,
-                        margin: EdgeInsets.only(bottom: 8, right: 8, left: 8),
-                        child: prodDestination(),
-                      ),
-                    ],
+                        Container(
+                          width: 400,
+                          margin: EdgeInsets.only(bottom: 8, right: 8, left: 8),
+                          child: prodDestination(),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -500,9 +516,9 @@ class _ProdutoSelecionadoState extends State<ProdutoSelecionado> {
         .where("userID", isEqualTo: userID)
         .getDocuments()
         .then(
-      (QuerySnapshot snapshot) {
+          (QuerySnapshot snapshot) {
         snapshot.documents.forEach(
-          (f) {
+              (f) {
             if (f.data.isNotEmpty) {
               setState(() {
                 productInFavorites = true;
@@ -514,7 +530,7 @@ class _ProdutoSelecionadoState extends State<ProdutoSelecionado> {
     );
   }
 
-   _setID(String value) {
+  _setID(String value) {
     setState(() {
       userID = value;
       getFavoriteStatus();
@@ -533,7 +549,7 @@ class _ProdutoSelecionadoState extends State<ProdutoSelecionado> {
 
     if (productInFavorites == false) {
       final newFav =
-          await databaseReference.collection("favoriteProducts").add(favData);
+      await databaseReference.collection("favoriteProducts").add(favData);
       String favIDWriter = newFav.documentID;
       Map<String, dynamic> setID = {
         "favID": favIDWriter,
@@ -553,7 +569,7 @@ class _ProdutoSelecionadoState extends State<ProdutoSelecionado> {
           .where("userID", isEqualTo: userID)
           .getDocuments()
           .then(
-        (QuerySnapshot snapshot) {
+            (QuerySnapshot snapshot) {
           snapshot.documents.forEach((f) async {
             Map productData = f.data;
             String favDel = productData["favID"];
@@ -568,22 +584,22 @@ class _ProdutoSelecionadoState extends State<ProdutoSelecionado> {
     await databaseReference
         .collection("favoriteProducts")
         .document(favDel)
-        .delete()
-        .then(_deleted);
-    _toast("Removido dos favoritos", context);
-  }
+        .delete();
 
-  _deleted(void value) {
     setState(() {
       productInFavorites = false;
       getFavoriteStatus();
+      _toast("Removido dos favoritos", context);
     });
   }
 
   prodDestination() {
     if (reservaAprovada.length > 0) {
-      int timeNow = Timestamp.fromDate(DateTime.now()).millisecondsSinceEpoch;
-      int nearestTime = reservaAprovada[0].programedInitDate.millisecondsSinceEpoch;
+      int timeNow = Timestamp
+          .fromDate(DateTime.now())
+          .millisecondsSinceEpoch;
+      int nearestTime =
+          reservaAprovada[0].programedInitDate.millisecondsSinceEpoch;
 
       if ((nearestTime - timeNow) <= 3600000) {
         return RaisedButton(
@@ -592,7 +608,9 @@ class _ProdutoSelecionadoState extends State<ProdutoSelecionado> {
             Navigator.push(
               context,
               MaterialPageRoute(builder: (BuildContext context) {
-                return TelaReservaProxima(solicitationID: solicitationID,);
+                return TelaReservaProxima(
+                  solicitationID: solicitationID,
+                );
               }),
             );
           },
@@ -632,9 +650,9 @@ class _ProdutoSelecionadoState extends State<ProdutoSelecionado> {
         .where("ownerID", isEqualTo: userID)
         .getDocuments()
         .then(
-      (QuerySnapshot snapshot) {
+          (QuerySnapshot snapshot) {
         snapshot.documents.forEach(
-          (f) {
+              (f) {
             if (f.data.isNotEmpty) {
               setState(() {
                 myProduct = true;
@@ -652,14 +670,18 @@ class _ProdutoSelecionadoState extends State<ProdutoSelecionado> {
         .where("requesterID", isEqualTo: userID)
         .where("productID", isEqualTo: widget.productID)
         .getDocuments()
-        .then((QuerySnapshot snapshot) {
+        .then(
+          (QuerySnapshot snapshot) {
         snapshot.documents.forEach(
-          (f) {
+              (f) {
             Map productData = f.data;
             if (productData["status"] == "aprovada") {
               setState(() {
-                reservaAprovada.add(new _ReservaProxima(productData["solicitationID"], productData["programedInitDate"]));
-                reservaAprovada.sort((a, b) => a.programedInitDate.compareTo(b.programedInitDate));
+                reservaAprovada.add(new _ReservaProxima(
+                    productData["solicitationID"],
+                    productData["programedInitDate"]));
+                reservaAprovada.sort((a, b) =>
+                    a.programedInitDate.compareTo(b.programedInitDate));
               });
             }
             if (productData["status"] == "em andamento") {
@@ -678,5 +700,4 @@ class _ProdutoSelecionadoState extends State<ProdutoSelecionado> {
         gravity: Toast.BOTTOM,
         backgroundColor: Colors.black.withOpacity(0.8));
   }
-
 }

@@ -66,7 +66,11 @@ class _ListaReservasBuilderState extends State<ListaReservasBuilder> {
 
   @override
   Widget build(BuildContext context) {
-    return listGen(_listaReservas);
+    return _listaReservas.length == 0
+        ? Center(
+            child: CircularProgressIndicator(),
+          )
+        : listGen(_listaReservas);
   }
 
   _onClick(BuildContext context, String idx) {
@@ -99,14 +103,14 @@ class _ListaReservasBuilderState extends State<ListaReservasBuilder> {
               bottomRight: Radius.zero,
               bottomLeft: Radius.circular(16)),
           child: Container(
+            height: 150,
+            width: 150,
             child: productMainIMG == null
                 ? Center(
                     child: CircularProgressIndicator(),
                   )
                 : Image.network(
                     productMainIMG,
-                    height: 150,
-                    width: 150,
                     fit: BoxFit.cover,
                   ),
           ),

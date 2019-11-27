@@ -61,7 +61,11 @@ class _ListaMeusProdutosBuilderState extends State<ListaMeusProdutosBuilder> {
 
   @override
   Widget build(BuildContext context) {
-    return listGen(_listaMeusProdutos);
+    return _listaMeusProdutos.length == 0
+        ? Center(
+            child: CircularProgressIndicator(),
+          )
+        : listGen(_listaMeusProdutos);
   }
 
   _onClick(BuildContext context, String idx) {
@@ -94,14 +98,14 @@ class _ListaMeusProdutosBuilderState extends State<ListaMeusProdutosBuilder> {
               bottomRight: Radius.zero,
               bottomLeft: Radius.circular(16)),
           child: Container(
+            height: 150,
+            width: 150,
             child: productMainIMG == null
                 ? Center(
                     child: CircularProgressIndicator(),
                   )
                 : Image.network(
                     productMainIMG,
-                    height: 150,
-                    width: 150,
                     fit: BoxFit.cover,
                   ),
           ),

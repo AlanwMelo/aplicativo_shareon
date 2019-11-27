@@ -22,39 +22,59 @@ homeFavoritos() {
       child: Column(
         children: <Widget>[
           Container(
-            padding: EdgeInsets.all(10),
-            height: 50,
             color: Colors.indigoAccent,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            child: Column(
               children: <Widget>[
                 Container(
-                  child: Expanded(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        _icPesquisar(),
-                      ],
-                    ),
-                  ),
-                ),
-                Container(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
+                  padding: EdgeInsets.only(top: 10, left: 10, right: 10),
+                  height: 50,
+                  color: Colors.indigoAccent,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: <Widget>[
-                      _text("Favoritos"),
+                      Container(
+                        child: Expanded(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              _icPesquisar(),
+                            ],
+                          ),
+                        ),
+                      ),
+                      Container(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            _text("Favoritos"),
+                          ],
+                        ),
+                      ),
+                      Container(
+                        child: Expanded(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: <Widget>[
+                              _icFiltros(),
+                            ],
+                          ),
+                        ),
+                      ),
                     ],
                   ),
                 ),
                 Container(
-                  child: Expanded(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: <Widget>[
-                        _icFiltros(),
-                      ],
+                  margin: EdgeInsets.only(bottom: 8),
+                  child: Center(
+                    child: Text(
+                      "Para excluir um favorito mantenha-o pressionado",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 14,
+                        fontWeight: FontWeight.normal,
+                      ),
                     ),
                   ),
                 ),

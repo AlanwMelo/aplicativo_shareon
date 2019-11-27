@@ -60,7 +60,11 @@ class _ListaHistoricoBuilderState extends State<ListaHistoricoBuilder> {
 
   @override
   Widget build(BuildContext context) {
-    return listGen(_listaHistorico);
+    return _listaHistorico.length == 0
+        ? Center(
+            child: CircularProgressIndicator(),
+          )
+        : listGen(_listaHistorico);
   }
 
   _onClick(BuildContext context, String idx) {

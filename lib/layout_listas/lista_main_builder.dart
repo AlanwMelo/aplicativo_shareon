@@ -85,7 +85,11 @@ class _ListaMainBuilderState extends State<ListaMainBuilder> {
 
   @override
   Widget build(BuildContext context) {
-    return listGen(_listaMain);
+    return _listaMain.length == 0
+        ? Center(
+            child: CircularProgressIndicator(),
+          )
+        : listGen(_listaMain);
   }
 
   _onClick(BuildContext context, String idx) {
