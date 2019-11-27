@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:aplicativo_shareon/telas/home.dart';
 import 'package:aplicativo_shareon/utils/image_source_sheet.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -38,6 +39,7 @@ class _CadastroProdutoState extends State<CadastroProduto> {
   File _img4;
   File _img5;
   int btPointer;
+  bool loading = false;
 
   //int btPointer = 1 Materiais Esportivos / 2 Livros / 3 Escritorio / 4 Eletrodomesticos
 
@@ -50,7 +52,13 @@ class _CadastroProdutoState extends State<CadastroProduto> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: homeCadastroProduto(),
+      body: loading == false
+          ? homeCadastroProduto()
+          : Container(
+              child: Center(
+                child: CircularProgressIndicator(),
+              ),
+            ),
     );
   }
 
@@ -312,8 +320,15 @@ class _CadastroProdutoState extends State<CadastroProduto> {
                                       _img5 = null;
                                     }
                                   }
-                                  if (camposLivros.currentState.validate()) {
-                                    _cadastraLivro();
+                                  if (btPointer == 2) {
+                                    if (camposLivros.currentState.validate()) {
+                                      _cadastraLivro().then((value) =>
+                                          Navigator.push(context,
+                                              MaterialPageRoute(builder:
+                                                  (BuildContext context) {
+                                            return Home();
+                                          })));
+                                    }
                                   }
                                 }
                               },
@@ -576,7 +591,12 @@ class _CadastroProdutoState extends State<CadastroProduto> {
         backgroundColor: Colors.black.withOpacity(0.8));
   }
 
-  _cadastraLivro() async {
+  Future _cadastraLivro() async {
+
+    setState(() {
+      loading = true;
+    });
+
     String adStatus = "em provisionamento";
     Timestamp insertioDate = Timestamp.fromDate(DateTime.now());
     Map<String, dynamic> cadastraProduto = {
@@ -660,8 +680,12 @@ class _CadastroProdutoState extends State<CadastroProduto> {
           .collection("products")
           .document(idWriter)
           .updateData(setStatus);
-
     }
+    _toast("Produto cadastrado", context);
+
+    setState(() {
+      loading = false;
+    });
   }
 
   _icGPS() {

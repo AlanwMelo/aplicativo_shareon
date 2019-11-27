@@ -228,11 +228,12 @@ class _CadastroUsuarioState extends State<CadastroUsuario> {
                               } else if (cpfInUse == true) {
                                 _cpfEmUso(context);
                               } else {
+                                double debit = 0;
                                 Map<String, dynamic> userData = {
                                   "nome": nomeController.text,
                                   "email": emailController.text,
                                   "cpf": cpf,
-                                  "debit": 0,
+                                  "debit": debit,
                                   "userAddressLatLng": userAddressLatLng,
                                   "userAddress": stringUserAddress,
                                   "authenticated": false,
@@ -594,7 +595,7 @@ class _CadastroUsuarioState extends State<CadastroUsuario> {
                   onTap: () => null,
                   child: Container(
                     color: Colors.white,
-                    height: 250,
+                    height: 260,
                     width: 300,
                     child: Container(
                       child: Column(
@@ -617,8 +618,8 @@ class _CadastroUsuarioState extends State<CadastroUsuario> {
                           Container(
                             margin: EdgeInsets.all(8),
                             child: _textConfirmacao(
-                                "Um email de autenticação será enviado ao email informado. Por favor siga os passos"
-                                " descritos nele para poder utilizar todas as funcionalidades do APP",
+                                "Um email de autenticação será enviado ao email informado. \n\nPor favor siga os passos"
+                                "descritos nele para poder utilizar todas as funcionalidades do APP",
                                 center: true),
                           ),
                           Expanded(
