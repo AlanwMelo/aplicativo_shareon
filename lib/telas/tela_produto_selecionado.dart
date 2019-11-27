@@ -29,7 +29,7 @@ class _ReservaProxima {
 
 class _ProdutoSelecionadoState extends State<ProdutoSelecionado> {
   SharedPreferencesController sharedPreferencesController =
-  new SharedPreferencesController();
+      new SharedPreferencesController();
   final databaseReference = Firestore.instance;
   bool productInFavorites = false;
   bool myProduct = false;
@@ -96,9 +96,9 @@ class _ProdutoSelecionadoState extends State<ProdutoSelecionado> {
         .where("ID", isEqualTo: (widget.productID))
         .getDocuments()
         .then(
-          (QuerySnapshot snapshot) {
+      (QuerySnapshot snapshot) {
         snapshot.documents.forEach(
-              (f) {
+          (f) {
             Map productData = f.data;
             setState(() {
               productIMG = productData["imgs"];
@@ -123,9 +123,9 @@ class _ProdutoSelecionadoState extends State<ProdutoSelecionado> {
         .where("productID", isEqualTo: (widget.productID))
         .getDocuments()
         .then(
-          (QuerySnapshot snapshot) {
+      (QuerySnapshot snapshot) {
         snapshot.documents.forEach(
-              (f) {
+          (f) {
             Map productIMG = f.data;
             imgID = productIMG["productMainIMG"];
             if (imgID != "") {
@@ -182,7 +182,7 @@ class _ProdutoSelecionadoState extends State<ProdutoSelecionado> {
         .where("userID", isEqualTo: productOwnerID)
         .getDocuments()
         .then(
-          (QuerySnapshot snapshot) {
+      (QuerySnapshot snapshot) {
         snapshot.documents.forEach((f) {
           Map userData = f.data;
           setState(() {
@@ -199,10 +199,9 @@ class _ProdutoSelecionadoState extends State<ProdutoSelecionado> {
         if (widget.caller != null) {
           return Navigator.push(context,
               MaterialPageRoute(builder: (BuildContext context) {
-                return Home(optionalControllerPointer: widget.caller);
-              }));
-        }
-        else {
+            return Home(optionalControllerPointer: widget.caller);
+          }));
+        } else {
           return true;
         }
       },
@@ -259,7 +258,7 @@ class _ProdutoSelecionadoState extends State<ProdutoSelecionado> {
                             margin: EdgeInsets.all(8),
                             child: ClipRRect(
                               borderRadius:
-                              BorderRadius.all(Radius.circular(16)),
+                                  BorderRadius.all(Radius.circular(16)),
                               child: Container(
                                 color: Colors.white,
                                 width: 1000,
@@ -516,9 +515,9 @@ class _ProdutoSelecionadoState extends State<ProdutoSelecionado> {
         .where("userID", isEqualTo: userID)
         .getDocuments()
         .then(
-          (QuerySnapshot snapshot) {
+      (QuerySnapshot snapshot) {
         snapshot.documents.forEach(
-              (f) {
+          (f) {
             if (f.data.isNotEmpty) {
               setState(() {
                 productInFavorites = true;
@@ -549,7 +548,7 @@ class _ProdutoSelecionadoState extends State<ProdutoSelecionado> {
 
     if (productInFavorites == false) {
       final newFav =
-      await databaseReference.collection("favoriteProducts").add(favData);
+          await databaseReference.collection("favoriteProducts").add(favData);
       String favIDWriter = newFav.documentID;
       Map<String, dynamic> setID = {
         "favID": favIDWriter,
@@ -569,7 +568,7 @@ class _ProdutoSelecionadoState extends State<ProdutoSelecionado> {
           .where("userID", isEqualTo: userID)
           .getDocuments()
           .then(
-            (QuerySnapshot snapshot) {
+        (QuerySnapshot snapshot) {
           snapshot.documents.forEach((f) async {
             Map productData = f.data;
             String favDel = productData["favID"];
@@ -595,9 +594,7 @@ class _ProdutoSelecionadoState extends State<ProdutoSelecionado> {
 
   prodDestination() {
     if (reservaAprovada.length > 0) {
-      int timeNow = Timestamp
-          .fromDate(DateTime.now())
-          .millisecondsSinceEpoch;
+      int timeNow = Timestamp.fromDate(DateTime.now()).millisecondsSinceEpoch;
       int nearestTime =
           reservaAprovada[0].programedInitDate.millisecondsSinceEpoch;
 
@@ -650,9 +647,9 @@ class _ProdutoSelecionadoState extends State<ProdutoSelecionado> {
         .where("ownerID", isEqualTo: userID)
         .getDocuments()
         .then(
-          (QuerySnapshot snapshot) {
+      (QuerySnapshot snapshot) {
         snapshot.documents.forEach(
-              (f) {
+          (f) {
             if (f.data.isNotEmpty) {
               setState(() {
                 myProduct = true;
@@ -671,9 +668,9 @@ class _ProdutoSelecionadoState extends State<ProdutoSelecionado> {
         .where("productID", isEqualTo: widget.productID)
         .getDocuments()
         .then(
-          (QuerySnapshot snapshot) {
+      (QuerySnapshot snapshot) {
         snapshot.documents.forEach(
-              (f) {
+          (f) {
             Map productData = f.data;
             if (productData["status"] == "aprovada") {
               setState(() {
@@ -691,7 +688,9 @@ class _ProdutoSelecionadoState extends State<ProdutoSelecionado> {
         );
       },
     );
-    solicitationID = reservaAprovada[0].solicitationID;
+    if (reservaAprovada.length > 0) {
+      solicitationID = reservaAprovada[0].solicitationID;
+    }
   }
 
   _toast(String texto, BuildContext context) {

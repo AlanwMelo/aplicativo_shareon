@@ -32,6 +32,7 @@ class _ListaReservasBuilderState extends State<ListaReservasBuilder> {
   String userID = "";
   int counter = 0;
   List<_Reservas> _listaReservas = [];
+  bool listIsEmpty = false;
 
   @override
   void initState() {
@@ -48,6 +49,11 @@ class _ListaReservasBuilderState extends State<ListaReservasBuilder> {
         .where("requesterID", isEqualTo: userID)
         .getDocuments()
         .then((QuerySnapshot snapshot) {
+      if (snapshot.documents.length == 0) {
+        setState(() {
+          listIsEmpty = true;
+        });
+      }
       snapshot.documents.forEach((f) {
         Map productData = f.data;
         if (productData["status"] == "em andamento" ||
@@ -66,11 +72,22 @@ class _ListaReservasBuilderState extends State<ListaReservasBuilder> {
 
   @override
   Widget build(BuildContext context) {
-    return _listaReservas.length == 0
+    return _listaReservas.length == 0 && listIsEmpty == false
         ? Center(
             child: CircularProgressIndicator(),
           )
-        : listGen(_listaReservas);
+        : listIsEmpty == true
+            ? Center(
+                child: Text(
+                  "Você ainda não possui nenhuma reserva",
+                  style: TextStyle(
+                    color: Colors.indigoAccent,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              )
+            : listGen(_listaReservas);
   }
 
   _onClick(BuildContext context, String idx) {

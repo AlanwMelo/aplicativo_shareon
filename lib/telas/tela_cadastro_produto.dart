@@ -119,7 +119,7 @@ class _CadastroProdutoState extends State<CadastroProduto> {
                                   _icGPS(),
                                   Container(
                                     margin: EdgeInsets.only(left: 8),
-                                    width: 300,
+                                    width: 280,
                                     child: Text(
                                       productAddress,
                                       textAlign: TextAlign.center,

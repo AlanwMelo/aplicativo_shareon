@@ -28,6 +28,7 @@ class _ListaFavoritosBuilderState extends State<ListaFavoritosBuilder> {
   String userID = "";
   int counter = 0;
   List<_FavoritesData> _listaFav = [];
+  bool listIsEmpty = false;
 
   @override
   void initState() {
@@ -43,6 +44,11 @@ class _ListaFavoritosBuilderState extends State<ListaFavoritosBuilder> {
         .where("userID", isEqualTo: userID)
         .getDocuments()
         .then((QuerySnapshot snapshot) {
+      if (snapshot.documents.length == 0) {
+        setState(() {
+          listIsEmpty = true;
+        });
+      }
       snapshot.documents.forEach((f) {
         Map productData = f.data;
         listHelper(productData["productID"], productData["addDate"]);
@@ -52,11 +58,22 @@ class _ListaFavoritosBuilderState extends State<ListaFavoritosBuilder> {
 
   @override
   Widget build(BuildContext context) {
-    return _listaFav.length == 0
+    return _listaFav.length == 0 && listIsEmpty == false
         ? Center(
             child: CircularProgressIndicator(),
           )
-        : listGen(_listaFav);
+        : listIsEmpty == true
+            ? Center(
+                child: Text(
+                  "Você não possui nenhum favorito",
+                  style: TextStyle(
+                    color: Colors.indigoAccent,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              )
+            : listGen(_listaFav);
   }
 
   _onClick(BuildContext context, String idx) {
@@ -332,6 +349,7 @@ class _ListaFavoritosBuilderState extends State<ListaFavoritosBuilder> {
                                           },
                                         );
                                         setState(() {
+                                          getData();
                                           _listaFav.removeAt(index);
                                         });
                                         Navigator.of(context).pop();
@@ -404,7 +422,7 @@ class _ListaFavoritosBuilderState extends State<ListaFavoritosBuilder> {
       return Text(
         "$texto",
         style: TextStyle(
-          fontWeight: FontWeight.normal,
+          fontWeight: FontWeight.bold,
           color: Colors.black,
           fontSize: 16,
           decoration: TextDecoration.none,

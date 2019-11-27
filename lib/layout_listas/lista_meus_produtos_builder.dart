@@ -28,7 +28,7 @@ class _ListaMeusProdutosBuilderState extends State<ListaMeusProdutosBuilder> {
   List<_MyProducts> _listaMeusProdutos = [];
   String id;
   String userID = "";
-  int counter = 0;
+  bool listIsEmpty = false;
 
   @override
   void initState() {
@@ -44,6 +44,11 @@ class _ListaMeusProdutosBuilderState extends State<ListaMeusProdutosBuilder> {
         .where("ownerID", isEqualTo: userID)
         .getDocuments()
         .then((QuerySnapshot snapshot) {
+          if(snapshot.documents.length == 0){
+            setState(() {
+              listIsEmpty = true;
+            });
+          }
       snapshot.documents.forEach((f) {
         Map productData = f.data;
         setState(() {
@@ -61,11 +66,22 @@ class _ListaMeusProdutosBuilderState extends State<ListaMeusProdutosBuilder> {
 
   @override
   Widget build(BuildContext context) {
-    return _listaMeusProdutos.length == 0
+    return _listaMeusProdutos.length == 0 && listIsEmpty == false
         ? Center(
             child: CircularProgressIndicator(),
           )
-        : listGen(_listaMeusProdutos);
+        : listIsEmpty == true
+            ? Center(
+                child: Text(
+                  "Você ainda não possui nenhum produto",
+                  style: TextStyle(
+                    color: Colors.indigoAccent,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              )
+            : listGen(_listaMeusProdutos);
   }
 
   _onClick(BuildContext context, String idx) {

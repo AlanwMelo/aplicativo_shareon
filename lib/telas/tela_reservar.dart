@@ -2,8 +2,11 @@ import 'package:aplicativo_shareon/telas/tela_creditos.dart';
 import 'package:aplicativo_shareon/utils/seletor_calendario.dart';
 import 'package:aplicativo_shareon/utils/shareon_appbar.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:aplicativo_shareon/models/usuario_model.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:scoped_model/scoped_model.dart';
 import 'package:toast/toast.dart';
 
 import '../main.dart';
@@ -28,7 +31,7 @@ class _TelaReservarState extends State<TelaReservar> {
   String strduracao;
   final databaseReference = Firestore.instance;
   SharedPreferencesController sharedPreferencesController =
-      new SharedPreferencesController();
+  new SharedPreferencesController();
   String userID = "";
   String productName = "";
   String productMedia = "";
@@ -40,19 +43,45 @@ class _TelaReservarState extends State<TelaReservar> {
   double userDebit;
 
   // Strings
-  String _dataInicio = DateTime.now().day.toString() +
+  String _dataInicio = DateTime
+      .now()
+      .day
+      .toString() +
       "/" +
-      DateTime.now().month.toString() +
+      DateTime
+          .now()
+          .month
+          .toString() +
       "/" +
-      DateTime.now().year.toString();
-  String _dataFim = DateTime.now().day.toString() +
+      DateTime
+          .now()
+          .year
+          .toString();
+  String _dataFim = DateTime
+      .now()
+      .day
+      .toString() +
       "/" +
-      DateTime.now().month.toString() +
+      DateTime
+          .now()
+          .month
+          .toString() +
       "/" +
-      DateTime.now().year.toString();
-  String _horarioInicio = DateTime.now().hour.toString().padLeft(2, "0") +
+      DateTime
+          .now()
+          .year
+          .toString();
+  String _horarioInicio = DateTime
+      .now()
+      .hour
+      .toString()
+      .padLeft(2, "0") +
       ":" +
-      DateTime.now().minute.toString().padLeft(2, "0");
+      DateTime
+          .now()
+          .minute
+          .toString()
+          .padLeft(2, "0");
   String _horarioFim;
 
   // Strings
@@ -79,129 +108,144 @@ class _TelaReservarState extends State<TelaReservar> {
   }
 
   _homeReservar(BuildContext context) {
-    return Scaffold(
-      appBar: shareonAppbar(context, ""),
-      backgroundColor: Colors.indigoAccent,
-      body: SingleChildScrollView(
-        child: Container(
-          height: 720,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: <Widget>[
-              _text(productName, titulo: true),
-              Container(
-                margin: EdgeInsets.only(top: 16, bottom: 16, right: 8, left: 8),
-                child: _img(productIMG),
-              ),
-              _text(
-                  "Para reservar um produto você precisa informar a data e a hora que deseja utiliza-lo para checarmos sua disponibilidade."),
-              Container(
-                margin: EdgeInsets.all(8),
-                child: Column(
-                  children: <Widget>[
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+    return ScopedModelDescendant<UserModel>(
+      builder: (context, child, model) {
+        if (model.carregando)
+          return Center(
+            child: CircularProgressIndicator(),
+          );
+        return Scaffold(
+          appBar: shareonAppbar(context, ""),
+          backgroundColor: Colors.indigoAccent,
+          body: SingleChildScrollView(
+            child: Container(
+              height: 720,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: <Widget>[
+                  _text(productName, titulo: true),
+                  Container(
+                    margin: EdgeInsets.only(
+                        top: 16, bottom: 16, right: 8, left: 8),
+                    child: _img(productIMG),
+                  ),
+                  _text(
+                      "Para reservar um produto você precisa informar a data e a hora que deseja utiliza-lo para checarmos sua disponibilidade."),
+                  Container(
+                    margin: EdgeInsets.all(8),
+                    child: Column(
+                      children: <Widget>[
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: <Widget>[
+                            Container(
+                              width: 100,
+                              child: _text("Retirada:"),
+                            ),
+                            Container(
+                              child: RaisedButton(
+                                onPressed: () {
+                                  _selecionarData(context, "inicio");
+                                },
+                                child: Text("$_dataInicio",
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold)),
+                              ),
+                            ),
+                            Container(
+                              child: RaisedButton(
+                                onPressed: () {
+                                  _selecionarHorario(context, "inicio");
+                                },
+                                child: Text("$_horarioInicio",
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold)),
+                              ),
+                            ),
+                          ],
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: <Widget>[
+                            Container(
+                              width: 100,
+                              child: _text("Devolução:"),
+                            ),
+                            Container(
+                              child: RaisedButton(
+                                onPressed: () {
+                                  _selecionarData(context, "fim");
+                                },
+                                child: Text("$_dataFim",
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold)),
+                              ),
+                            ),
+                            Container(
+                              child: RaisedButton(
+                                onPressed: () {
+                                  _selecionarHorario(context, "fim");
+                                },
+                                child: Text("$_horarioFim",
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold)),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                  Container(
+                    margin: EdgeInsets.only(bottom: 8, right: 8, left: 8),
+                    child: _text("Valor estimado:"),
+                  ),
+                  Container(
+                    margin: EdgeInsets.only(bottom: 8, right: 8, left: 8),
+                    child: _text("R\$ $calcValorProdutoConversor"),
+                  ),
+                  Container(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.end,
                       children: <Widget>[
                         Container(
-                          width: 100,
-                          child: _text("Retirada:"),
-                        ),
-                        Container(
+                          width: 500,
+                          margin:
+                          EdgeInsets.only(
+                              top: 8, left: 8, right: 8, bottom: 8),
                           child: RaisedButton(
-                            onPressed: () {
-                              _selecionarData(context, "inicio");
+                            onPressed: () async {
+                              print("xxxxx ${model.isAuthenticated(await FirebaseAuth.instance.currentUser())}");
+                              if (dataFim.isBefore(dataInicio)) {
+                                _toast(
+                                    "A data de devolução não pode ser menor que a data de retirada.",
+                                    context);
+                              } else
+                              if (double.parse(calcValorProdutoConversor) >
+                                  userDebit) {
+                                _semSaldo(context);
+                              } else {
+                                _alertConfirmacao(context);
+                              }
                             },
-                            child: Text("$_dataInicio",
-                                style: TextStyle(fontWeight: FontWeight.bold)),
-                          ),
-                        ),
-                        Container(
-                          child: RaisedButton(
-                            onPressed: () {
-                              _selecionarHorario(context, "inicio");
-                            },
-                            child: Text("$_horarioInicio",
-                                style: TextStyle(fontWeight: FontWeight.bold)),
+                            child: Text(
+                              "Reservar",
+                              style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
                           ),
                         ),
                       ],
                     ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: <Widget>[
-                        Container(
-                          width: 100,
-                          child: _text("Devolução:"),
-                        ),
-                        Container(
-                          child: RaisedButton(
-                            onPressed: () {
-                              _selecionarData(context, "fim");
-                            },
-                            child: Text("$_dataFim",
-                                style: TextStyle(fontWeight: FontWeight.bold)),
-                          ),
-                        ),
-                        Container(
-                          child: RaisedButton(
-                            onPressed: () {
-                              _selecionarHorario(context, "fim");
-                            },
-                            child: Text("$_horarioFim",
-                                style: TextStyle(fontWeight: FontWeight.bold)),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
+                  ),
+                ],
               ),
-              Container(
-                margin: EdgeInsets.only(bottom: 8, right: 8, left: 8),
-                child: _text("Valor estimado:"),
-              ),
-              Container(
-                margin: EdgeInsets.only(bottom: 8, right: 8, left: 8),
-                child: _text("R\$ $calcValorProdutoConversor"),
-              ),
-              Container(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: <Widget>[
-                    Container(
-                      width: 500,
-                      margin:
-                          EdgeInsets.only(top: 8, left: 8, right: 8, bottom: 8),
-                      child: RaisedButton(
-                        onPressed: () {
-                          if (dataFim.isBefore(dataInicio)) {
-                            _toast(
-                                "A data de devolução não pode ser menor que a data de retirada.",
-                                context);
-                          } else if (double.parse(calcValorProdutoConversor) >
-                              userDebit) {
-                            _semSaldo(context);
-                          } else {
-                            _alertConfirmacao(context);
-                          }
-                        },
-                        child: Text(
-                          "Reservar",
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
+            ),
           ),
-        ),
-      ),
-    );
+        );
+      },);
   }
 
   _alertConfirmacao(BuildContext context) {
@@ -563,8 +607,8 @@ class _TelaReservarState extends State<TelaReservar> {
     );
   }
 
-  Future<Null> _selecionarHorario(
-      BuildContext context, String inicioFim) async {
+  Future<Null> _selecionarHorario(BuildContext context,
+      String inicioFim) async {
     final TimeOfDay horarioSelecionado = await showTimePicker(
       context: context,
       initialTime: TimeOfDay.now(),
@@ -693,7 +737,9 @@ class _TelaReservarState extends State<TelaReservar> {
   _valorEstimado(double valordoProduto, DateTime dataInicio, DateTime dataFim) {
     DateTime retirada = dataInicio;
     DateTime devolucao = dataFim;
-    duracao = (devolucao.difference(retirada).inMinutes);
+    duracao = (devolucao
+        .difference(retirada)
+        .inMinutes);
     valordoProduto = valordoDoProduto / (60);
     double calcValorProduto = duracao.toDouble() * valordoProduto;
     getTimeString(duracao);
@@ -772,7 +818,10 @@ class _TelaReservarState extends State<TelaReservar> {
   }
 
   _horarioFimPadrao() {
-    int x = DateTime.now().hour.toInt();
+    int x = DateTime
+        .now()
+        .hour
+        .toInt();
 
     if (0 < x && x < 23) {
       x = x + 1;
@@ -783,7 +832,11 @@ class _TelaReservarState extends State<TelaReservar> {
     }
     String hora = x.toString().padLeft(2, "0") +
         ":" +
-        DateTime.now().minute.toString().padLeft(2, "0");
+        DateTime
+            .now()
+            .minute
+            .toString()
+            .padLeft(2, "0");
 
     return hora;
   }

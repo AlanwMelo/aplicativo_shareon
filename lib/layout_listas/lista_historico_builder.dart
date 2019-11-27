@@ -31,6 +31,7 @@ class _ListaHistoricoBuilderState extends State<ListaHistoricoBuilder> {
   String userID = "";
   int counter = 0;
   List<_ProductsHist> _listaHistorico = [];
+  bool listIsEmpty = false;
 
   @override
   void initState() {
@@ -47,6 +48,11 @@ class _ListaHistoricoBuilderState extends State<ListaHistoricoBuilder> {
         .where("requesterID", isEqualTo: userID)
         .getDocuments()
         .then((QuerySnapshot snapshot) {
+      if (snapshot.documents.length == 0) {
+        setState(() {
+          listIsEmpty = true;
+        });
+      }
       snapshot.documents.forEach((f) {
         Map productData = f.data;
         if (productData["status"] == "concluido" ||
@@ -60,11 +66,22 @@ class _ListaHistoricoBuilderState extends State<ListaHistoricoBuilder> {
 
   @override
   Widget build(BuildContext context) {
-    return _listaHistorico.length == 0
+    return _listaHistorico.length == 0 && listIsEmpty == false
         ? Center(
             child: CircularProgressIndicator(),
           )
-        : listGen(_listaHistorico);
+        : listIsEmpty == true
+            ? Center(
+                child: Text(
+                  "Você ainda não fez nenhuma transação",
+                  style: TextStyle(
+                    color: Colors.indigoAccent,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              )
+            : listGen(_listaHistorico);
   }
 
   _onClick(BuildContext context, String idx) {

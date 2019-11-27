@@ -18,20 +18,24 @@ class TimerReserva {
   Future<String> timerVerifier(String userID, String actualState) async {
     list.clear();
     await getData(userID);
-    int timeNow = Timestamp.fromDate(DateTime.now()).millisecondsSinceEpoch;
-    int nearestTime = list[0].programedInitDate.millisecondsSinceEpoch;
 
-    if (list.where((list) => list.status.contains("em andamento")).isNotEmpty) {
-      if (actualState != "Reserva em andamento") {
-        return "Reserva em andamento";
-      } else {
-        return "";
-      }
-    } else if ((nearestTime - timeNow) <= 3600000) {
-      if (actualState != "Há uma reserva próxima") {
-        return "Há uma reserva próxima";
-      } else {
-        return "";
+    if (list.length > 0) {
+      int timeNow = Timestamp.fromDate(DateTime.now()).millisecondsSinceEpoch;
+      int nearestTime = list[0].programedInitDate.millisecondsSinceEpoch;
+      if (list
+          .where((list) => list.status.contains("em andamento"))
+          .isNotEmpty) {
+        if (actualState != "Reserva em andamento") {
+          return "Reserva em andamento";
+        } else {
+          return "";
+        }
+      } else if ((nearestTime - timeNow) <= 3600000) {
+        if (actualState != "Há uma reserva próxima") {
+          return "Há uma reserva próxima";
+        } else {
+          return "";
+        }
       }
     }
     return "";

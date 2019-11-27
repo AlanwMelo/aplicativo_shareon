@@ -10,8 +10,6 @@ import 'package:scoped_model/scoped_model.dart';
 import 'package:toast/toast.dart';
 import 'package:valida_cpf/valida_cpf.dart';
 
-// import 'home.dart';
-
 class CadastroUsuario extends StatefulWidget {
   @override
   _CadastroUsuarioState createState() => _CadastroUsuarioState();
@@ -35,7 +33,7 @@ class _CadastroUsuarioState extends State<CadastroUsuario> {
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-      onWillPop: (){
+      onWillPop: () {
         return _alertExit(context);
       },
       child: Scaffold(
@@ -162,7 +160,7 @@ class _CadastroUsuarioState extends State<CadastroUsuario> {
                           _icGPS(),
                           Container(
                             margin: EdgeInsets.only(left: 8),
-                            width: 300,
+                            width: 280,
                             child: Text(
                               stringUserAddress,
                               textAlign: TextAlign.center,
@@ -236,8 +234,9 @@ class _CadastroUsuarioState extends State<CadastroUsuario> {
                                   "cpf": cpf,
                                   "debit": 0,
                                   "userAddress": userAddress,
-                                  "state": "criado",
-                                  "imgURL": "https://firebasestorage.googleapis.com/v0/b/shareon.appspot.com/o/DefaultIMG%2FDefaultIMG.png?alt=media&token=9fbc8d45-36a1-45cf-a53b-0c0b7c7588a0",
+                                  "authenticated": false,
+                                  "imgURL":
+                                      "https://firebasestorage.googleapis.com/v0/b/shareon.appspot.com/o/DefaultIMG%2FDefaultIMG.png?alt=media&token=9fbc8d45-36a1-45cf-a53b-0c0b7c7588a0",
                                 };
 
                                 model.signUp(
@@ -265,10 +264,7 @@ class _CadastroUsuarioState extends State<CadastroUsuario> {
       backgroundColor: Theme.of(context).primaryColor,
       duration: Duration(seconds: 2),
     ));
-    Future.delayed(Duration(seconds: 2)).then((_) {
-      Navigator.of(context)
-          .pushReplacement(MaterialPageRoute(builder: (context) => Home()));
-    });
+    _alertAuth(context);
   }
 
   void falha() {
@@ -516,7 +512,8 @@ class _CadastroUsuarioState extends State<CadastroUsuario> {
                           ),
                           Container(
                             margin: EdgeInsets.all(8),
-                            child: _textConfirmacao("Deseja mesmo voltar? Os dados preenchidos serão perdidos"),
+                            child: _textConfirmacao(
+                                "Deseja mesmo voltar? Os dados preenchidos serão perdidos"),
                           ),
                           Expanded(
                             child: Container(
@@ -557,6 +554,93 @@ class _CadastroUsuarioState extends State<CadastroUsuario> {
                                         },
                                         child: Text(
                                           "Cancelar",
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  _alertAuth(BuildContext context) {
+    return showDialog(
+      context: context,
+      builder: (context) {
+        return GestureDetector(
+          onTap: () => Navigator.pop(context),
+          child: Container(
+            color: Colors.white.withOpacity(0.1),
+            child: Center(
+              child: ClipRRect(
+                borderRadius: BorderRadius.all(Radius.circular(16)),
+                child: GestureDetector(
+                  onTap: () => null,
+                  child: Container(
+                    color: Colors.white,
+                    height: 250,
+                    width: 300,
+                    child: Container(
+                      child: Column(
+                        children: <Widget>[
+                          Container(
+                            margin: EdgeInsets.only(bottom: 8, top: 8),
+                            child: Text(
+                              "Autenticação",
+                              style: TextStyle(
+                                decoration: TextDecoration.none,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.red,
+                                fontSize: 25,
+                              ),
+                            ),
+                          ),
+                          Divider(
+                            thickness: 3,
+                          ),
+                          Container(
+                            margin: EdgeInsets.all(8),
+                            child: _textConfirmacao(
+                                "Um email de autenticação será enviado ao email informado. Por favor siga os passos"
+                                " descritos nele para poder utilizar todas as funcionalidades do APP",
+                                center: true),
+                          ),
+                          Expanded(
+                            child: Container(
+                              color: Colors.indigoAccent,
+                              margin: EdgeInsets.only(
+                                top: 8,
+                              ),
+                              child: Row(
+                                children: <Widget>[
+                                  Expanded(
+                                    child: Container(
+                                      height: 100,
+                                      child: RaisedButton(
+                                        color: Colors.indigoAccent,
+                                        onPressed: () {
+                                          Navigator.of(context).pushReplacement(
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      Home()));
+                                        },
+                                        child: Text(
+                                          "OK",
                                           style: TextStyle(
                                             color: Colors.white,
                                           ),

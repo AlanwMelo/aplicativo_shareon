@@ -27,6 +27,7 @@ class SharedPreferencesController {
   final String urlImgPerfil = "";
   final double lat = 0;
   final double lng = 0;
+  final bool emailAuth = false;
 
   //GETTERS
   Future<GeoPoint> getGeo() async {
@@ -35,6 +36,12 @@ class SharedPreferencesController {
     var lastLng = prefs.get("lng") ?? lng;
     GeoPoint userLastLocation = new GeoPoint(lastLat, lastLng);
     return userLastLocation;
+  }
+
+  Future<bool> getEmailAuth() async{
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    bool result = prefs.getBool("emailAuth") ?? emailAuth;
+    return result;
   }
 
   Future <String> getName() async {
@@ -68,6 +75,10 @@ class SharedPreferencesController {
     prefs.setDouble("lat", lat);
     prefs.setDouble("lng", lng);
     return true;
+  }
+  Future<bool> setEmailAuth(bool value) async{
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.setBool("emailAuth", value);
   }
 
   Future<bool> setID(String value) async {

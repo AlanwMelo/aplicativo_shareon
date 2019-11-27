@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:aplicativo_shareon/models/usuario_model.dart';
 import 'package:aplicativo_shareon/telas/tela_cadastro_produto.dart';
 import 'package:aplicativo_shareon/telas/tela_chat.dart';
 import 'package:aplicativo_shareon/telas/tela_configuracoes.dart';
@@ -17,6 +18,7 @@ import 'package:aplicativo_shareon/telas/tela_suporte.dart';
 import 'package:aplicativo_shareon/utils/shareon_appbar.dart';
 import 'package:aplicativo_shareon/utils/timer_reserva.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -67,6 +69,7 @@ class _HomeState extends State<Home> {
   GlobalKey<ScaffoldState> _drawerKey = GlobalKey();
   SharedPreferencesController sharedPreferencesController =
       new SharedPreferencesController();
+  UserModel model = new UserModel();
 
   @override
   void initState() {
@@ -75,7 +78,7 @@ class _HomeState extends State<Home> {
     } else {
       controllerPointer = 1;
     }
-    Timer.periodic(Duration(seconds: 10), (Timer t) => timerReserva());
+    Timer.periodic(Duration(seconds: 300), (Timer t) => timerReserva());
     sharedPreferencesController.getID().then(_setUserID);
     super.initState();
 
@@ -94,7 +97,6 @@ class _HomeState extends State<Home> {
       sharedPreferencesController.getlogedState().then(_logedVerifier);
       sharedPreferencesController.getURLImg().then(_setIMG);
     }
-
     return Scaffold(
       drawer: _drawer(),
       key: _drawerKey,
@@ -935,6 +937,7 @@ class _HomeState extends State<Home> {
       userID = value;
       getUserData();
       timerReserva();
+      sharedPreferencesController.getEmailAuth().then(_verifyAuth);
     });
   }
 
@@ -946,5 +949,20 @@ class _HomeState extends State<Home> {
         appBarText = aux;
       });
     }
+  }
+
+  _verifyAuth(bool value) async {
+    bool verifier =
+        model.isAuthenticated(await FirebaseAuth.instance.currentUser());
+    if (verifier == true) {
+      sharedPreferencesController.setEmailAuth(true);
+      Map<String, dynamic> authATT = {
+        "authenticated": true,
+      };
+      await databaseReference
+          .collection("users")
+          .document(userID)
+          .updateData(authATT);
+    } else {}
   }
 }
