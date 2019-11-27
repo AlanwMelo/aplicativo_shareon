@@ -64,6 +64,7 @@ class _HomeState extends State<Home> {
   String urlImgPerfil;
   String timer = "";
   String appBarText = "";
+  String userAddress = "";
   bool emailVerified;
   final databaseReference = Firestore.instance;
   GlobalKey<ScaffoldState> _drawerKey = GlobalKey();
@@ -91,12 +92,14 @@ class _HomeState extends State<Home> {
         userMail == "?" ||
         userID == "" ||
         urlImgPerfil == null ||
-        emailVerified == null) {
+        emailVerified == null ||
+        userAddress == null) {
       sharedPreferencesController.getEmail().then(_setMail);
       sharedPreferencesController.getName().then(_setName);
       sharedPreferencesController.getID().then(_setUserID);
       sharedPreferencesController.getlogedState().then(_logedVerifier);
       sharedPreferencesController.getURLImg().then(_setIMG);
+      sharedPreferencesController.getAddress().then(setAddress);
     }
     return Scaffold(
       drawer: _drawer(),
@@ -925,8 +928,10 @@ class _HomeState extends State<Home> {
         String name = userData["nome"];
         String email = userData["email"];
         String img = userData["imgURL"];
+        String address = userData["userAddress"];
 
         sharedPreferencesController.setName(name);
+        sharedPreferencesController.setAddress(address);
         sharedPreferencesController.setURLImg(img);
         sharedPreferencesController.setEmail(email);
       });
@@ -970,5 +975,11 @@ class _HomeState extends State<Home> {
         emailVerified = false;
       }
     }
+  }
+
+   setAddress(String value) {
+    setState(() {
+      userAddress = value;
+    });
   }
 }

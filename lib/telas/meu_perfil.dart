@@ -155,6 +155,7 @@ class _MeuPerfilState extends State<MeuPerfil> {
     sharedPreferencesController.setEmail("");
     sharedPreferencesController.setEmailAuth(false);
     sharedPreferencesController.setURLImg("");
+    sharedPreferencesController.setAddress("");
     _succesLogout();
   }
 

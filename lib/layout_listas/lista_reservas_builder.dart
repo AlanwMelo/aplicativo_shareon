@@ -161,29 +161,13 @@ class _ListaReservasBuilderState extends State<ListaReservasBuilder> {
   }
 
   _textMedia(String idx) {
-    String productMedia = "";
-
-    return FutureBuilder(
-      future: databaseReference
-          .collection("products")
-          .where("ID", isEqualTo: idx)
-          .getDocuments()
-          .then((QuerySnapshot snapshot) {
-        snapshot.documents.forEach((f) {
-          Map productData = f.data;
-          productMedia = productData["media"];
-        });
-      }),
-      builder: (context, snapshot) {
-        return Text(
-          productMedia,
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 16,
-            color: Colors.black54,
-          ),
-        );
-      },
+    return Text(
+      idx,
+      style: TextStyle(
+        fontWeight: FontWeight.bold,
+        fontSize: 16,
+        color: Colors.black54,
+      ),
     );
   }
 

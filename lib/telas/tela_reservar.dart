@@ -3,13 +3,13 @@ import 'package:aplicativo_shareon/telas/tela_creditos.dart';
 import 'package:aplicativo_shareon/utils/seletor_calendario.dart';
 import 'package:aplicativo_shareon/utils/shareon_appbar.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:toast/toast.dart';
 
 import '../main.dart';
+import 'home.dart';
 
 class TelaReservar extends StatefulWidget {
   final String productID;
@@ -41,6 +41,7 @@ class _TelaReservarState extends State<TelaReservar> {
   String productIMG = "";
   String productType = "";
   double userDebit;
+  bool loading = false;
 
   // Strings
   String _dataInicio = DateTime.now().day.toString() +
@@ -71,6 +72,7 @@ class _TelaReservarState extends State<TelaReservar> {
     if (userID == "") {
       sharedPreferencesController.getID().then(_setID);
     }
+    getProductData();
     getTimeString(duracao);
     _horarioFim = _horarioFimPadrao();
   }
@@ -78,7 +80,11 @@ class _TelaReservarState extends State<TelaReservar> {
   @override
   Widget build(BuildContext context) {
     getProductIMG();
-    return getProductData();
+    return loading == false
+        ? _homeReservar(context)
+        : Container(
+            color: Colors.white,
+            child: Center(child: CircularProgressIndicator()));
   }
 
   _homeReservar(BuildContext context) {
@@ -193,8 +199,6 @@ class _TelaReservarState extends State<TelaReservar> {
                           child: RaisedButton(
                             color: Colors.white,
                             onPressed: () async {
-                              print(
-                                  "xxxxx ${model.isAuthenticated(await FirebaseAuth.instance.currentUser())}");
                               if (dataFim.isBefore(dataInicio)) {
                                 _toast(
                                     "A data de devolução não pode ser menor que a data de retirada.",
@@ -722,7 +726,7 @@ class _TelaReservarState extends State<TelaReservar> {
     var calcValorProduto = duracao.toDouble() * valordoProduto;
     getTimeString(duracao);
     calcValorProdutoConversor = calcValorProduto.toStringAsFixed(2);
-    valorEstimado = calcValorProduto as int;
+    valorEstimado = calcValorProduto.toDouble();
   }
 
   _horarioConfirmado(String inicioFim, TimeOfDay time) {
@@ -869,33 +873,29 @@ class _TelaReservarState extends State<TelaReservar> {
     });
   }
 
-  getProductData() {
-    return FutureBuilder(
-        future: databaseReference
-            .collection("products")
-            .where("ID", isEqualTo: (widget.productID))
-            .getDocuments()
-            .then((QuerySnapshot snapshot) {
-          snapshot.documents.forEach((f) {
-            Map productData = f.data;
-            valordoDoProduto = productData["price"];
-            valorEstimado = productData["price"];
-            productName = productData["name"];
-            productDescription = productData["description"];
-            productMedia = productData["media"];
-            productOwnerID = productData["ownerID"];
-            productType = productData["type"];
+  getProductData() async {
+    await databaseReference
+        .collection("products")
+        .where("ID", isEqualTo: (widget.productID))
+        .getDocuments()
+        .then((QuerySnapshot snapshot) {
+      snapshot.documents.forEach((f) {
+        Map productData = f.data;
+        valordoDoProduto = productData["price"];
+        valorEstimado = productData["price"];
+        productName = productData["name"];
+        productDescription = productData["description"];
+        productMedia = productData["media"];
+        productOwnerID = productData["ownerID"];
+        productType = productData["type"];
 
-            if (calcValorProdutoConversor == "0.00") {
-              setState(() {
-                calcValorProdutoConversor = valordoDoProduto.toStringAsFixed(2);
-              });
-            }
+        if (calcValorProdutoConversor == "0.00") {
+          setState(() {
+            calcValorProdutoConversor = valordoDoProduto.toStringAsFixed(2);
           });
-        }),
-        builder: (context, snapshot) {
-          return _homeReservar(context);
-        });
+        }
+      });
+    });
   }
 
   _strgDia(int dia, int hora, int min) {
@@ -949,6 +949,10 @@ class _TelaReservarState extends State<TelaReservar> {
   }
 
   _solicitaReserva() async {
+    setState(() {
+      loading = true;
+    });
+
     String status = "pendente";
     String motivo = "solicitacao";
     Map<String, dynamic> solicitaReserva = {
@@ -974,6 +978,16 @@ class _TelaReservarState extends State<TelaReservar> {
         .collection("solicitations")
         .document(idWriter)
         .updateData(setID);
+
+    setState(() {
+      loading = false;
+    });
+
+    _toast("Solicitação efetuada com sucesso", context);
+
+    Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) {
+      return Home();
+    }));
   }
 
   void _setID(String value) {
