@@ -82,9 +82,12 @@ class UserModel extends Model {
     auth.sendPasswordResetEmail(email: email);
   }
 
-  bool isAuthenticated(FirebaseUser user) {
-    user.reload();
-    print(user);
+  Future<bool> isAuthenticated(FirebaseUser user) async {
+    SharedPreferencesController sharedPreferencesController =
+    new SharedPreferencesController();
+
+    await user.reload();
+    sharedPreferencesController.setEmailAuth(user.isEmailVerified);
     return user.isEmailVerified;
   }
 

@@ -1,7 +1,10 @@
+import 'dart:async';
+
 import 'package:aplicativo_shareon/telas/tela_reserva_proxima.dart';
 import 'package:aplicativo_shareon/telas/tela_reservar.dart';
 import 'package:aplicativo_shareon/utils/shareon_appbar.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:page_indicator/page_indicator.dart';
@@ -66,6 +69,7 @@ class _ProdutoSelecionadoState extends State<ProdutoSelecionado> {
   int counter = 0;
   List<_ReservaProxima> reservaAprovada = [];
   List<_ReservaProxima> reservaEmAndamento = [];
+  bool emailVerified;
 
   @override
   void initState() {
@@ -82,6 +86,9 @@ class _ProdutoSelecionadoState extends State<ProdutoSelecionado> {
   Widget build(BuildContext context) {
     listaIMGS = mapListaIMGS.values.toList();
     generaPGViewer();
+    if (emailVerified == null) {
+      sharedPreferencesController.getEmailAuth().then(_verifyAuth);
+    }
     if (productInFavorites == false) {
       favoriteController = "Adcionar aos Favoritos";
     } else if (productInFavorites == true) {
@@ -626,14 +633,18 @@ class _ProdutoSelecionadoState extends State<ProdutoSelecionado> {
       return RaisedButton(
         color: Colors.white,
         onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (BuildContext context) {
-              return TelaReservar(
-                  productID: widget.productID,
-                  productPrice: double.parse(productPrice));
-            }),
-          );
+          if (emailVerified == false) {
+            sharedPreferencesController.getEmailAuth().then((value) => _verifyAuth(value, caller: 1));
+          } else {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (BuildContext context) {
+                return TelaReservar(
+                    productID: widget.productID,
+                    productPrice: double.parse(productPrice));
+              }),
+            );
+          }
         },
         child: _text("Reservar", resumo: true),
       );
@@ -698,5 +709,153 @@ class _ProdutoSelecionadoState extends State<ProdutoSelecionado> {
         duration: 3,
         gravity: Toast.BOTTOM,
         backgroundColor: Colors.black.withOpacity(0.8));
+  }
+
+  FutureOr _verifyAuth(bool value, {int caller}) {
+    emailVerified = value;
+    if(caller == 1 && emailVerified == false){
+      _alertEmail();
+    }
+  }
+
+  _alertEmail() {
+    return showDialog(
+      context: context,
+      builder: (context) {
+        return GestureDetector(
+          onTap: () => Navigator.pop(context),
+          child: Container(
+            color: Colors.white.withOpacity(0.1),
+            child: Center(
+              child: ClipRRect(
+                borderRadius: BorderRadius.all(Radius.circular(16)),
+                child: GestureDetector(
+                  onTap: () => null,
+                  child: Container(
+                    color: Colors.white,
+                    height: 310,
+                    width: 300,
+                    child: Container(
+                      child: Column(
+                        children: <Widget>[
+                          Container(
+                            margin: EdgeInsets.only(bottom: 8, top: 8),
+                            child: Text(
+                              "Email ainda não confirmado !",
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                decoration: TextDecoration.none,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.red,
+                                fontSize: 20,
+                              ),
+                            ),
+                          ),
+                          Divider(
+                            thickness: 3,
+                          ),
+                          Container(
+                            margin: EdgeInsets.all(8),
+                            child: _textConfirmacao(
+                                "Somente usuários com email confirmado podem realizar empréstimos.\n\n "
+                                "Se você não recebeu o email de verificação você pode reenvia-lo "
+                                "atravéz do botão abaixo.",
+                                center: true),
+                          ),
+                          Expanded(
+                            child: Container(
+                              color: Colors.indigoAccent,
+                              margin: EdgeInsets.only(
+                                top: 8,
+                              ),
+                              child: Row(
+                                children: <Widget>[
+                                  Expanded(
+                                    child: Container(
+                                      height: 100,
+                                      child: RaisedButton(
+                                        color: Colors.indigoAccent,
+                                        onPressed: () {
+                                          Navigator.pop(context);
+                                        },
+                                        child: Text(
+                                          "Voltar",
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  Expanded(
+                                    child: Container(
+                                      height: 100,
+                                      child: RaisedButton(
+                                        color: Colors.indigoAccent,
+                                        onPressed: () async {
+                                          FirebaseUser user = await FirebaseAuth.instance.currentUser();
+                                          user.sendEmailVerification();
+                                          _toast("Email de verificação enviado", context);
+                                          Navigator.of(context).pop();
+                                        },
+                                        child: Text(
+                                          "Reenviar",
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  _textConfirmacao(String texto, {bool titulo = false, bool center = false}) {
+    if (titulo) {
+      return Text(
+        "$texto",
+        style: TextStyle(
+          fontWeight: FontWeight.bold,
+          color: Colors.red,
+          fontSize: 16,
+          decoration: TextDecoration.none,
+        ),
+      );
+    } else if (center == true) {
+      return Text(
+        "$texto",
+        textAlign: TextAlign.center,
+        style: TextStyle(
+          fontWeight: FontWeight.normal,
+          color: Colors.black,
+          fontSize: 16,
+          decoration: TextDecoration.none,
+        ),
+      );
+    } else {
+      return Text(
+        "$texto",
+        style: TextStyle(
+          fontWeight: FontWeight.normal,
+          color: Colors.black,
+          fontSize: 16,
+          decoration: TextDecoration.none,
+        ),
+      );
+    }
   }
 }

@@ -50,7 +50,6 @@ class LifecycleEventHandler extends WidgetsBindingObserver {
         await suspendingCallBack();
         break;
       case AppLifecycleState.resumed:
-        print("IM BACK BITCHES");
         await resumeCallBack();
         break;
     }
@@ -65,6 +64,7 @@ class _HomeState extends State<Home> {
   String urlImgPerfil;
   String timer = "";
   String appBarText = "";
+  bool emailVerified;
   final databaseReference = Firestore.instance;
   GlobalKey<ScaffoldState> _drawerKey = GlobalKey();
   SharedPreferencesController sharedPreferencesController =
@@ -90,7 +90,8 @@ class _HomeState extends State<Home> {
     if (userMail == "" ||
         userMail == "?" ||
         userID == "" ||
-        urlImgPerfil == null) {
+        urlImgPerfil == null ||
+        emailVerified == null) {
       sharedPreferencesController.getEmail().then(_setMail);
       sharedPreferencesController.getName().then(_setName);
       sharedPreferencesController.getID().then(_setUserID);
@@ -952,17 +953,22 @@ class _HomeState extends State<Home> {
   }
 
   _verifyAuth(bool value) async {
-    bool verifier =
-        model.isAuthenticated(await FirebaseAuth.instance.currentUser());
-    if (verifier == true) {
-      sharedPreferencesController.setEmailAuth(true);
-      Map<String, dynamic> authATT = {
-        "authenticated": true,
-      };
-      await databaseReference
-          .collection("users")
-          .document(userID)
-          .updateData(authATT);
-    } else {}
+    if (emailVerified == null) {
+      bool verifier = await model
+          .isAuthenticated(await FirebaseAuth.instance.currentUser());
+      if (verifier == true) {
+        sharedPreferencesController.setEmailAuth(true);
+        emailVerified = true;
+        Map<String, dynamic> authATT = {
+          "authenticated": true,
+        };
+        await databaseReference
+            .collection("users")
+            .document(userID)
+            .updateData(authATT);
+      } else {
+        emailVerified = false;
+      }
+    }
   }
 }

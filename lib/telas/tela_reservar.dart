@@ -1,8 +1,8 @@
+import 'package:aplicativo_shareon/models/usuario_model.dart';
 import 'package:aplicativo_shareon/telas/tela_creditos.dart';
 import 'package:aplicativo_shareon/utils/seletor_calendario.dart';
 import 'package:aplicativo_shareon/utils/shareon_appbar.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:aplicativo_shareon/models/usuario_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -31,7 +31,7 @@ class _TelaReservarState extends State<TelaReservar> {
   String strduracao;
   final databaseReference = Firestore.instance;
   SharedPreferencesController sharedPreferencesController =
-  new SharedPreferencesController();
+      new SharedPreferencesController();
   String userID = "";
   String productName = "";
   String productMedia = "";
@@ -43,45 +43,19 @@ class _TelaReservarState extends State<TelaReservar> {
   double userDebit;
 
   // Strings
-  String _dataInicio = DateTime
-      .now()
-      .day
-      .toString() +
+  String _dataInicio = DateTime.now().day.toString() +
       "/" +
-      DateTime
-          .now()
-          .month
-          .toString() +
+      DateTime.now().month.toString() +
       "/" +
-      DateTime
-          .now()
-          .year
-          .toString();
-  String _dataFim = DateTime
-      .now()
-      .day
-      .toString() +
+      DateTime.now().year.toString();
+  String _dataFim = DateTime.now().day.toString() +
       "/" +
-      DateTime
-          .now()
-          .month
-          .toString() +
+      DateTime.now().month.toString() +
       "/" +
-      DateTime
-          .now()
-          .year
-          .toString();
-  String _horarioInicio = DateTime
-      .now()
-      .hour
-      .toString()
-      .padLeft(2, "0") +
+      DateTime.now().year.toString();
+  String _horarioInicio = DateTime.now().hour.toString().padLeft(2, "0") +
       ":" +
-      DateTime
-          .now()
-          .minute
-          .toString()
-          .padLeft(2, "0");
+      DateTime.now().minute.toString().padLeft(2, "0");
   String _horarioFim;
 
   // Strings
@@ -125,8 +99,8 @@ class _TelaReservarState extends State<TelaReservar> {
                 children: <Widget>[
                   _text(productName, titulo: true),
                   Container(
-                    margin: EdgeInsets.only(
-                        top: 16, bottom: 16, right: 8, left: 8),
+                    margin:
+                        EdgeInsets.only(top: 16, bottom: 16, right: 8, left: 8),
                     child: _img(productIMG),
                   ),
                   _text(
@@ -144,22 +118,24 @@ class _TelaReservarState extends State<TelaReservar> {
                             ),
                             Container(
                               child: RaisedButton(
+                                color: Colors.white,
                                 onPressed: () {
                                   _selecionarData(context, "inicio");
                                 },
                                 child: Text("$_dataInicio",
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.bold)),
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.bold)),
                               ),
                             ),
                             Container(
                               child: RaisedButton(
+                                color: Colors.white,
                                 onPressed: () {
                                   _selecionarHorario(context, "inicio");
                                 },
                                 child: Text("$_horarioInicio",
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.bold)),
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.bold)),
                               ),
                             ),
                           ],
@@ -173,22 +149,24 @@ class _TelaReservarState extends State<TelaReservar> {
                             ),
                             Container(
                               child: RaisedButton(
+                                color: Colors.white,
                                 onPressed: () {
                                   _selecionarData(context, "fim");
                                 },
                                 child: Text("$_dataFim",
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.bold)),
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.bold)),
                               ),
                             ),
                             Container(
                               child: RaisedButton(
+                                color: Colors.white,
                                 onPressed: () {
                                   _selecionarHorario(context, "fim");
                                 },
                                 child: Text("$_horarioFim",
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.bold)),
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.bold)),
                               ),
                             ),
                           ],
@@ -210,18 +188,19 @@ class _TelaReservarState extends State<TelaReservar> {
                       children: <Widget>[
                         Container(
                           width: 500,
-                          margin:
-                          EdgeInsets.only(
+                          margin: EdgeInsets.only(
                               top: 8, left: 8, right: 8, bottom: 8),
                           child: RaisedButton(
+                            color: Colors.white,
                             onPressed: () async {
-                              print("xxxxx ${model.isAuthenticated(await FirebaseAuth.instance.currentUser())}");
+                              print(
+                                  "xxxxx ${model.isAuthenticated(await FirebaseAuth.instance.currentUser())}");
                               if (dataFim.isBefore(dataInicio)) {
                                 _toast(
                                     "A data de devolução não pode ser menor que a data de retirada.",
                                     context);
-                              } else
-                              if (double.parse(calcValorProdutoConversor) >
+                              } else if (double.parse(
+                                      calcValorProdutoConversor) >
                                   userDebit) {
                                 _semSaldo(context);
                               } else {
@@ -245,7 +224,8 @@ class _TelaReservarState extends State<TelaReservar> {
             ),
           ),
         );
-      },);
+      },
+    );
   }
 
   _alertConfirmacao(BuildContext context) {
@@ -607,8 +587,8 @@ class _TelaReservarState extends State<TelaReservar> {
     );
   }
 
-  Future<Null> _selecionarHorario(BuildContext context,
-      String inicioFim) async {
+  Future<Null> _selecionarHorario(
+      BuildContext context, String inicioFim) async {
     final TimeOfDay horarioSelecionado = await showTimePicker(
       context: context,
       initialTime: TimeOfDay.now(),
@@ -737,9 +717,7 @@ class _TelaReservarState extends State<TelaReservar> {
   _valorEstimado(double valordoProduto, DateTime dataInicio, DateTime dataFim) {
     DateTime retirada = dataInicio;
     DateTime devolucao = dataFim;
-    duracao = (devolucao
-        .difference(retirada)
-        .inMinutes);
+    duracao = (devolucao.difference(retirada).inMinutes);
     valordoProduto = valordoDoProduto / (60);
     double calcValorProduto = duracao.toDouble() * valordoProduto;
     getTimeString(duracao);
@@ -818,10 +796,7 @@ class _TelaReservarState extends State<TelaReservar> {
   }
 
   _horarioFimPadrao() {
-    int x = DateTime
-        .now()
-        .hour
-        .toInt();
+    int x = DateTime.now().hour.toInt();
 
     if (0 < x && x < 23) {
       x = x + 1;
@@ -832,11 +807,7 @@ class _TelaReservarState extends State<TelaReservar> {
     }
     String hora = x.toString().padLeft(2, "0") +
         ":" +
-        DateTime
-            .now()
-            .minute
-            .toString()
-            .padLeft(2, "0");
+        DateTime.now().minute.toString().padLeft(2, "0");
 
     return hora;
   }

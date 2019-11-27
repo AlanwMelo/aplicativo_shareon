@@ -27,7 +27,7 @@ class _CadastroUsuarioState extends State<CadastroUsuario> {
   final verificacao = GlobalKey<ScaffoldState>();
   final databaseReference = Firestore.instance;
   String stringUserAddress = "Informe seu endereço";
-  GeoPoint userAddress;
+  GeoPoint userAddressLatLng;
   String cpf;
 
   @override
@@ -233,7 +233,8 @@ class _CadastroUsuarioState extends State<CadastroUsuario> {
                                   "email": emailController.text,
                                   "cpf": cpf,
                                   "debit": 0,
-                                  "userAddress": userAddress,
+                                  "userAddressLatLng": userAddressLatLng,
+                                  "userAddress": stringUserAddress,
                                   "authenticated": false,
                                   "imgURL":
                                       "https://firebasestorage.googleapis.com/v0/b/shareon.appspot.com/o/DefaultIMG%2FDefaultIMG.png?alt=media&token=9fbc8d45-36a1-45cf-a53b-0c0b7c7588a0",
@@ -284,7 +285,7 @@ class _CadastroUsuarioState extends State<CadastroUsuario> {
         stringUserAddress = result.address;
       });
     }
-    userAddress = new GeoPoint(result.latLng.latitude, result.latLng.longitude);
+    userAddressLatLng = new GeoPoint(result.latLng.latitude, result.latLng.longitude);
   }
 
   _icGPS() {
