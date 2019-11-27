@@ -597,6 +597,9 @@ class _CadastroProdutoState extends State<CadastroProduto> {
       loading = true;
     });
 
+    String priceAux = priceController.text.replaceAll(",", ".");
+    print(priceAux);
+
     String adStatus = "em provisionamento";
     Timestamp insertioDate = Timestamp.fromDate(DateTime.now());
     Map<String, dynamic> cadastraProduto = {
@@ -605,7 +608,7 @@ class _CadastroProdutoState extends State<CadastroProduto> {
       "location": productLocation,
       "name": nameController.text,
       "ownerID": widget.userID,
-      "price": priceController.text,
+      "price": double.parse(priceAux),
       "type": "livro",
       "media": "-",
       "adStatus": adStatus,

@@ -39,7 +39,7 @@ class _ProdutoSelecionadoState extends State<ProdutoSelecionado> {
   String favoriteController = "";
   String productName = "";
   String productMedia = "";
-  String productPrice = "";
+  var productPrice = 0;
   String productOwner = "";
   String productOwnerID = "";
   String productDescription = "";
@@ -641,7 +641,7 @@ class _ProdutoSelecionadoState extends State<ProdutoSelecionado> {
               MaterialPageRoute(builder: (BuildContext context) {
                 return TelaReservar(
                     productID: widget.productID,
-                    productPrice: double.parse(productPrice));
+                    productPrice: productPrice);
               }),
             );
           }
