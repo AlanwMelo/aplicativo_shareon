@@ -14,7 +14,7 @@ class ListaMeusProdutosBuilder extends StatefulWidget {
 class _MyProducts {
   String productID;
   String name;
-  String preco;
+  var preco;
   String media;
   Timestamp addDate;
 
@@ -169,7 +169,7 @@ class _ListaMeusProdutosBuilderState extends State<ListaMeusProdutosBuilder> {
     );
   }
 
-  _textPreco(String idx) {
+  _textPreco(var idx) {
     return Text(
       "R\$ $idx",
       style: TextStyle(

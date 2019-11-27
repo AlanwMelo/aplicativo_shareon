@@ -14,7 +14,7 @@ class _FavoritesData {
   String productID;
   String name;
   String media;
-  String preco;
+  var preco;
   Timestamp addDate;
 
   _FavoritesData(
@@ -161,7 +161,7 @@ class _ListaFavoritosBuilderState extends State<ListaFavoritosBuilder> {
     );
   }
 
-  _textPreco(String idx) {
+  _textPreco(var idx) {
     return Text(
       "R\$ $idx",
       style: TextStyle(

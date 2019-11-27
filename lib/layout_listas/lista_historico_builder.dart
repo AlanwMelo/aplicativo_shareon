@@ -14,7 +14,7 @@ class _ProductsHist {
   String productID;
   String name;
   String media;
-  String preco;
+  var preco;
   String status;
   Timestamp endDate;
 
@@ -188,7 +188,7 @@ class _ListaHistoricoBuilderState extends State<ListaHistoricoBuilder> {
     );
   }
 
-  _textPreco(String idx) {
+  _textPreco(var idx) {
     return Text(
       "R\$ $idx",
       style: TextStyle(

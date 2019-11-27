@@ -17,7 +17,7 @@ class _Products {
   String productID;
   String name;
   String media;
-  String preco;
+  var preco;
   double distance;
 
   _Products(this.productID, this.name, this.preco, this.media, this.distance);
@@ -91,6 +91,7 @@ class _ListaMainBuilderState extends State<ListaMainBuilder> {
 
   @override
   Widget build(BuildContext context) {
+    print("witf ${listIsEmpty} ${_listaMain.length}");
     return _listaMain.length == 0 && listIsEmpty == false
         ? Center(
             child: CircularProgressIndicator(),
@@ -201,7 +202,7 @@ class _ListaMainBuilderState extends State<ListaMainBuilder> {
     }
   }
 
-  _textPreco(String idx) {
+  _textPreco(var idx) {
     return Text(
       "R\$ $idx",
       style: TextStyle(
