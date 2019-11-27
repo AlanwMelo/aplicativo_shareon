@@ -15,19 +15,18 @@ class _MeuPerfilState extends State<MeuPerfil> {
 
   String userName = "?";
   String userMail = "?";
-  String userimgURL =
-      "https://cdn4.iconfinder.com/data/icons/instagram-ui-twotone/48/Paul-18-512.png";
+  String userimgURL;
 
   @override
   void initState() {
     sharedPreferencesController.getName().then(_setUserName);
     sharedPreferencesController.getEmail().then(_setUserMail);
+    sharedPreferencesController.getURLImg().then(_setURLImg);
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    sharedPreferencesController.getURLImg().then(_setURLImg);
     return _meuPerfil();
   }
 
@@ -35,19 +34,19 @@ class _MeuPerfilState extends State<MeuPerfil> {
     return Scaffold(
       backgroundColor: Colors.indigoAccent,
       appBar: AppBar(
-        title: Text('Perfil'),
-        elevation: 0,
-        backgroundColor: Colors.indigoAccent,
-        leading: IconButton(
-          icon: Icon (Icons.arrow_back_ios),
-          onPressed: (){},
-      ),
-      actions:<Widget>[
-        IconButton(
-          icon: Icon(Icons.edit),
-          onPressed: (){},
-        )
-      ]
+          title: Text('Perfil'),
+          elevation: 0,
+          backgroundColor: Colors.indigoAccent,
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back_ios),
+            onPressed: () {},
+          ),
+          actions: <Widget>[
+            IconButton(
+              icon: Icon(Icons.edit),
+              onPressed: () {},
+            )
+          ]
       ),
       body: SizedBox.expand(
         child: Container(
@@ -149,7 +148,7 @@ class _MeuPerfilState extends State<MeuPerfil> {
   void _logout(BuildContext context) {
     FirebaseAuth.instance.signOut();
     SharedPreferencesController sharedPreferencesController =
-        new SharedPreferencesController();
+    new SharedPreferencesController();
     sharedPreferencesController.setlogedState("0");
     sharedPreferencesController.setID("");
     sharedPreferencesController.setName("");
@@ -161,7 +160,7 @@ class _MeuPerfilState extends State<MeuPerfil> {
     Navigator.pushAndRemoveUntil(
       context,
       MaterialPageRoute(builder: (context) => MyApp()),
-      (Route<dynamic> route) => false,
+          (Route<dynamic> route) => false,
     );
   }
 
@@ -179,9 +178,9 @@ class _MeuPerfilState extends State<MeuPerfil> {
             Radius.circular(180),
           ),
           child: Container(
-            child: Image.network(
-              userimgURL
-              /*"https://avatars2.githubusercontent.com/u/49197693?s=400&v=4"*/,
+            color: Colors.white,
+            child: userimgURL == null ? Center(child: CircularProgressIndicator(),) : Image.network(
+              userimgURL,
               fit: BoxFit.cover,
             ),
           ),

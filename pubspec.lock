@@ -14,7 +14,7 @@ packages:
       name: android_intent
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.3.4+4"
+    version: "0.3.4+6"
   ansicolor:
     dependency: transitive
     description:
@@ -221,6 +221,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.7.3"
+  flutter_masked_text:
+    dependency: "direct main"
+    description:
+      name: flutter_masked_text
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.8.0"
   front_end:
     dependency: transitive
     description:
@@ -255,7 +262,7 @@ packages:
       name: google_map_location_picker
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.1.1"
+    version: "2.1.2"
   google_maps_flutter:
     dependency: transitive
     description:
@@ -409,7 +416,7 @@ packages:
       name: path_provider
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.4.4"
+    version: "1.4.5"
   pedantic:
     dependency: transitive
     description:
@@ -500,7 +507,7 @@ packages:
       name: shared_preferences
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.5.4+5"
+    version: "0.5.4+6"
   sky_engine:
     dependency: transitive
     description: flutter
@@ -582,7 +589,7 @@ packages:
       name: url_launcher
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "5.2.5"
+    version: "5.2.7"
   url_launcher_platform_interface:
     dependency: transitive
     description:
@@ -597,6 +604,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.0.4"
+  valida_cpf:
+    dependency: "direct main"
+    description:
+      name: valida_cpf
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.0.1"
   validate:
     dependency: transitive
     description:

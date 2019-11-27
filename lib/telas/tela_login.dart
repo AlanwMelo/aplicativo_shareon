@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:aplicativo_shareon/models/usuario_model.dart';
-import 'package:aplicativo_shareon/telas/tela_CadastroUsuario.dart';
+import 'package:aplicativo_shareon/telas/tela_cadastro_usuario.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';
