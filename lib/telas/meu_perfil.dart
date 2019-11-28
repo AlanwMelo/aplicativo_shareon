@@ -123,6 +123,7 @@ class _MeuPerfilState extends State<MeuPerfil> {
                       height: 50.0,
                       margin: const EdgeInsets.all(95.0),
                       child: RaisedButton(
+                        color: Colors.white,
                         child: new Text(
                           'Logout',
                           style: TextStyle(
@@ -131,7 +132,7 @@ class _MeuPerfilState extends State<MeuPerfil> {
                           ),
                         ),
                         onPressed: () {
-                          _logout(context);
+                          alertExit(context);
                         },
                       )),
                 ],
@@ -287,5 +288,109 @@ class _MeuPerfilState extends State<MeuPerfil> {
       userID = value;
       _getUserData();
     });
+  }
+  
+  alertExit(BuildContext context) {
+    return showDialog(
+      context: context,
+      builder: (context) {
+        return GestureDetector(
+          onTap: () => Navigator.pop(context),
+          child: Container(
+            color: Colors.white.withOpacity(0.1),
+            child: Center(
+              child: ClipRRect(
+                borderRadius: BorderRadius.all(Radius.circular(16)),
+                child: GestureDetector(
+                  onTap: () => null,
+                  child: Container(
+                    color: Colors.white,
+                    height: 135,
+                    width: 300,
+                    child: Container(
+                      child: Column(
+                        children: <Widget>[
+                          Container(
+                            margin: EdgeInsets.only(bottom: 8, top: 8),
+                            child: Text(
+                              "Sair",
+                              style: TextStyle(
+                                decoration: TextDecoration.none,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.red,
+                                fontSize: 25,
+                              ),
+                            ),
+                          ),
+                          Text(
+                            "Deseja mesmo desconectar-se da sua conta?",
+                            textAlign:  TextAlign.center,
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 15,
+                              fontWeight: FontWeight.bold,
+                              decoration: TextDecoration.none,
+                            ),
+                          ),
+                          Expanded(
+                            child: Container(
+                              color: Colors.indigoAccent,
+                              margin: EdgeInsets.only(
+                                top: 8,
+                              ),
+                              child: Row(
+                                children: <Widget>[
+                                  Expanded(
+                                    child: Container(
+                                      height: 100,
+                                      child: RaisedButton(
+                                        color: Colors.indigoAccent,
+                                        onPressed: () {
+                                          setState(() {
+                                            Navigator.pop(context);
+                                            _logout(context);
+                                          });
+                                        },
+                                        child: Text(
+                                          "Sair",
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  Expanded(
+                                    child: Container(
+                                      height: 100,
+                                      child: RaisedButton(
+                                        color: Colors.indigoAccent,
+                                        onPressed: () {
+                                          Navigator.pop(context);
+                                        },
+                                        child: Text(
+                                          "Cancelar",
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
   }
 }

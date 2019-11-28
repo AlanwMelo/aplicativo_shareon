@@ -1,8 +1,10 @@
 import 'dart:io';
 
+import 'package:aplicativo_shareon/telas/home.dart';
 import 'package:aplicativo_shareon/utils/image_source_sheet.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_map_location_picker/google_map_location_picker.dart';
@@ -19,6 +21,7 @@ class _EditarPerfilState extends State<EditarPerfil> {
   SharedPreferencesController sharedPreferencesController =
       new SharedPreferencesController();
   final databaseReference = Firestore.instance;
+  final storageRef = FirebaseStorage.instance;
   final nameController = TextEditingController();
   final mailController = TextEditingController();
   final senhaController = TextEditingController();
@@ -38,6 +41,7 @@ class _EditarPerfilState extends State<EditarPerfil> {
   String userID = "";
   GeoPoint userAddressLatLng;
   bool loading = false;
+  bool canPop = true;
   String actualPass;
 
   bool alterName = false;
@@ -58,243 +62,257 @@ class _EditarPerfilState extends State<EditarPerfil> {
 
   @override
   Widget build(BuildContext context) {
-    return loading == false
-        ? editaPerfil()
-        : Container(
-            child: Center(
-              child: CircularProgressIndicator(),
+    return WillPopScope(
+      onWillPop: () async {
+        if (canPop == true) {
+          return _alertExit(context);
+        } else {
+          _toast("Aguarde os dados serem carregados", context);
+          return false;
+        }
+      },
+      child: loading == false
+          ? editaPerfil()
+          : Container(
+              color: Colors.white,
+              child: Center(
+                child: CircularProgressIndicator(),
+              ),
             ),
-          );
+    );
   }
 
-  Widget editaPerfil() {
-    return WillPopScope(
-      onWillPop: () {
-        return _alertExit(context);
-      },
-      child: Scaffold(
-        backgroundColor: Colors.white,
-        appBar: AppBar(
-          title: Text('Perfil'),
-          elevation: 0,
-          backgroundColor: Colors.indigoAccent,
-          leading: IconButton(
-            icon: Icon(Icons.arrow_back_ios),
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-          ),
+  editaPerfil() {
+    return Scaffold(
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        title: Text('Perfil'),
+        elevation: 0,
+        backgroundColor: Colors.indigoAccent,
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back_ios),
+          onPressed: () {
+            _alertExit(context);
+          },
         ),
-        body: SizedBox.expand(
+      ),
+      body: SizedBox.expand(
+        child: Container(
           child: Container(
-            child: Container(
-              child: Form(
-                key: fields,
-                child: ListView(
-                  children: <Widget>[
-                    Container(
-                      child: Center(
-                        child: _img(),
-                      ),
+            child: Form(
+              key: fields,
+              child: ListView(
+                children: <Widget>[
+                  Container(
+                    child: Center(
+                      child: _img(),
                     ),
-                    GestureDetector(
-                      onTap: () {
-                        _toast("Segure para remover sua imagem atual", context);
-                      },
-                      onLongPress: () {
-                        alterIMG = true;
-                        setState(() {
-                          userimgURL =
-                              "https://firebasestorage.googleapis.com/v0/b/shareon.appspot.com/o/DefaultIMG%2FDefaultIMG.png?alt=media&token=9fbc8d45-36a1-45cf-a53b-0c0b7c7588a0";
-                        });
-                      },
-                      child: Container(
-                        margin: EdgeInsets.only(top: 8),
-                        child: Center(
-                          child: Container(
-                            width: 150,
-                            height: 30,
-                            color: Colors.indigoAccent,
-                            child: Center(
-                              child: Text("Remover imagem",
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.bold)),
-                            ),
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      _toast("Segure para remover sua imagem atual", context);
+                    },
+                    onLongPress: () {
+                      alterIMG = true;
+                      setState(() {
+                        userimgURL =
+                            "https://firebasestorage.googleapis.com/v0/b/shareon.appspot.com/o/DefaultIMG%2FDefaultIMG.png?alt=media&token=9fbc8d45-36a1-45cf-a53b-0c0b7c7588a0";
+                      });
+                    },
+                    child: Container(
+                      margin: EdgeInsets.only(top: 8),
+                      child: Center(
+                        child: Container(
+                          width: 150,
+                          height: 30,
+                          color: Colors.indigoAccent,
+                          child: Center(
+                            child: Text("Remover imagem",
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold)),
                           ),
                         ),
                       ),
                     ),
-                    Container(
-                        color: Colors.white,
-                        margin: EdgeInsets.only(top: 16),
-                        child: TextFormField(
-                          textAlign: TextAlign.center,
-                          decoration: InputDecoration(
-                            hintText: userName,
-                          ),
-                          controller: nameController,
-                          validator: (text) {
-                            if (text.isNotEmpty) {
-                              alterName = true;
-                              return null;
-                            } else {
-                              alterName = false;
-                              return null;
-                            }
-                          },
-                        )),
-                    Container(
-                        color: Colors.white,
-                        margin: EdgeInsets.only(top: 16),
-                        child: TextFormField(
-                          textAlign: TextAlign.center,
-                          decoration: InputDecoration(
-                            hintText: userMail,
-                          ),
-                          controller: mailController,
-                          validator: (text) {
-                            if (text.isNotEmpty) {
-                              alterMail = true;
-                              if (!text.contains("@")) {
-                                return "Digite um email válido";
-                              } else {
-                                return null;
-                              }
-                            } else {
-                              alterMail = false;
-                              return null;
-                            }
-                          },
-                        )),
-                    Container(
-                        color: Colors.white,
-                        margin: EdgeInsets.only(top: 16),
-                        child: TextFormField(
-                          textAlign: TextAlign.center,
-                          decoration: InputDecoration(
-                            hintText: "Confirmar email",
-                          ),
-                          controller: confirmarEailController,
-                          validator: (text) {
-                            if (mailController.text.isNotEmpty) {
-                              if (mailController.text != text) {
-                                return "A confirmação do email está diferente do email informado";
-                              } else {
-                                return null;
-                              }
+                  ),
+                  Container(
+                      color: Colors.white,
+                      margin: EdgeInsets.only(top: 16),
+                      child: TextFormField(
+                        textAlign: TextAlign.center,
+                        decoration: InputDecoration(
+                          hintText: userName,
+                        ),
+                        controller: nameController,
+                        validator: (text) {
+                          if (text.isNotEmpty) {
+                            alterName = true;
+                            return null;
+                          } else {
+                            alterName = false;
+                            return null;
+                          }
+                        },
+                      )),
+                  Container(
+                      color: Colors.white,
+                      margin: EdgeInsets.only(top: 16),
+                      child: TextFormField(
+                        textAlign: TextAlign.center,
+                        decoration: InputDecoration(
+                          hintText: userMail,
+                        ),
+                        controller: mailController,
+                        validator: (text) {
+                          if (text.isNotEmpty) {
+                            alterMail = true;
+                            if (!text.contains("@")) {
+                              return "Digite um email válido";
                             } else {
                               return null;
                             }
-                          },
-                        )),
-                    Container(
-                        color: Colors.white,
-                        margin: EdgeInsets.only(top: 16),
-                        child: TextFormField(
-                          obscureText: true,
-                          controller: senhaController,
-                          textAlign: TextAlign.center,
-                          decoration: InputDecoration(
-                            hintText: "Nova senha",
-                          ),
-                          validator: (text) {
-                            if (text.isNotEmpty) {
-                              alterPass = true;
-                              if (text.length < 8) {
-                                return "Senha curta, mínimo 8 digitos";
-                              } else {
-                                return null;
-                              }
-                            } else {
-                              alterPass = false;
-                              return null;
-                            }
-                          },
-                        )),
-                    Container(
-                        color: Colors.white,
-                        margin: EdgeInsets.only(top: 16),
-                        child: TextFormField(
-                          textAlign: TextAlign.center,
-                          obscureText: true,
-                          decoration: InputDecoration(
-                            hintText: "Confirmar Senha",
-                          ),
-                          controller: confirmacaoSenhaController,
-                          validator: (text) {
-                            if (senhaController.text.isNotEmpty) {
-                              if (text.isEmpty) {
-                                return "Campo confirmar email obrigatório";
-                              } else if (senhaController.text != text) {
-                                return "A confirmação do email está diferente do email informado";
-                              } else {
-                                return null;
-                              }
+                          } else {
+                            alterMail = false;
+                            return null;
+                          }
+                        },
+                      )),
+                  Container(
+                      color: Colors.white,
+                      margin: EdgeInsets.only(top: 16),
+                      child: TextFormField(
+                        textAlign: TextAlign.center,
+                        decoration: InputDecoration(
+                          hintText: "Confirmar email",
+                        ),
+                        controller: confirmarEailController,
+                        validator: (text) {
+                          if (mailController.text.isNotEmpty) {
+                            if (mailController.text != text) {
+                              return "A confirmação do email está diferente do email informado";
                             } else {
                               return null;
                             }
-                          },
-                        )),
-                    Container(
-                      margin: EdgeInsets.only(top: 22),
+                          } else {
+                            return null;
+                          }
+                        },
+                      )),
+                  Container(
+                      color: Colors.white,
+                      margin: EdgeInsets.only(top: 16),
+                      child: TextFormField(
+                        obscureText: true,
+                        controller: senhaController,
+                        textAlign: TextAlign.center,
+                        decoration: InputDecoration(
+                          hintText: "Nova senha",
+                        ),
+                        validator: (text) {
+                          if (text.isNotEmpty) {
+                            alterPass = true;
+                            if (text.length < 8) {
+                              return "Senha curta, mínimo 8 digitos";
+                            } else {
+                              return null;
+                            }
+                          } else {
+                            alterPass = false;
+                            return null;
+                          }
+                        },
+                      )),
+                  Container(
+                      color: Colors.white,
+                      margin: EdgeInsets.only(top: 16),
+                      child: TextFormField(
+                        textAlign: TextAlign.center,
+                        obscureText: true,
+                        decoration: InputDecoration(
+                          hintText: "Confirmar Senha",
+                        ),
+                        controller: confirmacaoSenhaController,
+                        validator: (text) {
+                          if (senhaController.text.isNotEmpty) {
+                            if (text.isEmpty) {
+                              return "Campo confirmar email obrigatório";
+                            } else if (senhaController.text != text) {
+                              return "A confirmação do email está diferente do email informado";
+                            } else {
+                              return null;
+                            }
+                          } else {
+                            return null;
+                          }
+                        },
+                      )),
+                  Container(
+                    margin: EdgeInsets.only(top: 22),
+                    child: Row(
+                      children: <Widget>[
+                        Expanded(
+                            child: Center(
+                          child: _text("Endereço: ", semititle: true),
+                        ))
+                      ],
+                    ),
+                  ),
+                  Container(
+                    margin: EdgeInsets.only(top: 12),
+                    child: GestureDetector(
+                      onTap: () {
+                        _selecionaLocalizacao(context);
+                      },
                       child: Row(
                         children: <Widget>[
-                          Expanded(
-                              child: Center(
-                            child: _text("Endereço: ", semititle: true),
-                          ))
-                        ],
-                      ),
-                    ),
-                    Container(
-                      margin: EdgeInsets.only(top: 12),
-                      child: GestureDetector(
-                        onTap: () {
-                          _selecionaLocalizacao(context);
-                        },
-                        child: Row(
-                          children: <Widget>[
-                            _icGPS(),
-                            Container(
-                              width: 280,
-                              child: _text(userAddress),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    Container(
-                      color: Colors.white,
-                      margin: const EdgeInsets.only(top: 25.0),
-                      child: Column(
-                        children: <Widget>[
-                          Text("Somente dados alterados serão salvos"),
+                          _icGPS(),
                           Container(
-                            width: 400.0,
-                            height: 50.0,
-                            child: RaisedButton(
-                              color: Colors.indigoAccent,
-                              child: new Text(
-                                'Atualizar dados',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              onPressed: () {
-                                if (fields.currentState.validate()) {
-                                  _validaAlteracoes();
-                                }
-                              },
-                            ),
+                            width: 280,
+                            child: _text(userAddress),
                           ),
                         ],
                       ),
                     ),
-                  ],
-                ),
+                  ),
+                  Container(
+                    color: Colors.white,
+                    margin: const EdgeInsets.only(top: 25.0),
+                    child: Column(
+                      children: <Widget>[
+                        Text("Somente dados alterados serão salvos"),
+                        Container(
+                          width: 400.0,
+                          height: 50.0,
+                          child: RaisedButton(
+                            color: Colors.indigoAccent,
+                            child: new Text(
+                              'Atualizar dados',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            onPressed: () {
+                              if (fields.currentState.validate()) {
+                                if (alterIMG == false &&
+                                    alterPass == false &&
+                                    alterName == false &&
+                                    alterMail == false &&
+                                    alterAddress == false) {
+                                  _toast("Nada foi alterado", context);
+                                } else {
+                                  _validaAlteracoes();
+                                }
+                              }
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
             ),
           ),
@@ -307,11 +325,6 @@ class _EditarPerfilState extends State<EditarPerfil> {
     setState(() {
       userName = name;
     });
-  }
-
-  Future updatePassword(String password) async {
-    FirebaseUser user = await FirebaseAuth.instance.currentUser();
-    user.updatePassword(password);
   }
 
   void _setUserMail(String email) {
@@ -361,7 +374,10 @@ class _EditarPerfilState extends State<EditarPerfil> {
             child: Container(
               color: Colors.indigoAccent,
               child: newIMG != null
-                  ? Image.file(newIMG)
+                  ? Image.file(
+                      newIMG,
+                      fit: BoxFit.cover,
+                    )
                   : userimgURL == null
                       ? Center(
                           child: CircularProgressIndicator(),
@@ -478,12 +494,106 @@ class _EditarPerfilState extends State<EditarPerfil> {
 
   void _atualizaDados() async {
     setState(() {
+      canPop = false;
       loading = true;
     });
+    Navigator.of(context).pop();
+    if (alterName == true) {
+      sharedPreferencesController.setName(nameController.text);
+      Map<String, dynamic> attName = {
+        "nome": nameController.text,
+      };
 
+      await databaseReference
+          .collection("users")
+          .document(userID)
+          .updateData(attName);
+    }
+    if (alterMail == true) {
+      FirebaseUser user = await FirebaseAuth.instance.currentUser();
+      var userAuth = EmailAuthProvider.getCredential(
+          email: userMail, password: actualPass);
+      await user.reauthenticateWithCredential(userAuth).then((ok) async {
+        await user.updateEmail(mailController.text).then((ok) async {
+          user.sendEmailVerification();
+          sharedPreferencesController.setEmail(mailController.text);
+          sharedPreferencesController.setEmailAuth(false);
+
+          Map<String, dynamic> attMail = {
+            "email": mailController.text,
+            "authenticated": false,
+          };
+
+          await databaseReference
+              .collection("users")
+              .document(userID)
+              .updateData(attMail);
+        });
+      });
+    }
+    if (alterAddress == true) {
+      sharedPreferencesController.setAddress(userAddress);
+      Map<String, dynamic> attAddress = {
+        "userAddress": userAddress,
+        "userAddressLatLng": userAddressLatLng,
+      };
+
+      await databaseReference
+          .collection("users")
+          .document(userID)
+          .updateData(attAddress);
+    }
+    if (alterPass == true) {
+      Map<String, dynamic> attPass = {
+        "password": senhaController.text,
+      };
+
+      FirebaseUser user = await FirebaseAuth.instance.currentUser();
+      var userAuth = EmailAuthProvider.getCredential(
+          email: userMail, password: actualPass);
+      await user.reauthenticateWithCredential(userAuth).then((ok) async {
+        await user.updatePassword(senhaController.text).then((ok) async {
+          await databaseReference
+              .collection("users")
+              .document(userID)
+              .updateData(attPass);
+        });
+      });
+    }
+    if (alterIMG == true) {
+      String newUserImg;
+      if (newIMG != null) {
+        final StorageUploadTask task =
+            storageRef.ref().child("/usersIMG/$userID/IMG").putFile(newIMG);
+        newUserImg = await (await task.onComplete).ref.getDownloadURL();
+
+        await task.onComplete;
+        sharedPreferencesController.setURLImg(newUserImg);
+
+        Map<String, dynamic> attIMG = {
+          "imgURL": newUserImg,
+        };
+        await databaseReference
+            .collection("users")
+            .document(userID)
+            .updateData(attIMG);
+      } else {
+        sharedPreferencesController.setURLImg(userimgURL);
+        Map<String, dynamic> attIMG = {
+          "imgURL": userimgURL,
+        };
+        await databaseReference
+            .collection("users")
+            .document(userID)
+            .updateData(attIMG);
+      }
+    }
     setState(() {
+      canPop = true;
       loading = false;
     });
+    Navigator.of(context).pop();
+    _success();
   }
 
   _validaAlteracoes() {
@@ -617,6 +727,13 @@ class _EditarPerfilState extends State<EditarPerfil> {
                               : Container(
                                   margin: EdgeInsets.only(bottom: 8),
                                   child: _textConfirmacao("Senha alterada",
+                                      titulo: true),
+                                ),
+                          alterIMG != true
+                              ? Container()
+                              : Container(
+                                  margin: EdgeInsets.only(bottom: 8),
+                                  child: _textConfirmacao("Imagem alterada",
                                       titulo: true),
                                 ),
                           Expanded(
@@ -924,7 +1041,9 @@ class _EditarPerfilState extends State<EditarPerfil> {
                                                       actualPass) {
                                                     _toast("Senha incorreta",
                                                         context);
-                                                  } else {}
+                                                  } else {
+                                                    _atualizaDados();
+                                                  }
 
                                                   // Navigator.pop(context);
                                                 }
@@ -958,5 +1077,12 @@ class _EditarPerfilState extends State<EditarPerfil> {
         );
       },
     );
+  }
+
+  void _success() {
+    Navigator.of(context)
+        .pushReplacement(MaterialPageRoute(builder: (BuildContext context) {
+      return Home();
+    }));
   }
 }
