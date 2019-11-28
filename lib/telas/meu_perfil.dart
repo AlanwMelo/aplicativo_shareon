@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -11,17 +12,23 @@ class MeuPerfil extends StatefulWidget {
 
 class _MeuPerfilState extends State<MeuPerfil> {
   SharedPreferencesController sharedPreferencesController =
-  new SharedPreferencesController();
+      new SharedPreferencesController();
+  final databaseReference = Firestore.instance;
 
   String userName = "?";
   String userMail = "?";
   String userimgURL;
+  String userAddress = "";
+  String userMedia = "-";
+  String userID = "";
 
   @override
   void initState() {
     sharedPreferencesController.getName().then(_setUserName);
     sharedPreferencesController.getEmail().then(_setUserMail);
     sharedPreferencesController.getURLImg().then(_setURLImg);
+    sharedPreferencesController.getAddress().then(_setAddress);
+    sharedPreferencesController.getID().then(_setId);
     super.initState();
   }
 
@@ -39,15 +46,16 @@ class _MeuPerfilState extends State<MeuPerfil> {
           backgroundColor: Colors.indigoAccent,
           leading: IconButton(
             icon: Icon(Icons.arrow_back_ios),
-            onPressed: () {},
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
           ),
           actions: <Widget>[
             IconButton(
               icon: Icon(Icons.edit),
               onPressed: () {},
             )
-          ]
-      ),
+          ]),
       body: SizedBox.expand(
         child: Container(
           padding: EdgeInsets.all(16),
@@ -55,20 +63,6 @@ class _MeuPerfilState extends State<MeuPerfil> {
             child: Container(
               child: Column(
                 children: <Widget>[
-                  Row(
-                    children: <Widget>[
-                      Expanded(
-                        child: Container(
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: <Widget>[
-                              _iconEditar(),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
                   _img(),
                   Container(
                     margin: EdgeInsets.only(top: 16),
@@ -80,7 +74,7 @@ class _MeuPerfilState extends State<MeuPerfil> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: <Widget>[
-                        _text("5.0"),
+                        _text(userMedia),
                         _iconEstrela(),
                       ],
                     ),
@@ -148,7 +142,7 @@ class _MeuPerfilState extends State<MeuPerfil> {
   void _logout(BuildContext context) {
     FirebaseAuth.instance.signOut();
     SharedPreferencesController sharedPreferencesController =
-    new SharedPreferencesController();
+        new SharedPreferencesController();
     sharedPreferencesController.setlogedState("0");
     sharedPreferencesController.setID("");
     sharedPreferencesController.setName("");
@@ -163,7 +157,7 @@ class _MeuPerfilState extends State<MeuPerfil> {
     Navigator.pushAndRemoveUntil(
       context,
       MaterialPageRoute(builder: (context) => MyApp()),
-          (Route<dynamic> route) => false,
+      (Route<dynamic> route) => false,
     );
   }
 
@@ -182,10 +176,14 @@ class _MeuPerfilState extends State<MeuPerfil> {
           ),
           child: Container(
             color: Colors.white,
-            child: userimgURL == null ? Center(child: CircularProgressIndicator(),) : Image.network(
-              userimgURL,
-              fit: BoxFit.cover,
-            ),
+            child: userimgURL == null
+                ? Center(
+                    child: CircularProgressIndicator(),
+                  )
+                : Image.network(
+                    userimgURL,
+                    fit: BoxFit.cover,
+                  ),
           ),
         ),
       ),
@@ -229,11 +227,32 @@ class _MeuPerfilState extends State<MeuPerfil> {
     );
   }
 
-  _iconEditar() {
-    return Icon(
-      Icons.edit,
-      color: Colors.white,
-      size: 25.0,
-    );
+  _setAddress(String value) {
+    setState(() {
+      userAddress = value;
+    });
+  }
+
+  _getUserData() async {
+    await databaseReference
+        .collection("user")
+        .where("userID", isEqualTo: userID)
+        .getDocuments()
+        .then((QuerySnapshot snapshot) {
+      snapshot.documents.forEach((f) {
+        Map userData = f.data;
+        setState(() {
+          userMedia = userData["media"];
+          userAddress = userData["userAddress"];
+        });
+      });
+    });
+  }
+
+  _setId(String value) {
+    setState(() {
+      userID = value;
+      _getUserData();
+    });
   }
 }

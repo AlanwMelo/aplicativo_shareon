@@ -236,6 +236,7 @@ class _CadastroUsuarioState extends State<CadastroUsuario> {
                                   "email": emailController.text,
                                   "cpf": cpf,
                                   "debit": debit,
+                                  "media": "-",
                                   "userAddressLatLng": userAddressLatLng,
                                   "userAddress": stringUserAddress,
                                   "authenticated": false,
