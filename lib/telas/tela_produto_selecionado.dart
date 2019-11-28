@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:aplicativo_shareon/models/usuario_model.dart';
 import 'package:aplicativo_shareon/telas/tela_reserva_proxima.dart';
 import 'package:aplicativo_shareon/telas/tela_reservar.dart';
 import 'package:aplicativo_shareon/utils/shareon_appbar.dart';
@@ -33,6 +34,7 @@ class _ReservaProxima {
 class _ProdutoSelecionadoState extends State<ProdutoSelecionado> {
   SharedPreferencesController sharedPreferencesController =
       new SharedPreferencesController();
+  UserModel model = new UserModel();
   final databaseReference = Firestore.instance;
   bool productInFavorites = false;
   bool myProduct = false;
@@ -46,6 +48,7 @@ class _ProdutoSelecionadoState extends State<ProdutoSelecionado> {
   String productIMG = "";
   String productType = "";
   String userID = "";
+  String userMail = "";
   String solicitationStatus = "";
   String solicitationID = "";
   String imgID = "";
@@ -64,6 +67,7 @@ class _ProdutoSelecionadoState extends State<ProdutoSelecionado> {
   String img3 = "";
   String img4 = "";
   String img5 = "";
+  String actualPass = "";
   List listaIMGS = [];
   Map mapListaIMGS = {};
   int counter = 0;
@@ -86,8 +90,10 @@ class _ProdutoSelecionadoState extends State<ProdutoSelecionado> {
   Widget build(BuildContext context) {
     listaIMGS = mapListaIMGS.values.toList();
     generaPGViewer();
-    if (emailVerified == null) {
-      sharedPreferencesController.getEmailAuth().then(_verifyAuth);
+    if (userID != "" && userMail != "") {
+      if (emailVerified == null) {
+        sharedPreferencesController.getEmailAuth().then(_verifyAuth);
+      }
     }
     if (productInFavorites == false) {
       favoriteController = "Adcionar aos Favoritos";
@@ -712,11 +718,29 @@ class _ProdutoSelecionadoState extends State<ProdutoSelecionado> {
         backgroundColor: Colors.black.withOpacity(0.8));
   }
 
-  FutureOr _verifyAuth(bool value, {int caller}) {
-    emailVerified = value;
-    if (caller == 1 && emailVerified == false) {
-      _alertEmail();
-    }
+  Future<FutureOr> _verifyAuth(bool value, {int caller}) async {
+    await databaseReference
+        .collection("users")
+        .where("userID", isEqualTo: userID)
+        .getDocuments()
+        .then((QuerySnapshot snapshot) {
+      snapshot.documents.forEach((f) {
+        Map userData = f.data;
+        actualPass = userData["password"];
+      });
+    });
+
+    FirebaseUser user = await FirebaseAuth.instance.currentUser();
+    var userAuth =
+        EmailAuthProvider.getCredential(email: userMail, password: actualPass);
+    await user.reauthenticateWithCredential(userAuth).then((onValue) async {
+      emailVerified = await model
+          .isAuthenticated(await FirebaseAuth.instance.currentUser());
+
+      if (caller == 1 && emailVerified == false) {
+        _alertEmail();
+      }
+    });
   }
 
   _alertEmail() {
