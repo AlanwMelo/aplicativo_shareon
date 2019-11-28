@@ -1,7 +1,9 @@
+import 'package:aplicativo_shareon/telas/tela_editar_perfil.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:toast/toast.dart';
 
 import '../main.dart';
 
@@ -12,7 +14,7 @@ class MeuPerfil extends StatefulWidget {
 
 class _MeuPerfilState extends State<MeuPerfil> {
   SharedPreferencesController sharedPreferencesController =
-      new SharedPreferencesController();
+  new SharedPreferencesController();
   final databaseReference = Firestore.instance;
 
   String userName = "?";
@@ -53,7 +55,11 @@ class _MeuPerfilState extends State<MeuPerfil> {
           actions: <Widget>[
             IconButton(
               icon: Icon(Icons.edit),
-              onPressed: () {},
+              onPressed: () {
+                Navigator.of(context).push(MaterialPageRoute(builder: (BuildContext context){
+                  return EditarPerfil();
+                }));
+              },
             )
           ]),
       body: SizedBox.expand(
@@ -65,8 +71,11 @@ class _MeuPerfilState extends State<MeuPerfil> {
                 children: <Widget>[
                   _img(),
                   Container(
+                      margin: EdgeInsets.only(top: 16),
+                      child: _text(userName, titulo: true)),
+                  Container(
                     margin: EdgeInsets.only(top: 16),
-                    child: _text(userName, titulo: true),
+                    child: _text(userMail),
                   ),
                   Container(
                     margin: EdgeInsets.only(top: 16),
@@ -80,8 +89,16 @@ class _MeuPerfilState extends State<MeuPerfil> {
                     ),
                   ),
                   Container(
+                    margin: EdgeInsets.only(top: 8),
+                    child: _text("Endereço: ", semititle: true),
+                  ),
+                  Container(
+                    margin: EdgeInsets.only(top: 12, bottom: 4),
+                    child: _text(userAddress),
+                  ),
+                  Container(
                     margin: EdgeInsets.only(top: 16, bottom: 24),
-                    child: _text("Avaliações:"),
+                    child: _text("Avaliações:", semititle: true),
                   ),
                   ConstrainedBox(
                     constraints: BoxConstraints(
@@ -100,17 +117,22 @@ class _MeuPerfilState extends State<MeuPerfil> {
                       ),
                     ),
                   ),
-                  new Container(
+                  Container(
+                      color: Colors.white,
                       width: 200.0,
                       height: 50.0,
                       margin: const EdgeInsets.all(95.0),
-                      child: new RaisedButton(
-                        child: new Text('Logout'),
+                      child: RaisedButton(
+                        child: new Text(
+                          'Logout',
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                         onPressed: () {
                           _logout(context);
                         },
-                        textColor: Colors.white70,
-                        color: Colors.indigoAccent,
                       )),
                 ],
               ),
@@ -142,7 +164,7 @@ class _MeuPerfilState extends State<MeuPerfil> {
   void _logout(BuildContext context) {
     FirebaseAuth.instance.signOut();
     SharedPreferencesController sharedPreferencesController =
-        new SharedPreferencesController();
+    new SharedPreferencesController();
     sharedPreferencesController.setlogedState("0");
     sharedPreferencesController.setID("");
     sharedPreferencesController.setName("");
@@ -157,40 +179,43 @@ class _MeuPerfilState extends State<MeuPerfil> {
     Navigator.pushAndRemoveUntil(
       context,
       MaterialPageRoute(builder: (context) => MyApp()),
-      (Route<dynamic> route) => false,
+          (Route<dynamic> route) => false,
     );
   }
 
   _img() {
-    return Container(
-      child: ConstrainedBox(
-        constraints: BoxConstraints(
-          minWidth: 200,
-          minHeight: 200,
-          maxHeight: 200,
-          maxWidth: 200,
-        ),
-        child: ClipRRect(
-          borderRadius: BorderRadius.all(
-            Radius.circular(180),
+    return GestureDetector(
+      child: Container(
+        child: ConstrainedBox(
+          constraints: BoxConstraints(
+            minWidth: 200,
+            minHeight: 200,
+            maxHeight: 200,
+            maxWidth: 200,
           ),
-          child: Container(
-            color: Colors.white,
-            child: userimgURL == null
-                ? Center(
-                    child: CircularProgressIndicator(),
-                  )
-                : Image.network(
-                    userimgURL,
-                    fit: BoxFit.cover,
-                  ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.all(
+              Radius.circular(180),
+            ),
+            child: Container(
+              color: Colors.white,
+              child: userimgURL == null
+                  ? Center(
+                child: CircularProgressIndicator(),
+              )
+                  : Image.network(
+                userimgURL,
+                fit: BoxFit.cover,
+              ),
+            ),
           ),
         ),
       ),
     );
   }
 
-  _text(String texto, {bool titulo = false, bool resumo = false}) {
+  _text(String texto,
+      {bool titulo = false, bool resumo = false, bool semititle = false}) {
     if (titulo == true) {
       return Text(
         "$texto",
@@ -203,17 +228,25 @@ class _MeuPerfilState extends State<MeuPerfil> {
     } else if (resumo == true) {
       return Text(
         "$texto",
+        style: TextStyle(fontSize: 16, color: Colors.black),
+      );
+    } else if (semititle == true) {
+      return Text(
+        texto,
         style: TextStyle(
-          fontSize: 16,
+          fontWeight: FontWeight.bold,
+          color: Colors.white,
+          fontSize: 26,
         ),
       );
     } else {
       return Text(
         "$texto",
+        textAlign: TextAlign.center,
         style: TextStyle(
           fontWeight: FontWeight.bold,
           color: Colors.white,
-          fontSize: 20,
+          fontSize: 19,
         ),
       );
     }
@@ -235,7 +268,7 @@ class _MeuPerfilState extends State<MeuPerfil> {
 
   _getUserData() async {
     await databaseReference
-        .collection("user")
+        .collection("users")
         .where("userID", isEqualTo: userID)
         .getDocuments()
         .then((QuerySnapshot snapshot) {

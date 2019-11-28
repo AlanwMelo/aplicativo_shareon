@@ -634,14 +634,15 @@ class _ProdutoSelecionadoState extends State<ProdutoSelecionado> {
         color: Colors.white,
         onPressed: () {
           if (emailVerified == false) {
-            sharedPreferencesController.getEmailAuth().then((value) => _verifyAuth(value, caller: 1));
+            sharedPreferencesController
+                .getEmailAuth()
+                .then((value) => _verifyAuth(value, caller: 1));
           } else {
             Navigator.push(
               context,
               MaterialPageRoute(builder: (BuildContext context) {
                 return TelaReservar(
-                    productID: widget.productID,
-                    productPrice: productPrice);
+                    productID: widget.productID, productPrice: productPrice);
               }),
             );
           }
@@ -713,7 +714,7 @@ class _ProdutoSelecionadoState extends State<ProdutoSelecionado> {
 
   FutureOr _verifyAuth(bool value, {int caller}) {
     emailVerified = value;
-    if(caller == 1 && emailVerified == false){
+    if (caller == 1 && emailVerified == false) {
       _alertEmail();
     }
   }
@@ -793,9 +794,12 @@ class _ProdutoSelecionadoState extends State<ProdutoSelecionado> {
                                       child: RaisedButton(
                                         color: Colors.indigoAccent,
                                         onPressed: () async {
-                                          FirebaseUser user = await FirebaseAuth.instance.currentUser();
+                                          FirebaseUser user = await FirebaseAuth
+                                              .instance
+                                              .currentUser();
                                           user.sendEmailVerification();
-                                          _toast("Email de verificação enviado", context);
+                                          _toast("Email de verificação enviado",
+                                              context);
                                           Navigator.of(context).pop();
                                         },
                                         child: Text(

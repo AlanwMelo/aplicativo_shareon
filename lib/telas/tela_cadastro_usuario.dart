@@ -234,6 +234,7 @@ class _CadastroUsuarioState extends State<CadastroUsuario> {
                                 Map<String, dynamic> userData = {
                                   "nome": nomeController.text,
                                   "email": emailController.text,
+                                  "password": senhaController.text,
                                   "cpf": cpf,
                                   "debit": debit,
                                   "media": "-",
