@@ -295,7 +295,7 @@ class _EditarPerfilState extends State<EditarPerfil> {
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
-                            onPressed: () {
+                            onPressed: () async {
                               if (fields.currentState.validate()) {
                                 if (alterIMG == false &&
                                     alterPass == false &&
@@ -303,6 +303,25 @@ class _EditarPerfilState extends State<EditarPerfil> {
                                     alterMail == false &&
                                     alterAddress == false) {
                                   _toast("Nada foi alterado", context);
+                                }
+                                bool emailInUse = false;
+
+                                await databaseReference
+                                    .collection("users")
+                                    .where("email")
+                                    .getDocuments()
+                                    .then((QuerySnapshot snapshot) {
+                                  snapshot.documents.forEach((f) {
+                                    Map mappedEmail = f.data;
+                                    if (mappedEmail["email"] ==
+                                        mailController.text) {
+                                      emailInUse = true;
+                                    }
+                                  });
+                                });
+                                if (emailInUse == true) {
+                                  _toast("Este email já está sendo utilizado",
+                                      context);
                                 } else {
                                   _validaAlteracoes();
                                 }
@@ -1037,7 +1056,7 @@ class _EditarPerfilState extends State<EditarPerfil> {
                                             height: 70,
                                             child: RaisedButton(
                                               color: Colors.indigoAccent,
-                                              onPressed: () {
+                                              onPressed: () async {
                                                 FocusScope.of(context)
                                                     .requestFocus(
                                                         new FocusNode());
@@ -1051,10 +1070,7 @@ class _EditarPerfilState extends State<EditarPerfil> {
                                                   } else {
                                                     _atualizaDados();
                                                   }
-
-                                                  // Navigator.pop(context);
                                                 }
-                                                setState(() {});
                                               },
                                               child: Text(
                                                 "OK",
