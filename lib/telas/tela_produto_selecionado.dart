@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:aplicativo_shareon/models/usuario_model.dart';
 import 'package:aplicativo_shareon/telas/tela_reserva_proxima.dart';
@@ -732,7 +733,10 @@ class _ProdutoSelecionadoState extends State<ProdutoSelecionado> {
         .then((QuerySnapshot snapshot) {
       snapshot.documents.forEach((f) {
         Map userData = f.data;
-        actualPass = userData["password"];
+        var base64Str = base64.decode(userData["password"]);
+        var passDecode = utf8.decode(base64Str);
+
+        actualPass = passDecode;
       });
     });
 

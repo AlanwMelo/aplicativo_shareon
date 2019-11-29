@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:aplicativo_shareon/telas/home.dart';
@@ -449,7 +450,10 @@ class _EditarPerfilState extends State<EditarPerfil> {
           userMedia = userData["media"];
           userAddress = userData["userAddress"];
           oldUserAddress = userData["userAddress"];
-          actualPass = userData["password"];
+          var base64Str = base64.decode(userData["password"]);
+          var passDecode = utf8.decode(base64Str);
+
+          actualPass = passDecode;
         });
       });
     });
@@ -509,6 +513,26 @@ class _EditarPerfilState extends State<EditarPerfil> {
           .document(userID)
           .updateData(attName);
     }
+    if (alterPass == true) {
+      var passEncode = utf8.encode(senhaController.text);
+      var base64Str = base64.encode(passEncode);
+
+      Map<String, dynamic> attPass = {
+        "password": base64Str,
+      };
+
+      FirebaseUser user = await FirebaseAuth.instance.currentUser();
+      var userAuth = EmailAuthProvider.getCredential(
+          email: userMail, password: actualPass);
+      await user.reauthenticateWithCredential(userAuth).then((ok) async {
+        await user.updatePassword(senhaController.text).then((ok) async {
+          await databaseReference
+              .collection("users")
+              .document(userID)
+              .updateData(attPass);
+        });
+      });
+    }
     if (alterMail == true) {
       FirebaseUser user = await FirebaseAuth.instance.currentUser();
       var userAuth = EmailAuthProvider.getCredential(
@@ -542,23 +566,6 @@ class _EditarPerfilState extends State<EditarPerfil> {
           .collection("users")
           .document(userID)
           .updateData(attAddress);
-    }
-    if (alterPass == true) {
-      Map<String, dynamic> attPass = {
-        "password": senhaController.text,
-      };
-
-      FirebaseUser user = await FirebaseAuth.instance.currentUser();
-      var userAuth = EmailAuthProvider.getCredential(
-          email: userMail, password: actualPass);
-      await user.reauthenticateWithCredential(userAuth).then((ok) async {
-        await user.updatePassword(senhaController.text).then((ok) async {
-          await databaseReference
-              .collection("users")
-              .document(userID)
-              .updateData(attPass);
-        });
-      });
     }
     if (alterIMG == true) {
       String newUserImg;

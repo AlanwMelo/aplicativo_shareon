@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:aplicativo_shareon/models/usuario_model.dart';
 import 'package:aplicativo_shareon/telas/home.dart';
 import 'package:aplicativo_shareon/telas/tela_login.dart';
@@ -245,10 +247,13 @@ class _CadastroUsuarioState extends State<CadastroUsuario> {
                                         _btLoader();
                                         double debit = 0;
 
+                                        var passEncode = utf8.encode(senhaController.text);
+                                        var base64Str = base64.encode(passEncode);
+
                                         Map<String, dynamic> userData = {
                                           "nome": nomeController.text,
                                           "email": emailController.text,
-                                          "password": senhaController.text,
+                                          "password": base64Str,
                                           "cpf": cpf,
                                           "debit": debit,
                                           "media": "-",
