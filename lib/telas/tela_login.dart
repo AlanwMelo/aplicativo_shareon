@@ -1,7 +1,10 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:aplicativo_shareon/models/usuario_model.dart';
 import 'package:aplicativo_shareon/telas/tela_cadastro_usuario.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';
@@ -17,6 +20,7 @@ class Login extends StatefulWidget {
 class _LoginState extends State<Login> {
   SharedPreferencesController sharedPreferencesController =
       new SharedPreferencesController();
+  final databaseReference = Firestore.instance;
   final emailController = TextEditingController();
   final passController = TextEditingController();
 
@@ -181,7 +185,21 @@ class _LoginState extends State<Login> {
     );
   }
 
-  void _onSuccess() {
+  Future _onSuccess() async {
+    var passEncode = utf8.encode(passController.text);
+    var base64Str = base64.encode(passEncode);
+
+    Map<String, dynamic> attPass = {
+      "password": base64Str,
+    };
+
+    FirebaseUser aux = await FirebaseAuth.instance.currentUser();
+
+    await databaseReference
+        .collection("users")
+        .document(aux.uid)
+        .updateData(attPass);
+
     Navigator.of(context)
         .pushReplacement(MaterialPageRoute(builder: (context) => Home()));
   }
