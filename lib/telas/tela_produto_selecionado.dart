@@ -626,7 +626,13 @@ class _ProdutoSelecionadoState extends State<ProdutoSelecionado> {
           },
           child: _text("Validar retirada", resumo: true),
         );
-      }
+      }else{return RaisedButton(
+        color: Colors.white,
+        onPressed: () {
+          _toast("Só existo", context);
+        },
+        child: _text("Editar reserva", resumo: true),
+      );}
     } else if (myProduct == null) {
       return Container();
     } else if (myProduct == true) {
@@ -700,7 +706,7 @@ class _ProdutoSelecionadoState extends State<ProdutoSelecionado> {
               });
             }
             if (productData["status"] == "em andamento") {
-              reservaEmAndamento.add(productData["programedInitDate"]);
+              reservaEmAndamento.add(new _ReservaProxima(productData["solicitationID"], productData["programedInitDate"]));
             }
           },
         );
