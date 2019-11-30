@@ -669,6 +669,10 @@ class _CadastroProdutoState extends State<CadastroProduto> {
               tamanhoInformado = true;
               tamanho = "G";
               break;
+            case 4:
+              tamanhoInformado = false;
+              tamanho = "";
+              break;
           }
         });
       }
@@ -677,27 +681,66 @@ class _CadastroProdutoState extends State<CadastroProduto> {
         margin: EdgeInsets.only(top: 8),
         child: Column(
           children: <Widget>[
+            _textBlack("Tamanho: "),
             Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: <Widget>[
-                _textBlack("Tamanho: "),
-                Radio(
-                  value: 1,
-                  groupValue: _radioValueME,
-                  onChanged: _handleRadioValueME,
+                Expanded(
+                  child: Container(
+                    child: Row(
+                      children: <Widget>[
+                        Radio(
+                          value: 1,
+                          groupValue: _radioValueME,
+                          onChanged: _handleRadioValueME,
+                        ),
+                        _textBlack("P"),
+                      ],
+                    ),
+                  ),
                 ),
-                _textBlack("P"),
-                Radio(
-                  value: 2,
-                  groupValue: _radioValueME,
-                  onChanged: _handleRadioValueME,
+                Expanded(
+                  child: Container(
+                    child: Row(
+                      children: <Widget>[
+                        Radio(
+                          value: 2,
+                          groupValue: _radioValueME,
+                          onChanged: _handleRadioValueME,
+                        ),
+                        _textBlack("M"),
+                      ],
+                    ),
+                  ),
                 ),
-                _textBlack("M"),
-                Radio(
-                  value: 3,
-                  groupValue: _radioValueME,
-                  onChanged: _handleRadioValueME,
+                Expanded(
+                  child: Container(
+                    child: Row(
+                      children: <Widget>[
+                        Radio(
+                          value: 3,
+                          groupValue: _radioValueME,
+                          onChanged: _handleRadioValueME,
+                        ),
+                        _textBlack("G"),
+                      ],
+                    ),
+                  ),
                 ),
-                _textBlack("G"),
+                Expanded(
+                  child: Container(
+                    child: Row(
+                      children: <Widget>[
+                        Radio(
+                          value: 4,
+                          groupValue: _radioValueME,
+                          onChanged: _handleRadioValueME,
+                        ),
+                        _textBlack("Vazio"),
+                      ],
+                    ),
+                  ),
+                )
               ],
             ),
             Form(
