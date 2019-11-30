@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:aplicativo_shareon/models/usuario_model.dart';
 import 'package:aplicativo_shareon/telas/home.dart';
 import 'package:aplicativo_shareon/telas/tela_login.dart';
@@ -29,6 +31,7 @@ class _CadastroUsuarioState extends State<CadastroUsuario> {
   String stringUserAddress = "Informe seu endereço";
   GeoPoint userAddressLatLng;
   String cpf;
+  bool btloading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -178,81 +181,100 @@ class _CadastroUsuarioState extends State<CadastroUsuario> {
                     ),
                     SizedBox(
                       height: 44.0,
-                      child: RaisedButton(
-                        child: Text(
-                          "Criar Conta",
-                          style: TextStyle(
-                            fontSize: 18.0,
-                          ),
-                        ),
-                        textColor: Colors.white,
-                        color: Theme.of(context).primaryColor,
-                        onPressed: () async {
-                          FocusScope.of(context).requestFocus(new FocusNode());
-                          if (campos.currentState.validate()) {
-                            if (stringUserAddress == "Informe seu endereço") {
-                              _toast("Informe seu endereço", context);
-                            } else {
-                              bool cpfInUse = false;
-                              bool emailInUse = false;
+                      child: Container(
+                        child: btloading != false
+                            ? RaisedButton(
+                                color: Theme.of(context).primaryColor,
+                                onPressed: () {},
+                                child: CircularProgressIndicator(
+                                    valueColor:
+                                        new AlwaysStoppedAnimation<Color>(
+                                            Colors.white)),
+                              )
+                            : RaisedButton(
+                                child: Text(
+                                  "Criar Conta",
+                                  style: TextStyle(
+                                    fontSize: 18.0,
+                                  ),
+                                ),
+                                textColor: Colors.white,
+                                color: Theme.of(context).primaryColor,
+                                onPressed: () async {
+                                  FocusScope.of(context)
+                                      .requestFocus(new FocusNode());
+                                  if (campos.currentState.validate()) {
+                                    if (stringUserAddress ==
+                                        "Informe seu endereço") {
+                                      _toast("Informe seu endereço", context);
+                                    } else {
+                                      bool cpfInUse = false;
+                                      bool emailInUse = false;
 
-                              await databaseReference
-                                  .collection("users")
-                                  .where("email")
-                                  .getDocuments()
-                                  .then((QuerySnapshot snapshot) {
-                                snapshot.documents.forEach((f) {
-                                  Map mappedEmail = f.data;
-                                  if (mappedEmail["email"] ==
-                                      emailController.text) {
-                                    emailInUse = true;
+                                      await databaseReference
+                                          .collection("users")
+                                          .where("email")
+                                          .getDocuments()
+                                          .then((QuerySnapshot snapshot) {
+                                        snapshot.documents.forEach((f) {
+                                          Map mappedEmail = f.data;
+                                          if (mappedEmail["email"] ==
+                                              emailController.text) {
+                                            emailInUse = true;
+                                          }
+                                        });
+                                      });
+
+                                      await databaseReference
+                                          .collection("users")
+                                          .where("cpf")
+                                          .getDocuments()
+                                          .then((QuerySnapshot snapshot) {
+                                        snapshot.documents.forEach((f) {
+                                          Map mappedCPF = f.data;
+                                          if (mappedCPF["cpf"] == cpf) {
+                                            cpfInUse = true;
+                                          }
+                                        });
+                                      });
+                                      if (emailInUse == true) {
+                                        _toast(
+                                            "Este email já está sendo utilizado",
+                                            context);
+                                      } else if (cpfInUse == true) {
+                                        _cpfEmUso(context);
+                                      } else {
+                                        _btLoader();
+                                        double debit = 0;
+
+                                        var passEncode = utf8.encode(senhaController.text);
+                                        var base64Str = base64.encode(passEncode);
+
+                                        Map<String, dynamic> userData = {
+                                          "nome": nomeController.text,
+                                          "email": emailController.text,
+                                          "password": base64Str,
+                                          "cpf": cpf,
+                                          "debit": debit,
+                                          "media": "-",
+                                          "userAddressLatLng":
+                                              userAddressLatLng,
+                                          "userAddress": stringUserAddress,
+                                          "authenticated": false,
+                                          "imgURL":
+                                              "https://firebasestorage.googleapis.com/v0/b/shareon.appspot.com/o/DefaultIMG%2FDefaultIMG.png?alt=media&token=9fbc8d45-36a1-45cf-a53b-0c0b7c7588a0",
+                                        };
+
+                                        model.signUp(
+                                            userData: userData,
+                                            pass: senhaController.text,
+                                            onSuccess: sucesso,
+                                            onFail: falha);
+                                      }
+                                    }
                                   }
-                                });
-                              });
-
-                              await databaseReference
-                                  .collection("users")
-                                  .where("cpf")
-                                  .getDocuments()
-                                  .then((QuerySnapshot snapshot) {
-                                snapshot.documents.forEach((f) {
-                                  Map mappedCPF = f.data;
-                                  if (mappedCPF["cpf"] == cpf) {
-                                    cpfInUse = true;
-                                  }
-                                });
-                              });
-                              if (emailInUse == true) {
-                                _toast("Este email já está sendo utilizado",
-                                    context);
-                              } else if (cpfInUse == true) {
-                                _cpfEmUso(context);
-                              } else {
-                                double debit = 0;
-
-
-                                Map<String, dynamic> userData = {
-                                  "nome": nomeController.text,
-                                  "email": emailController.text,
-                                  "cpf": cpf,
-                                  "debit": debit,
-                                  "media": "-",
-                                  "userAddressLatLng": userAddressLatLng,
-                                  "userAddress": stringUserAddress,
-                                  "authenticated": false,
-                                  "imgURL":
-                                      "https://firebasestorage.googleapis.com/v0/b/shareon.appspot.com/o/DefaultIMG%2FDefaultIMG.png?alt=media&token=9fbc8d45-36a1-45cf-a53b-0c0b7c7588a0",
-                                };
-
-                                model.signUp(
-                                    userData: userData,
-                                    pass: senhaController.text,
-                                    onSuccess: sucesso,
-                                    onFail: falha);
-                              }
-                            }
-                          }
-                        },
+                                },
+                              ),
                       ),
                     ),
                   ],
@@ -289,7 +311,8 @@ class _CadastroUsuarioState extends State<CadastroUsuario> {
         stringUserAddress = result.address;
       });
     }
-    userAddressLatLng = new GeoPoint(result.latLng.latitude, result.latLng.longitude);
+    userAddressLatLng =
+        new GeoPoint(result.latLng.latitude, result.latLng.longitude);
   }
 
   _icGPS() {
@@ -668,5 +691,15 @@ class _CadastroUsuarioState extends State<CadastroUsuario> {
         );
       },
     );
+  }
+
+  Future _btLoader() async {
+    setState(() {
+      btloading = true;
+    });
+    await Future.delayed(Duration(seconds: 10));
+    setState(() {
+      btloading = false;
+    });
   }
 }

@@ -1,5 +1,7 @@
 import 'dart:async';
+import 'dart:convert';
 
+import 'package:aplicativo_shareon/models/usuario_model.dart';
 import 'package:aplicativo_shareon/telas/tela_reserva_proxima.dart';
 import 'package:aplicativo_shareon/telas/tela_reservar.dart';
 import 'package:aplicativo_shareon/utils/shareon_appbar.dart';
@@ -33,6 +35,7 @@ class _ReservaProxima {
 class _ProdutoSelecionadoState extends State<ProdutoSelecionado> {
   SharedPreferencesController sharedPreferencesController =
       new SharedPreferencesController();
+  UserModel model = new UserModel();
   final databaseReference = Firestore.instance;
   bool productInFavorites = false;
   bool myProduct = false;
@@ -46,6 +49,7 @@ class _ProdutoSelecionadoState extends State<ProdutoSelecionado> {
   String productIMG = "";
   String productType = "";
   String userID = "";
+  String userMail = "";
   String solicitationStatus = "";
   String solicitationID = "";
   String imgID = "";
@@ -64,6 +68,7 @@ class _ProdutoSelecionadoState extends State<ProdutoSelecionado> {
   String img3 = "";
   String img4 = "";
   String img5 = "";
+  String actualPass = "";
   List listaIMGS = [];
   Map mapListaIMGS = {};
   int counter = 0;
@@ -86,8 +91,10 @@ class _ProdutoSelecionadoState extends State<ProdutoSelecionado> {
   Widget build(BuildContext context) {
     listaIMGS = mapListaIMGS.values.toList();
     generaPGViewer();
-    if (emailVerified == null) {
-      sharedPreferencesController.getEmailAuth().then(_verifyAuth);
+    if (userID != "" && userMail != "") {
+      if (emailVerified == null) {
+        sharedPreferencesController.getEmailAuth().then(_verifyAuth);
+      }
     }
     if (productInFavorites == false) {
       favoriteController = "Adcionar aos Favoritos";
@@ -620,7 +627,13 @@ class _ProdutoSelecionadoState extends State<ProdutoSelecionado> {
           },
           child: _text("Validar retirada", resumo: true),
         );
-      }
+      }else{return RaisedButton(
+        color: Colors.white,
+        onPressed: () {
+          _toast("Só existo", context);
+        },
+        child: _text("Editar reserva", resumo: true),
+      );}
     } else if (myProduct == null) {
       return Container();
     } else if (myProduct == true) {
@@ -634,14 +647,15 @@ class _ProdutoSelecionadoState extends State<ProdutoSelecionado> {
         color: Colors.white,
         onPressed: () {
           if (emailVerified == false) {
-            sharedPreferencesController.getEmailAuth().then((value) => _verifyAuth(value, caller: 1));
+            sharedPreferencesController
+                .getEmailAuth()
+                .then((value) => _verifyAuth(value, caller: 1));
           } else {
             Navigator.push(
               context,
               MaterialPageRoute(builder: (BuildContext context) {
                 return TelaReservar(
-                    productID: widget.productID,
-                    productPrice: productPrice);
+                    productID: widget.productID, productPrice: productPrice);
               }),
             );
           }
@@ -693,7 +707,7 @@ class _ProdutoSelecionadoState extends State<ProdutoSelecionado> {
               });
             }
             if (productData["status"] == "em andamento") {
-              reservaEmAndamento.add(productData["programedInitDate"]);
+              reservaEmAndamento.add(new _ReservaProxima(productData["solicitationID"], productData["programedInitDate"]));
             }
           },
         );
@@ -711,11 +725,32 @@ class _ProdutoSelecionadoState extends State<ProdutoSelecionado> {
         backgroundColor: Colors.black.withOpacity(0.8));
   }
 
-  FutureOr _verifyAuth(bool value, {int caller}) {
-    emailVerified = value;
-    if(caller == 1 && emailVerified == false){
-      _alertEmail();
-    }
+  Future<FutureOr> _verifyAuth(bool value, {int caller}) async {
+    await databaseReference
+        .collection("users")
+        .where("userID", isEqualTo: userID)
+        .getDocuments()
+        .then((QuerySnapshot snapshot) {
+      snapshot.documents.forEach((f) {
+        Map userData = f.data;
+        var base64Str = base64.decode(userData["password"]);
+        var passDecode = utf8.decode(base64Str);
+
+        actualPass = passDecode;
+      });
+    });
+
+    FirebaseUser user = await FirebaseAuth.instance.currentUser();
+    var userAuth =
+        EmailAuthProvider.getCredential(email: userMail, password: actualPass);
+    await user.reauthenticateWithCredential(userAuth).then((onValue) async {
+      emailVerified = await model
+          .isAuthenticated(await FirebaseAuth.instance.currentUser());
+
+      if (caller == 1 && emailVerified == false) {
+        _alertEmail();
+      }
+    });
   }
 
   _alertEmail() {
@@ -793,9 +828,12 @@ class _ProdutoSelecionadoState extends State<ProdutoSelecionado> {
                                       child: RaisedButton(
                                         color: Colors.indigoAccent,
                                         onPressed: () async {
-                                          FirebaseUser user = await FirebaseAuth.instance.currentUser();
+                                          FirebaseUser user = await FirebaseAuth
+                                              .instance
+                                              .currentUser();
                                           user.sendEmailVerification();
-                                          _toast("Email de verificação enviado", context);
+                                          _toast("Email de verificação enviado",
+                                              context);
                                           Navigator.of(context).pop();
                                         },
                                         child: Text(
