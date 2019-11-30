@@ -7,7 +7,6 @@ import 'package:aplicativo_shareon/telas/tela_chat.dart';
 import 'package:aplicativo_shareon/telas/tela_configuracoes.dart';
 import 'package:aplicativo_shareon/telas/tela_creditos.dart';
 import 'package:aplicativo_shareon/telas/tela_de_testes.dart';
-import 'package:aplicativo_shareon/telas/tela_dicas.dart';
 import 'package:aplicativo_shareon/telas/tela_faq.dart';
 import 'package:aplicativo_shareon/telas/tela_favoritos.dart';
 import 'package:aplicativo_shareon/telas/tela_historico.dart';
@@ -143,14 +142,12 @@ class _HomeState extends State<Home> {
     } else if (controllerPointer == 7) {
       return homeSuporte();
     } else if (controllerPointer == 8) {
-      return homeDicas();
-    } else if (controllerPointer == 9) {
       return homeConfigurcoes();
-    } else if (controllerPointer == 10) {
+    } else if (controllerPointer == 9) {
       return homeFAQ();
-    } else if (controllerPointer == 11) {
+    } else if (controllerPointer == 10) {
       return Creditos();
-    } else if (controllerPointer == 12) {
+    } else if (controllerPointer == 11) {
       return CadastroProduto(userID);
     } else if (controllerPointer == 21) {
       return tela_testes();
