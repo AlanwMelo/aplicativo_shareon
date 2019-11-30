@@ -1,12 +1,15 @@
+import 'package:aplicativo_shareon/models/usuario_model.dart';
 import 'package:aplicativo_shareon/telas/tela_creditos.dart';
 import 'package:aplicativo_shareon/utils/seletor_calendario.dart';
 import 'package:aplicativo_shareon/utils/shareon_appbar.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:scoped_model/scoped_model.dart';
 import 'package:toast/toast.dart';
 
 import '../main.dart';
+import 'home.dart';
 
 class TelaReservar extends StatefulWidget {
   final String productID;
@@ -38,6 +41,7 @@ class _TelaReservarState extends State<TelaReservar> {
   String productIMG = "";
   String productType = "";
   double userDebit;
+  bool loading = false;
 
   // Strings
   String _dataInicio = DateTime.now().day.toString() +
@@ -57,8 +61,8 @@ class _TelaReservarState extends State<TelaReservar> {
 
   // Strings
 
-  double valordoDoProduto = 0;
-  double valorEstimado = 0;
+  var valordoDoProduto;
+  var valorEstimado;
   String calcValorProdutoConversor = 0.toStringAsFixed(2);
 
   @override
@@ -68,6 +72,7 @@ class _TelaReservarState extends State<TelaReservar> {
     if (userID == "") {
       sharedPreferencesController.getID().then(_setID);
     }
+    getProductData();
     getTimeString(duracao);
     _horarioFim = _horarioFimPadrao();
   }
@@ -75,132 +80,155 @@ class _TelaReservarState extends State<TelaReservar> {
   @override
   Widget build(BuildContext context) {
     getProductIMG();
-    return getProductData();
+    return loading == false
+        ? _homeReservar(context)
+        : Container(
+            color: Colors.white,
+            child: Center(child: CircularProgressIndicator()));
   }
 
   _homeReservar(BuildContext context) {
-    return Scaffold(
-      appBar: shareonAppbar(context, ""),
-      backgroundColor: Colors.indigoAccent,
-      body: SingleChildScrollView(
-        child: Container(
-          height: 720,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: <Widget>[
-              _text(productName, titulo: true),
-              Container(
-                margin: EdgeInsets.only(top: 16, bottom: 16, right: 8, left: 8),
-                child: _img(productIMG),
-              ),
-              _text(
-                  "Para reservar um produto você precisa informar a data e a hora que deseja utiliza-lo para checarmos sua disponibilidade."),
-              Container(
-                margin: EdgeInsets.all(8),
-                child: Column(
-                  children: <Widget>[
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+    return ScopedModelDescendant<UserModel>(
+      builder: (context, child, model) {
+        if (model.carregando)
+          return Center(
+            child: CircularProgressIndicator(),
+          );
+        return Scaffold(
+          appBar: shareonAppbar(context, ""),
+          backgroundColor: Colors.indigoAccent,
+          body: SingleChildScrollView(
+            child: Container(
+              height: 720,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: <Widget>[
+                  _text(productName, titulo: true),
+                  Container(
+                    margin:
+                        EdgeInsets.only(top: 16, bottom: 16, right: 8, left: 8),
+                    child: _img(productIMG),
+                  ),
+                  _text(
+                      "Para reservar um produto você precisa informar a data e a hora que deseja utiliza-lo para checarmos sua disponibilidade."),
+                  Container(
+                    margin: EdgeInsets.all(8),
+                    child: Column(
+                      children: <Widget>[
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: <Widget>[
+                            Container(
+                              width: 100,
+                              child: _text("Retirada:"),
+                            ),
+                            Container(
+                              child: RaisedButton(
+                                color: Colors.white,
+                                onPressed: () {
+                                  _selecionarData(context, "inicio");
+                                },
+                                child: Text("$_dataInicio",
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.bold)),
+                              ),
+                            ),
+                            Container(
+                              child: RaisedButton(
+                                color: Colors.white,
+                                onPressed: () {
+                                  _selecionarHorario(context, "inicio");
+                                },
+                                child: Text("$_horarioInicio",
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.bold)),
+                              ),
+                            ),
+                          ],
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: <Widget>[
+                            Container(
+                              width: 100,
+                              child: _text("Devolução:"),
+                            ),
+                            Container(
+                              child: RaisedButton(
+                                color: Colors.white,
+                                onPressed: () {
+                                  _selecionarData(context, "fim");
+                                },
+                                child: Text("$_dataFim",
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.bold)),
+                              ),
+                            ),
+                            Container(
+                              child: RaisedButton(
+                                color: Colors.white,
+                                onPressed: () {
+                                  _selecionarHorario(context, "fim");
+                                },
+                                child: Text("$_horarioFim",
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.bold)),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                  Container(
+                    margin: EdgeInsets.only(bottom: 8, right: 8, left: 8),
+                    child: _text("Valor estimado:"),
+                  ),
+                  Container(
+                    margin: EdgeInsets.only(bottom: 8, right: 8, left: 8),
+                    child: _text("R\$ $calcValorProdutoConversor"),
+                  ),
+                  Container(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.end,
                       children: <Widget>[
                         Container(
-                          width: 100,
-                          child: _text("Retirada:"),
-                        ),
-                        Container(
+                          width: 500,
+                          margin: EdgeInsets.only(
+                              top: 8, left: 8, right: 8, bottom: 8),
                           child: RaisedButton(
-                            onPressed: () {
-                              _selecionarData(context, "inicio");
+                            color: Colors.white,
+                            onPressed: () async {
+                              if (dataFim.isBefore(dataInicio)) {
+                                _toast(
+                                    "A data de devolução não pode ser menor que a data de retirada.",
+                                    context);
+                              } else if (double.parse(
+                                      calcValorProdutoConversor) >
+                                  userDebit) {
+                                _semSaldo(context);
+                              } else {
+                                _alertConfirmacao(context);
+                              }
                             },
-                            child: Text("$_dataInicio",
-                                style: TextStyle(fontWeight: FontWeight.bold)),
-                          ),
-                        ),
-                        Container(
-                          child: RaisedButton(
-                            onPressed: () {
-                              _selecionarHorario(context, "inicio");
-                            },
-                            child: Text("$_horarioInicio",
-                                style: TextStyle(fontWeight: FontWeight.bold)),
+                            child: Text(
+                              "Reservar",
+                              style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
                           ),
                         ),
                       ],
                     ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: <Widget>[
-                        Container(
-                          width: 100,
-                          child: _text("Devolução:"),
-                        ),
-                        Container(
-                          child: RaisedButton(
-                            onPressed: () {
-                              _selecionarData(context, "fim");
-                            },
-                            child: Text("$_dataFim",
-                                style: TextStyle(fontWeight: FontWeight.bold)),
-                          ),
-                        ),
-                        Container(
-                          child: RaisedButton(
-                            onPressed: () {
-                              _selecionarHorario(context, "fim");
-                            },
-                            child: Text("$_horarioFim",
-                                style: TextStyle(fontWeight: FontWeight.bold)),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
+                  ),
+                ],
               ),
-              Container(
-                margin: EdgeInsets.only(bottom: 8, right: 8, left: 8),
-                child: _text("Valor estimado:"),
-              ),
-              Container(
-                margin: EdgeInsets.only(bottom: 8, right: 8, left: 8),
-                child: _text("R\$ $calcValorProdutoConversor"),
-              ),
-              Container(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: <Widget>[
-                    Container(
-                      width: 500,
-                      margin:
-                          EdgeInsets.only(top: 8, left: 8, right: 8, bottom: 8),
-                      child: RaisedButton(
-                        onPressed: () {
-                          if (dataFim.isBefore(dataInicio)) {
-                            _toast(
-                                "A data de devolução não pode ser menor que a data de retirada.",
-                                context);
-                          } else if (double.parse(calcValorProdutoConversor) >
-                              userDebit) {
-                            _semSaldo(context);
-                          } else {
-                            _alertConfirmacao(context);
-                          }
-                        },
-                        child: Text(
-                          "Reservar",
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
+            ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 
@@ -690,15 +718,15 @@ class _TelaReservarState extends State<TelaReservar> {
     }
   }
 
-  _valorEstimado(double valordoProduto, DateTime dataInicio, DateTime dataFim) {
+  _valorEstimado(var valordoProduto, DateTime dataInicio, DateTime dataFim) {
     DateTime retirada = dataInicio;
     DateTime devolucao = dataFim;
     duracao = (devolucao.difference(retirada).inMinutes);
     valordoProduto = valordoDoProduto / (60);
-    double calcValorProduto = duracao.toDouble() * valordoProduto;
+    var calcValorProduto = duracao.toDouble() * valordoProduto;
     getTimeString(duracao);
     calcValorProdutoConversor = calcValorProduto.toStringAsFixed(2);
-    valorEstimado = calcValorProduto;
+    valorEstimado = calcValorProduto.toDouble();
   }
 
   _horarioConfirmado(String inicioFim, TimeOfDay time) {
@@ -845,33 +873,29 @@ class _TelaReservarState extends State<TelaReservar> {
     });
   }
 
-  getProductData() {
-    return FutureBuilder(
-        future: databaseReference
-            .collection("products")
-            .where("ID", isEqualTo: (widget.productID))
-            .getDocuments()
-            .then((QuerySnapshot snapshot) {
-          snapshot.documents.forEach((f) {
-            Map productData = f.data;
-            valordoDoProduto = double.parse(productData["price"]);
-            valorEstimado = double.parse(productData["price"]);
-            productName = productData["name"];
-            productDescription = productData["description"];
-            productMedia = productData["media"];
-            productOwnerID = productData["ownerID"];
-            productType = productData["type"];
+  getProductData() async {
+    await databaseReference
+        .collection("products")
+        .where("ID", isEqualTo: (widget.productID))
+        .getDocuments()
+        .then((QuerySnapshot snapshot) {
+      snapshot.documents.forEach((f) {
+        Map productData = f.data;
+        valordoDoProduto = productData["price"];
+        valorEstimado = productData["price"];
+        productName = productData["name"];
+        productDescription = productData["description"];
+        productMedia = productData["media"];
+        productOwnerID = productData["ownerID"];
+        productType = productData["type"];
 
-            if (calcValorProdutoConversor == "0.00") {
-              setState(() {
-                calcValorProdutoConversor = valordoDoProduto.toStringAsFixed(2);
-              });
-            }
+        if (calcValorProdutoConversor == "0.00") {
+          setState(() {
+            calcValorProdutoConversor = valordoDoProduto.toStringAsFixed(2);
           });
-        }),
-        builder: (context, snapshot) {
-          return _homeReservar(context);
-        });
+        }
+      });
+    });
   }
 
   _strgDia(int dia, int hora, int min) {
@@ -925,6 +949,10 @@ class _TelaReservarState extends State<TelaReservar> {
   }
 
   _solicitaReserva() async {
+    setState(() {
+      loading = true;
+    });
+
     String status = "pendente";
     String motivo = "solicitacao";
     Map<String, dynamic> solicitaReserva = {
@@ -950,6 +978,16 @@ class _TelaReservarState extends State<TelaReservar> {
         .collection("solicitations")
         .document(idWriter)
         .updateData(setID);
+
+    setState(() {
+      loading = false;
+    });
+
+    _toast("Solicitação efetuada com sucesso", context);
+
+    Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) {
+      return Home();
+    }));
   }
 
   void _setID(String value) {

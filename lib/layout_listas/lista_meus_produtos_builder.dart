@@ -14,7 +14,7 @@ class ListaMeusProdutosBuilder extends StatefulWidget {
 class _MyProducts {
   String productID;
   String name;
-  String preco;
+  var preco;
   String media;
   Timestamp addDate;
 
@@ -28,7 +28,7 @@ class _ListaMeusProdutosBuilderState extends State<ListaMeusProdutosBuilder> {
   List<_MyProducts> _listaMeusProdutos = [];
   String id;
   String userID = "";
-  int counter = 0;
+  bool listIsEmpty = false;
 
   @override
   void initState() {
@@ -44,6 +44,11 @@ class _ListaMeusProdutosBuilderState extends State<ListaMeusProdutosBuilder> {
         .where("ownerID", isEqualTo: userID)
         .getDocuments()
         .then((QuerySnapshot snapshot) {
+          if(snapshot.documents.length == 0){
+            setState(() {
+              listIsEmpty = true;
+            });
+          }
       snapshot.documents.forEach((f) {
         Map productData = f.data;
         setState(() {
@@ -61,7 +66,22 @@ class _ListaMeusProdutosBuilderState extends State<ListaMeusProdutosBuilder> {
 
   @override
   Widget build(BuildContext context) {
-    return listGen(_listaMeusProdutos);
+    return _listaMeusProdutos.length == 0 && listIsEmpty == false
+        ? Center(
+            child: CircularProgressIndicator(),
+          )
+        : listIsEmpty == true
+            ? Center(
+                child: Text(
+                  "Você ainda não possui nenhum produto",
+                  style: TextStyle(
+                    color: Colors.indigoAccent,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              )
+            : listGen(_listaMeusProdutos);
   }
 
   _onClick(BuildContext context, String idx) {
@@ -94,14 +114,14 @@ class _ListaMeusProdutosBuilderState extends State<ListaMeusProdutosBuilder> {
               bottomRight: Radius.zero,
               bottomLeft: Radius.circular(16)),
           child: Container(
+            height: 150,
+            width: 150,
             child: productMainIMG == null
                 ? Center(
                     child: CircularProgressIndicator(),
                   )
                 : Image.network(
                     productMainIMG,
-                    height: 150,
-                    width: 150,
                     fit: BoxFit.cover,
                   ),
           ),
@@ -111,12 +131,15 @@ class _ListaMeusProdutosBuilderState extends State<ListaMeusProdutosBuilder> {
   }
 
   _textNome(String idx) {
-    return Text(
-      idx,
-      style: TextStyle(
-        fontWeight: FontWeight.bold,
-        fontSize: 24,
-        color: Colors.indigoAccent,
+    return Expanded(
+      child: Text(
+        idx,
+        overflow: TextOverflow.ellipsis,
+        style: TextStyle(
+          fontWeight: FontWeight.bold,
+          fontSize: 24,
+          color: Colors.indigoAccent,
+        ),
       ),
     );
   }
@@ -149,7 +172,7 @@ class _ListaMeusProdutosBuilderState extends State<ListaMeusProdutosBuilder> {
     );
   }
 
-  _textPreco(String idx) {
+  _textPreco(var idx) {
     return Text(
       "R\$ $idx",
       style: TextStyle(

@@ -43,6 +43,7 @@ class UserModel extends Model {
 
       onSuccess();
       carregando = false;
+      firebaseUser.sendEmailVerification();
       _loadCurrentUser();
       notifyListeners();
     }).catchError((e) {
@@ -81,6 +82,15 @@ class UserModel extends Model {
     auth.sendPasswordResetEmail(email: email);
   }
 
+  Future<bool> isAuthenticated(FirebaseUser user) async {
+    SharedPreferencesController sharedPreferencesController =
+    new SharedPreferencesController();
+
+    await user.reload();
+    sharedPreferencesController.setEmailAuth(user.isEmailVerified);
+    return user.isEmailVerified;
+  }
+
   bool isLoggedIn() {
     return firebaseUser != null;
   }
@@ -97,7 +107,6 @@ class UserModel extends Model {
     firebaseUser = null;
 
     if (firebaseUser == null) {
-
       firebaseUser = await auth.currentUser();
 
       await _setSharedID(firebaseUser.uid);

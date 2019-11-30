@@ -14,7 +14,7 @@ class _ProductsHist {
   String productID;
   String name;
   String media;
-  String preco;
+  var preco;
   String status;
   Timestamp endDate;
 
@@ -31,6 +31,7 @@ class _ListaHistoricoBuilderState extends State<ListaHistoricoBuilder> {
   String userID = "";
   int counter = 0;
   List<_ProductsHist> _listaHistorico = [];
+  bool listIsEmpty = false;
 
   @override
   void initState() {
@@ -47,6 +48,11 @@ class _ListaHistoricoBuilderState extends State<ListaHistoricoBuilder> {
         .where("requesterID", isEqualTo: userID)
         .getDocuments()
         .then((QuerySnapshot snapshot) {
+      if (snapshot.documents.length == 0) {
+        setState(() {
+          listIsEmpty = true;
+        });
+      }
       snapshot.documents.forEach((f) {
         Map productData = f.data;
         if (productData["status"] == "concluido" ||
@@ -60,7 +66,22 @@ class _ListaHistoricoBuilderState extends State<ListaHistoricoBuilder> {
 
   @override
   Widget build(BuildContext context) {
-    return listGen(_listaHistorico);
+    return _listaHistorico.length == 0 && listIsEmpty == false
+        ? Center(
+            child: CircularProgressIndicator(),
+          )
+        : listIsEmpty == true
+            ? Center(
+                child: Text(
+                  "Você ainda não fez nenhuma transação",
+                  style: TextStyle(
+                    color: Colors.indigoAccent,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              )
+            : listGen(_listaHistorico);
   }
 
   _onClick(BuildContext context, String idx) {
@@ -116,40 +137,27 @@ class _ListaHistoricoBuilderState extends State<ListaHistoricoBuilder> {
     } else {
       color = Colors.redAccent;
     }
-    return Text(
-      idx,
-      style: TextStyle(
-        fontWeight: FontWeight.bold,
-        fontSize: 24,
-        color: color,
+    return Expanded(
+      child: Text(
+        idx,
+        overflow: TextOverflow.ellipsis,
+        style: TextStyle(
+          fontWeight: FontWeight.bold,
+          fontSize: 24,
+          color: color,
+        ),
       ),
     );
   }
 
   _textMedia(String idx) {
-    String productMedia = "";
-
-    return FutureBuilder(
-      future: databaseReference
-          .collection("products")
-          .where("ID", isEqualTo: idx)
-          .getDocuments()
-          .then((QuerySnapshot snapshot) {
-        snapshot.documents.forEach((f) {
-          Map productData = f.data;
-          productMedia = productData["media"];
-        });
-      }),
-      builder: (context, snapshot) {
-        return Text(
-          productMedia,
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 16,
-            color: Colors.black54,
-          ),
-        );
-      },
+    return Text(
+      idx,
+      style: TextStyle(
+        fontWeight: FontWeight.bold,
+        fontSize: 16,
+        color: Colors.black54,
+      ),
     );
   }
 
@@ -167,7 +175,7 @@ class _ListaHistoricoBuilderState extends State<ListaHistoricoBuilder> {
     );
   }
 
-  _textPreco(String idx) {
+  _textPreco(var idx) {
     return Text(
       "R\$ $idx",
       style: TextStyle(

@@ -32,6 +32,7 @@ class _ListaReservasBuilderState extends State<ListaReservasBuilder> {
   String userID = "";
   int counter = 0;
   List<_Reservas> _listaReservas = [];
+  bool listIsEmpty = false;
 
   @override
   void initState() {
@@ -48,6 +49,11 @@ class _ListaReservasBuilderState extends State<ListaReservasBuilder> {
         .where("requesterID", isEqualTo: userID)
         .getDocuments()
         .then((QuerySnapshot snapshot) {
+      if (snapshot.documents.length == 0) {
+        setState(() {
+          listIsEmpty = true;
+        });
+      }
       snapshot.documents.forEach((f) {
         Map productData = f.data;
         if (productData["status"] == "em andamento" ||
@@ -66,7 +72,22 @@ class _ListaReservasBuilderState extends State<ListaReservasBuilder> {
 
   @override
   Widget build(BuildContext context) {
-    return listGen(_listaReservas);
+    return _listaReservas.length == 0 && listIsEmpty == false
+        ? Center(
+            child: CircularProgressIndicator(),
+          )
+        : listIsEmpty == true
+            ? Center(
+                child: Text(
+                  "Você ainda não possui nenhuma reserva",
+                  style: TextStyle(
+                    color: Colors.indigoAccent,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              )
+            : listGen(_listaReservas);
   }
 
   _onClick(BuildContext context, String idx) {
@@ -99,14 +120,14 @@ class _ListaReservasBuilderState extends State<ListaReservasBuilder> {
               bottomRight: Radius.zero,
               bottomLeft: Radius.circular(16)),
           child: Container(
+            height: 150,
+            width: 150,
             child: productMainIMG == null
                 ? Center(
                     child: CircularProgressIndicator(),
                   )
                 : Image.network(
                     productMainIMG,
-                    height: 150,
-                    width: 150,
                     fit: BoxFit.cover,
                   ),
           ),
@@ -126,40 +147,27 @@ class _ListaReservasBuilderState extends State<ListaReservasBuilder> {
     if (status == "aprovada") {
       color = Colors.indigoAccent;
     }
-    return Text(
-      idx,
-      style: TextStyle(
-        fontWeight: FontWeight.bold,
-        fontSize: 24,
-        color: color,
+    return Expanded(
+      child: Text(
+        idx,
+        overflow: TextOverflow.ellipsis,
+        style: TextStyle(
+          fontWeight: FontWeight.bold,
+          fontSize: 24,
+          color: color,
+        ),
       ),
     );
   }
 
   _textMedia(String idx) {
-    String productMedia = "";
-
-    return FutureBuilder(
-      future: databaseReference
-          .collection("products")
-          .where("ID", isEqualTo: idx)
-          .getDocuments()
-          .then((QuerySnapshot snapshot) {
-        snapshot.documents.forEach((f) {
-          Map productData = f.data;
-          productMedia = productData["media"];
-        });
-      }),
-      builder: (context, snapshot) {
-        return Text(
-          productMedia,
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 16,
-            color: Colors.black54,
-          ),
-        );
-      },
+    return Text(
+      idx,
+      style: TextStyle(
+        fontWeight: FontWeight.bold,
+        fontSize: 16,
+        color: Colors.black54,
+      ),
     );
   }
 

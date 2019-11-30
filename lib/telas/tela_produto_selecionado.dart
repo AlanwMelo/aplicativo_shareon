@@ -1,18 +1,25 @@
+import 'dart:async';
+import 'dart:convert';
+
+import 'package:aplicativo_shareon/models/usuario_model.dart';
 import 'package:aplicativo_shareon/telas/tela_reserva_proxima.dart';
 import 'package:aplicativo_shareon/telas/tela_reservar.dart';
 import 'package:aplicativo_shareon/utils/shareon_appbar.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:page_indicator/page_indicator.dart';
 import 'package:toast/toast.dart';
 
 import '../main.dart';
+import 'home.dart';
 
 class ProdutoSelecionado extends StatefulWidget {
   final String productID;
+  final int caller;
 
-  ProdutoSelecionado({@required this.productID});
+  ProdutoSelecionado({@required this.productID, this.caller});
 
   @override
   _ProdutoSelecionadoState createState() => _ProdutoSelecionadoState();
@@ -28,19 +35,21 @@ class _ReservaProxima {
 class _ProdutoSelecionadoState extends State<ProdutoSelecionado> {
   SharedPreferencesController sharedPreferencesController =
       new SharedPreferencesController();
+  UserModel model = new UserModel();
   final databaseReference = Firestore.instance;
   bool productInFavorites = false;
   bool myProduct = false;
   String favoriteController = "";
   String productName = "";
   String productMedia = "";
-  String productPrice = "";
+  var productPrice;
   String productOwner = "";
   String productOwnerID = "";
   String productDescription = "";
   String productIMG = "";
   String productType = "";
   String userID = "";
+  String userMail = "";
   String solicitationStatus = "";
   String solicitationID = "";
   String imgID = "";
@@ -59,11 +68,13 @@ class _ProdutoSelecionadoState extends State<ProdutoSelecionado> {
   String img3 = "";
   String img4 = "";
   String img5 = "";
+  String actualPass = "";
   List listaIMGS = [];
   Map mapListaIMGS = {};
   int counter = 0;
   List<_ReservaProxima> reservaAprovada = [];
   List<_ReservaProxima> reservaEmAndamento = [];
+  bool emailVerified;
 
   @override
   void initState() {
@@ -80,6 +91,11 @@ class _ProdutoSelecionadoState extends State<ProdutoSelecionado> {
   Widget build(BuildContext context) {
     listaIMGS = mapListaIMGS.values.toList();
     generaPGViewer();
+    if (userID != "" && userMail != "") {
+      if (emailVerified == null) {
+        sharedPreferencesController.getEmailAuth().then(_verifyAuth);
+      }
+    }
     if (productInFavorites == false) {
       favoriteController = "Adcionar aos Favoritos";
     } else if (productInFavorites == true) {
@@ -192,84 +208,97 @@ class _ProdutoSelecionadoState extends State<ProdutoSelecionado> {
   }
 
   _produtoSelecionado(BuildContext context) {
-    return Scaffold(
-      appBar: shareonAppbar(context, ""),
-      body: SizedBox.expand(
-        child: Container(
-          color: Colors.indigoAccent,
-          child: SingleChildScrollView(
-            child: Container(
-              child: Center(
-                child: Container(
-                  child: Column(
-                    children: <Widget>[
-                      Container(
-                        height: 300,
-                        color: Colors.white,
-                        child: PageIndicatorContainer(
-                          length: listaIMGS.length,
-                          indicatorSpace: 10.0,
-                          padding: const EdgeInsets.all(10),
-                          indicatorColor: Colors.white.withOpacity(0.7),
-                          indicatorSelectorColor: Colors.blue,
-                          shape: IndicatorShape.circle(size: 10),
-                          child: exibePGV(),
+    return WillPopScope(
+      onWillPop: () async {
+        if (widget.caller != null) {
+          return Navigator.push(context,
+              MaterialPageRoute(builder: (BuildContext context) {
+            return Home(optionalControllerPointer: widget.caller);
+          }));
+        } else {
+          return true;
+        }
+      },
+      child: Scaffold(
+        appBar: shareonAppbar(context, ""),
+        body: SizedBox.expand(
+          child: Container(
+            color: Colors.indigoAccent,
+            child: SingleChildScrollView(
+              child: Container(
+                child: Center(
+                  child: Container(
+                    child: Column(
+                      children: <Widget>[
+                        Container(
+                          height: 300,
+                          color: Colors.white,
+                          child: PageIndicatorContainer(
+                            length: listaIMGS.length,
+                            indicatorSpace: 10.0,
+                            padding: const EdgeInsets.all(10),
+                            indicatorColor: Colors.white.withOpacity(0.7),
+                            indicatorSelectorColor: Colors.blue,
+                            shape: IndicatorShape.circle(size: 10),
+                            child: exibePGV(),
+                          ),
                         ),
-                      ),
-                      Container(
-                        margin: EdgeInsets.only(top: 8),
-                        child: _text(productName, titulo: true),
-                      ),
-                      Container(
-                          width: 70,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: <Widget>[
-                              _text(productMedia),
-                              _iconEstrela(),
-                            ],
-                          )),
-                      Container(
-                        margin: EdgeInsets.only(top: 8, left: 8, right: 8),
-                        child: _text("Produto de: $productOwner"),
-                      ),
-                      Container(
-                        margin: EdgeInsets.only(top: 8, bottom: 8),
-                        child: _text("Descrição:"),
-                      ),
-                      ConstrainedBox(
-                        constraints: BoxConstraints(
-                          minHeight: 180,
+                        Container(
+                          margin: EdgeInsets.only(top: 8),
+                          child: _text(productName, titulo: true),
                         ),
-                        child: Container(
-                          margin: EdgeInsets.all(8),
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.all(Radius.circular(16)),
-                            child: Container(
-                              color: Colors.white,
-                              width: 1000,
-                              padding: EdgeInsets.all(8),
-                              child: _text(productDescription, resumo: true),
+                        Container(
+                            width: 70,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: <Widget>[
+                                _text(productMedia),
+                                _iconEstrela(),
+                              ],
+                            )),
+                        Container(
+                          margin: EdgeInsets.only(top: 8, left: 8, right: 8),
+                          child: _text("Produto de: $productOwner"),
+                        ),
+                        Container(
+                          margin: EdgeInsets.only(top: 8, bottom: 8),
+                          child: _text("Descrição:"),
+                        ),
+                        ConstrainedBox(
+                          constraints: BoxConstraints(
+                            minHeight: 180,
+                          ),
+                          child: Container(
+                            margin: EdgeInsets.all(8),
+                            child: ClipRRect(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(16)),
+                              child: Container(
+                                color: Colors.white,
+                                width: 1000,
+                                padding: EdgeInsets.all(8),
+                                child: _text(productDescription, resumo: true),
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                      Container(
-                        margin: EdgeInsets.only(bottom: 8),
-                        child: RaisedButton(
-                          color: Colors.white,
-                          onPressed: () {
-                            _setFavoriteState();
-                          },
-                          child: _text(favoriteController, resumo: true),
+                        Container(
+                          margin: EdgeInsets.only(bottom: 8),
+                          child: RaisedButton(
+                            color: Colors.white,
+                            onPressed: () {
+                              _setFavoriteState();
+                            },
+                            child: _text(favoriteController, resumo: true),
+                          ),
                         ),
-                      ),
-                      Container(
-                        width: 400,
-                        margin: EdgeInsets.only(bottom: 8, right: 8, left: 8),
-                        child: prodDestination(),
-                      ),
-                    ],
+                        Container(
+                          width: 400,
+                          margin: EdgeInsets.only(bottom: 8, right: 8, left: 8),
+                          child: prodDestination(),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -514,7 +543,7 @@ class _ProdutoSelecionadoState extends State<ProdutoSelecionado> {
     );
   }
 
-   _setID(String value) {
+  _setID(String value) {
     setState(() {
       userID = value;
       getFavoriteStatus();
@@ -568,22 +597,20 @@ class _ProdutoSelecionadoState extends State<ProdutoSelecionado> {
     await databaseReference
         .collection("favoriteProducts")
         .document(favDel)
-        .delete()
-        .then(_deleted);
-    _toast("Removido dos favoritos", context);
-  }
+        .delete();
 
-  _deleted(void value) {
     setState(() {
       productInFavorites = false;
       getFavoriteStatus();
+      _toast("Removido dos favoritos", context);
     });
   }
 
   prodDestination() {
     if (reservaAprovada.length > 0) {
       int timeNow = Timestamp.fromDate(DateTime.now()).millisecondsSinceEpoch;
-      int nearestTime = reservaAprovada[0].programedInitDate.millisecondsSinceEpoch;
+      int nearestTime =
+          reservaAprovada[0].programedInitDate.millisecondsSinceEpoch;
 
       if ((nearestTime - timeNow) <= 3600000) {
         return RaisedButton(
@@ -592,13 +619,21 @@ class _ProdutoSelecionadoState extends State<ProdutoSelecionado> {
             Navigator.push(
               context,
               MaterialPageRoute(builder: (BuildContext context) {
-                return TelaReservaProxima(solicitationID: solicitationID,);
+                return TelaReservaProxima(
+                  solicitationID: solicitationID,
+                );
               }),
             );
           },
           child: _text("Validar retirada", resumo: true),
         );
-      }
+      }else{return RaisedButton(
+        color: Colors.white,
+        onPressed: () {
+          _toast("Só existo", context);
+        },
+        child: _text("Editar reserva", resumo: true),
+      );}
     } else if (myProduct == null) {
       return Container();
     } else if (myProduct == true) {
@@ -611,14 +646,19 @@ class _ProdutoSelecionadoState extends State<ProdutoSelecionado> {
       return RaisedButton(
         color: Colors.white,
         onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (BuildContext context) {
-              return TelaReservar(
-                  productID: widget.productID,
-                  productPrice: double.parse(productPrice));
-            }),
-          );
+          if (emailVerified == false) {
+            sharedPreferencesController
+                .getEmailAuth()
+                .then((value) => _verifyAuth(value, caller: 1));
+          } else {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (BuildContext context) {
+                return TelaReservar(
+                    productID: widget.productID, productPrice: productPrice);
+              }),
+            );
+          }
         },
         child: _text("Reservar", resumo: true),
       );
@@ -652,24 +692,30 @@ class _ProdutoSelecionadoState extends State<ProdutoSelecionado> {
         .where("requesterID", isEqualTo: userID)
         .where("productID", isEqualTo: widget.productID)
         .getDocuments()
-        .then((QuerySnapshot snapshot) {
+        .then(
+      (QuerySnapshot snapshot) {
         snapshot.documents.forEach(
           (f) {
             Map productData = f.data;
             if (productData["status"] == "aprovada") {
               setState(() {
-                reservaAprovada.add(new _ReservaProxima(productData["solicitationID"], productData["programedInitDate"]));
-                reservaAprovada.sort((a, b) => a.programedInitDate.compareTo(b.programedInitDate));
+                reservaAprovada.add(new _ReservaProxima(
+                    productData["solicitationID"],
+                    productData["programedInitDate"]));
+                reservaAprovada.sort((a, b) =>
+                    a.programedInitDate.compareTo(b.programedInitDate));
               });
             }
             if (productData["status"] == "em andamento") {
-              reservaEmAndamento.add(productData["programedInitDate"]);
+              reservaEmAndamento.add(new _ReservaProxima(productData["solicitationID"], productData["programedInitDate"]));
             }
           },
         );
       },
     );
-    solicitationID = reservaAprovada[0].solicitationID;
+    if (reservaAprovada.length > 0) {
+      solicitationID = reservaAprovada[0].solicitationID;
+    }
   }
 
   _toast(String texto, BuildContext context) {
@@ -679,4 +725,175 @@ class _ProdutoSelecionadoState extends State<ProdutoSelecionado> {
         backgroundColor: Colors.black.withOpacity(0.8));
   }
 
+  Future<FutureOr> _verifyAuth(bool value, {int caller}) async {
+    await databaseReference
+        .collection("users")
+        .where("userID", isEqualTo: userID)
+        .getDocuments()
+        .then((QuerySnapshot snapshot) {
+      snapshot.documents.forEach((f) {
+        Map userData = f.data;
+        var base64Str = base64.decode(userData["password"]);
+        var passDecode = utf8.decode(base64Str);
+
+        actualPass = passDecode;
+      });
+    });
+
+    FirebaseUser user = await FirebaseAuth.instance.currentUser();
+    var userAuth =
+        EmailAuthProvider.getCredential(email: userMail, password: actualPass);
+    await user.reauthenticateWithCredential(userAuth).then((onValue) async {
+      emailVerified = await model
+          .isAuthenticated(await FirebaseAuth.instance.currentUser());
+
+      if (caller == 1 && emailVerified == false) {
+        _alertEmail();
+      }
+    });
+  }
+
+  _alertEmail() {
+    return showDialog(
+      context: context,
+      builder: (context) {
+        return GestureDetector(
+          onTap: () => Navigator.pop(context),
+          child: Container(
+            color: Colors.white.withOpacity(0.1),
+            child: Center(
+              child: ClipRRect(
+                borderRadius: BorderRadius.all(Radius.circular(16)),
+                child: GestureDetector(
+                  onTap: () => null,
+                  child: Container(
+                    color: Colors.white,
+                    height: 310,
+                    width: 300,
+                    child: Container(
+                      child: Column(
+                        children: <Widget>[
+                          Container(
+                            margin: EdgeInsets.only(bottom: 8, top: 8),
+                            child: Text(
+                              "Email ainda não confirmado !",
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                decoration: TextDecoration.none,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.red,
+                                fontSize: 20,
+                              ),
+                            ),
+                          ),
+                          Divider(
+                            thickness: 3,
+                          ),
+                          Container(
+                            margin: EdgeInsets.all(8),
+                            child: _textConfirmacao(
+                                "Somente usuários com email confirmado podem realizar empréstimos.\n\n "
+                                "Se você não recebeu o email de verificação você pode reenvia-lo "
+                                "atravéz do botão abaixo.",
+                                center: true),
+                          ),
+                          Expanded(
+                            child: Container(
+                              color: Colors.indigoAccent,
+                              margin: EdgeInsets.only(
+                                top: 8,
+                              ),
+                              child: Row(
+                                children: <Widget>[
+                                  Expanded(
+                                    child: Container(
+                                      height: 100,
+                                      child: RaisedButton(
+                                        color: Colors.indigoAccent,
+                                        onPressed: () {
+                                          Navigator.pop(context);
+                                        },
+                                        child: Text(
+                                          "Voltar",
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  Expanded(
+                                    child: Container(
+                                      height: 100,
+                                      child: RaisedButton(
+                                        color: Colors.indigoAccent,
+                                        onPressed: () async {
+                                          FirebaseUser user = await FirebaseAuth
+                                              .instance
+                                              .currentUser();
+                                          user.sendEmailVerification();
+                                          _toast("Email de verificação enviado",
+                                              context);
+                                          Navigator.of(context).pop();
+                                        },
+                                        child: Text(
+                                          "Reenviar",
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  _textConfirmacao(String texto, {bool titulo = false, bool center = false}) {
+    if (titulo) {
+      return Text(
+        "$texto",
+        style: TextStyle(
+          fontWeight: FontWeight.bold,
+          color: Colors.red,
+          fontSize: 16,
+          decoration: TextDecoration.none,
+        ),
+      );
+    } else if (center == true) {
+      return Text(
+        "$texto",
+        textAlign: TextAlign.center,
+        style: TextStyle(
+          fontWeight: FontWeight.normal,
+          color: Colors.black,
+          fontSize: 16,
+          decoration: TextDecoration.none,
+        ),
+      );
+    } else {
+      return Text(
+        "$texto",
+        style: TextStyle(
+          fontWeight: FontWeight.normal,
+          color: Colors.black,
+          fontSize: 16,
+          decoration: TextDecoration.none,
+        ),
+      );
+    }
+  }
 }

@@ -17,7 +17,7 @@ class _Products {
   String productID;
   String name;
   String media;
-  String preco;
+  var preco;
   double distance;
 
   _Products(this.productID, this.name, this.preco, this.media, this.distance);
@@ -34,6 +34,7 @@ class _ListaMainBuilderState extends State<ListaMainBuilder> {
   List<_Products> _listaMain = [];
   GeoPoint userLocation;
   ScrollController _controller;
+  bool listIsEmpty = false;
 
   @override
   initState() {
@@ -64,6 +65,11 @@ class _ListaMainBuilderState extends State<ListaMainBuilder> {
         .getDocuments()
         .then((QuerySnapshot snapshot) {
       snapshot.documents.forEach((f) {
+        if(snapshot.documents.length == 0){
+          setState(() {
+            listIsEmpty = true;
+          });
+        }
         Map productData = f.data;
         if (productData["ownerID"] != userID) {
           setState(() {
@@ -85,7 +91,22 @@ class _ListaMainBuilderState extends State<ListaMainBuilder> {
 
   @override
   Widget build(BuildContext context) {
-    return listGen(_listaMain);
+    return _listaMain.length == 0 && listIsEmpty == false
+        ? Center(
+            child: CircularProgressIndicator(),
+          )
+        : listIsEmpty == true
+            ? Center(
+                child: Text(
+                  "OPS! Algo deu errado...",
+                  style: TextStyle(
+                    color: Colors.indigoAccent,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              )
+            : listGen(_listaMain);
   }
 
   _onClick(BuildContext context, String idx) {
@@ -135,12 +156,15 @@ class _ListaMainBuilderState extends State<ListaMainBuilder> {
   }
 
   _textNome(String idx) {
-    return Text(
-      idx,
-      style: TextStyle(
-        fontWeight: FontWeight.bold,
-        fontSize: 24,
-        color: Colors.indigoAccent,
+    return Expanded(
+      child: Text(
+        idx,
+        overflow: TextOverflow.ellipsis,
+        style: TextStyle(
+          fontWeight: FontWeight.bold,
+          fontSize: 24,
+          color: Colors.indigoAccent,
+        ),
       ),
     );
   }
@@ -180,7 +204,7 @@ class _ListaMainBuilderState extends State<ListaMainBuilder> {
     }
   }
 
-  _textPreco(String idx) {
+  _textPreco(var idx) {
     return Text(
       "R\$ $idx",
       style: TextStyle(
