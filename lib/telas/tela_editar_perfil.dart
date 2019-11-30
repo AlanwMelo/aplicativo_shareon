@@ -303,27 +303,28 @@ class _EditarPerfilState extends State<EditarPerfil> {
                                     alterMail == false &&
                                     alterAddress == false) {
                                   _toast("Nada foi alterado", context);
-                                }
-                                bool emailInUse = false;
-
-                                await databaseReference
-                                    .collection("users")
-                                    .where("email")
-                                    .getDocuments()
-                                    .then((QuerySnapshot snapshot) {
-                                  snapshot.documents.forEach((f) {
-                                    Map mappedEmail = f.data;
-                                    if (mappedEmail["email"] ==
-                                        mailController.text) {
-                                      emailInUse = true;
-                                    }
-                                  });
-                                });
-                                if (emailInUse == true) {
-                                  _toast("Este email já está sendo utilizado",
-                                      context);
                                 } else {
-                                  _validaAlteracoes();
+                                  bool emailInUse = false;
+
+                                  await databaseReference
+                                      .collection("users")
+                                      .where("email")
+                                      .getDocuments()
+                                      .then((QuerySnapshot snapshot) {
+                                    snapshot.documents.forEach((f) {
+                                      Map mappedEmail = f.data;
+                                      if (mappedEmail["email"] ==
+                                          mailController.text) {
+                                        emailInUse = true;
+                                      }
+                                    });
+                                  });
+                                  if (emailInUse == true) {
+                                    _toast("Este email já está sendo utilizado",
+                                        context);
+                                  } else {
+                                    _validaAlteracoes();
+                                  }
                                 }
                               }
                             },

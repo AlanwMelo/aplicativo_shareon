@@ -109,7 +109,11 @@ class _EditaProdutoState extends State<EditaProduto> {
           leading: IconButton(
             icon: Icon(Icons.arrow_back_ios),
             onPressed: () {
-              Navigator.of(context).pop();
+              if (canPop == true) {
+                return _alertExit(context);
+              } else {
+                _toast("Aguarde os dados serem carregados", context);
+              }
             },
           ),
         ),
