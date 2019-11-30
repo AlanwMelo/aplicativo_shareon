@@ -47,6 +47,8 @@ dependencies:
   flutter_launcher_icons: ^0.7.4
   valida_cpf: ^0.0.1
   flutter_masked_text: ^0.8.0
+  onesignal_flutter: any
+
 
 flutter_icons:
   android: true
@@ -63,7 +65,7 @@ flutter:
   # the material Icons class.
   uses-material-design: true
   assets:
-    - lib/assets/
+    - lib/assets
 
   # To add assets to your application, add an assets section, like this:
   # assets:
