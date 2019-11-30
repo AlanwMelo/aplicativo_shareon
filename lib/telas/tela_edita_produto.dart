@@ -766,7 +766,6 @@ class _EditaProdutoState extends State<EditaProduto> {
     });
 
     String priceAux = priceController.text.replaceAll(",", ".");
-    print(priceAux);
 
     String adStatus = "em provisionamento";
     Timestamp insertioDate = Timestamp.fromDate(DateTime.now());
@@ -848,7 +847,6 @@ class _EditaProdutoState extends State<EditaProduto> {
     });
 
     String priceAux = priceController.text.replaceAll(",", ".");
-    print(priceAux);
 
     String adStatus = "em atualização";
     String description = descriptionController.text.isEmpty
@@ -1063,7 +1061,6 @@ class _EditaProdutoState extends State<EditaProduto> {
     });
 
     String priceAux = priceController.text.replaceAll(",", ".");
-    print(priceAux);
 
     String adStatus = "em provisionamento";
     Timestamp insertioDate = Timestamp.fromDate(DateTime.now());
@@ -1360,15 +1357,6 @@ class _EditaProdutoState extends State<EditaProduto> {
         _img3String = productIMG["productIMG3"];
         _img4String = productIMG["productIMG4"];
         _img5String = productIMG["productIMG5"];
-
-        print("5 $_img5String");
-        print("4 $_img4String");
-        print("3 $_img3String");
-        if (_img3String == "") {
-          print(true);
-        }
-        print("2 $_img2String");
-        print("1 $_imgMainString");
 
         cacheMounter();
       });
