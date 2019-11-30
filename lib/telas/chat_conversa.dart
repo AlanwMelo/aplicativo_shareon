@@ -1,56 +1,56 @@
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
+// import 'package:flutter/cupertino.dart';
+// import 'package:flutter/material.dart';
 
-class ChatConversa extends StatelessWidget {
+// class ChatConversa extends StatelessWidget {
 
-  _enviarMensagem(){
+//   _enviarMensagem(){
 
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 8),
-      height: 70,
-      color: Colors.indigoAccent,
-      child: Row(
-        children: <Widget>[
-          IconButton(icon: Icon(Icons.photo),
-          iconSize: 25,
-          color: Colors.indigoAccent,
-          onPressed: (){},
-          ),
-          Expanded(
-            child: TextField(
-              decoration: InputDecoration(
-                hintText: "Enviar Mensagem..."
-              ),
-            ),
-          ),
-          IconButton(icon: Icon(Icons.send),
-          iconSize: 25,
-          color: Colors.indigoAccent,
-          onPressed: (){},
-          ),
-        ],
-      ),
-    );
-  }
+//     return Container(
+//       padding: EdgeInsets.symmetric(horizontal: 8),
+//       height: 70,
+//       color: Colors.indigoAccent,
+//       child: Row(
+//         children: <Widget>[
+//           IconButton(icon: Icon(Icons.photo),
+//           iconSize: 25,
+//           color: Colors.indigoAccent,
+//           onPressed: (){},
+//           ),
+//           Expanded(
+//             child: TextField(
+//               decoration: InputDecoration(
+//                 hintText: "Enviar Mensagem..."
+//               ),
+//             ),
+//           ),
+//           IconButton(icon: Icon(Icons.send),
+//           iconSize: 25,
+//           color: Colors.indigoAccent,
+//           onPressed: (){},
+//           ),
+//         ],
+//       ),
+//     );
+//   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("Fulano"),
-      ),
-      body: Column(
-        children: <Widget>[
-          Expanded(
-            child: Container(
-              decoration: BoxDecoration(
-                color: Colors.white
-              ),
-            ),
-          )
-        ],
-      ),
-    );
-  }
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: AppBar(
+//         title: Text("Fulano"),
+//       ),
+//       body: Column(
+//         children: <Widget>[
+//           Expanded(
+//             child: Container(
+//               decoration: BoxDecoration(
+//                 color: Colors.white
+//               ),
+//             ),
+//           )
+//         ],
+//       ),
+//     );
+//   }
 
-}
+// }
