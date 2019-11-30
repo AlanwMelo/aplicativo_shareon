@@ -10,45 +10,58 @@ import 'package:flutter_masked_text/flutter_masked_text.dart';
 import 'package:google_map_location_picker/google_map_location_picker.dart';
 import 'package:toast/toast.dart';
 
-class CadastroProduto extends StatefulWidget {
+class EditaProduto extends StatefulWidget {
   final String userID;
+  final String productID;
 
-  CadastroProduto(this.userID);
+  EditaProduto({@required this.userID, @required this.productID});
 
   @override
-  _CadastroProdutoState createState() => _CadastroProdutoState();
+  _EditaProdutoState createState() => _EditaProdutoState();
 }
 
-class _CadastroProdutoState extends State<CadastroProduto> {
+class _EditaProdutoState extends State<EditaProduto> {
   final databaseReference = Firestore.instance;
   final storageRef = FirebaseStorage.instance;
-  final campos = GlobalKey<FormState>();
+  final camposEditar = GlobalKey<FormState>();
   final nameController = TextEditingController();
   final descriptionController = TextEditingController();
   final priceController = MoneyMaskedTextController();
   String productAddress = "Informe onde encontrar seu produto";
+  bool alteredAddress = false;
   GeoPoint productLocation;
   bool canPop = true;
+  String actualName = "";
+  String actualPrice = "";
+  String actualDescription = "";
+  String actualType = "";
+  String imgDOCid = "";
 
   //Materiais Esportivos
-  final campoEsportivo = GlobalKey<FormState>();
+  final campoEsportivoEditar = GlobalKey<FormState>();
   final marcaEsportivoController = TextEditingController();
   int _radioValueME = 0;
   bool tamanhoInformado = false;
   String tamanho;
+  String actualTamanho = "";
+  String actualMarcaEsportivo = "";
 
   //livros
-  final camposLivros = GlobalKey<FormState>();
+  final camposLivrosEditar = GlobalKey<FormState>();
   final livroTituloController = TextEditingController();
   final livroEditoraController = TextEditingController();
+  String actualTituloLivro = "";
+  String actualEditoraLivro = "";
 
   //Materiais de Escritorio
 
   //Eletrodomesticos
-  final campoEletro = GlobalKey<FormState>();
+  final campoEletroEditar = GlobalKey<FormState>();
   final marcaEletroController = TextEditingController();
   bool voltagemInformada = false;
   String voltagem;
+  String actualVoltagem = "";
+  String actualMarcaVoltagem = "";
   int _radioValueEletro = 0;
 
   File _imgMain;
@@ -56,6 +69,16 @@ class _CadastroProdutoState extends State<CadastroProduto> {
   File _img3;
   File _img4;
   File _img5;
+  bool imgMainModif = false;
+  bool img2Modif = false;
+  bool img3Modif = false;
+  bool img4Modif = false;
+  bool img5Modif = false;
+  String _imgMainUrl = "";
+  String _img2Url = "";
+  String _img3Url = "";
+  String _img4Url = "";
+  String _img5Url = "";
   int btPointer;
   bool livrosPressed = false;
   bool eletrodomesticosPressed = false;
@@ -67,7 +90,7 @@ class _CadastroProdutoState extends State<CadastroProduto> {
 
   @override
   void initState() {
-    print(_imgMain);
+    getProductData();
     super.initState();
   }
 
@@ -85,7 +108,7 @@ class _CadastroProdutoState extends State<CadastroProduto> {
       child: Scaffold(
         appBar: AppBar(
           centerTitle: true,
-          title: Text("Cadastrar produto"),
+          title: Text("Editar produto"),
           elevation: 0,
           backgroundColor: Colors.indigoAccent,
           leading: IconButton(
@@ -96,7 +119,7 @@ class _CadastroProdutoState extends State<CadastroProduto> {
           ),
         ),
         body: loading == false
-            ? homeCadastroProduto()
+            ? homeEditaProduto()
             : Container(
                 color: Colors.white,
                 child: Center(
@@ -117,7 +140,7 @@ class _CadastroProdutoState extends State<CadastroProduto> {
     );
   }
 
-  homeCadastroProduto() {
+  homeEditaProduto() {
     return Container(
       child: Column(
         children: <Widget>[
@@ -131,7 +154,7 @@ class _CadastroProdutoState extends State<CadastroProduto> {
                   ),
                   child: Container(
                     child: Form(
-                      key: campos,
+                      key: camposEditar,
                       child: ListView(
                         padding: EdgeInsets.all(16),
                         children: <Widget>[
@@ -172,15 +195,8 @@ class _CadastroProdutoState extends State<CadastroProduto> {
                             margin: EdgeInsets.only(top: 12),
                             child: TextFormField(
                               style: _fieldstyle,
-                              decoration: _buildDecoration("Nome do produto"),
+                              decoration: _buildDecoration(actualName),
                               controller: nameController,
-                              validator: (text) {
-                                if (text.isEmpty) {
-                                  return "O nome do produto é obrigatório";
-                                } else {
-                                  return null;
-                                }
-                              },
                             ),
                           ),
                           Container(
@@ -188,15 +204,8 @@ class _CadastroProdutoState extends State<CadastroProduto> {
                             child: TextFormField(
                               style: _fieldstyle,
                               maxLines: 6,
-                              decoration: _buildDecoration("Descrição"),
+                              decoration: _buildDecoration(actualDescription),
                               controller: descriptionController,
-                              validator: (text) {
-                                if (text.isEmpty) {
-                                  return "Informe uma descrição do seu produto";
-                                } else {
-                                  return null;
-                                }
-                              },
                             ),
                           ),
                           Container(
@@ -205,7 +214,7 @@ class _CadastroProdutoState extends State<CadastroProduto> {
                               style: _fieldstyle,
                               keyboardType: TextInputType.numberWithOptions(
                                   decimal: true),
-                              decoration: _buildDecoration("Preço"),
+                              decoration: _buildDecoration(actualPrice),
                               controller: priceController,
                               validator: (text) {
                                 if (text.isEmpty || text == "0,00") {
@@ -233,22 +242,7 @@ class _CadastroProdutoState extends State<CadastroProduto> {
                                         width: 100,
                                         height: 50,
                                         child: FlatButton(
-                                          onPressed: () {
-                                            setState(() {
-                                              if (materiaisEsportivosPressed ==
-                                                  false) {
-                                                materiaisEsportivosPressed =
-                                                    true;
-                                                livrosPressed = false;
-                                                materiaisEscritorioPressed =
-                                                    false;
-                                                eletrodomesticosPressed = false;
-                                              }
-                                              if (btPointer != 1) {
-                                                btPointer = 1;
-                                              }
-                                            });
-                                          },
+                                          onPressed: () {},
                                           color:
                                               materiaisEsportivosPressed == true
                                                   ? Colors.orange
@@ -263,21 +257,7 @@ class _CadastroProdutoState extends State<CadastroProduto> {
                                         width: 100,
                                         height: 50,
                                         child: FlatButton(
-                                          onPressed: () {
-                                            setState(() {
-                                              if (livrosPressed == false) {
-                                                livrosPressed = true;
-                                                materiaisEscritorioPressed =
-                                                    false;
-                                                materiaisEsportivosPressed =
-                                                    false;
-                                                eletrodomesticosPressed = false;
-                                              }
-                                              if (btPointer != 2) {
-                                                btPointer = 2;
-                                              }
-                                            });
-                                          },
+                                          onPressed: () {},
                                           color: livrosPressed == true
                                               ? Colors.orange
                                               : Colors.indigoAccent,
@@ -291,22 +271,7 @@ class _CadastroProdutoState extends State<CadastroProduto> {
                                         width: 100,
                                         height: 50,
                                         child: FlatButton(
-                                          onPressed: () {
-                                            setState(() {
-                                              if (materiaisEscritorioPressed ==
-                                                  false) {
-                                                materiaisEscritorioPressed =
-                                                    true;
-                                                livrosPressed = false;
-                                                materiaisEsportivosPressed =
-                                                    false;
-                                                eletrodomesticosPressed = false;
-                                              }
-                                              if (btPointer != 3) {
-                                                btPointer = 3;
-                                              }
-                                            });
-                                          },
+                                          onPressed: () {},
                                           color:
                                               materiaisEscritorioPressed == true
                                                   ? Colors.orange
@@ -330,22 +295,7 @@ class _CadastroProdutoState extends State<CadastroProduto> {
                                         width: 300,
                                         height: 50,
                                         child: FlatButton(
-                                          onPressed: () {
-                                            setState(() {
-                                              if (materiaisEsportivosPressed ==
-                                                  false) {
-                                                eletrodomesticosPressed = true;
-                                                materiaisEsportivosPressed =
-                                                    false;
-                                                livrosPressed = false;
-                                                materiaisEscritorioPressed =
-                                                    false;
-                                              }
-                                              if (btPointer != 4) {
-                                                btPointer = 4;
-                                              }
-                                            });
-                                          },
+                                          onPressed: () {},
                                           color: eletrodomesticosPressed == true
                                               ? Colors.orange
                                               : Colors.indigoAccent,
@@ -367,7 +317,7 @@ class _CadastroProdutoState extends State<CadastroProduto> {
                             height: 40,
                             child: RaisedButton(
                               child: Text(
-                                "Cadastrar",
+                                "Editar",
                                 style: TextStyle(
                                   fontSize: 20,
                                 ),
@@ -377,12 +327,13 @@ class _CadastroProdutoState extends State<CadastroProduto> {
                               onPressed: () {
                                 FocusScope.of(context)
                                     .requestFocus(new FocusNode());
-                                if (campos.currentState.validate()) {
+                                if (camposEditar.currentState.validate()) {
                                   if (_imgMain == null &&
                                       _img2 == null &&
                                       _img3 == null &&
                                       _img4 == null &&
-                                      _img5 == null) {
+                                      _img5 == null &&
+                                      _imgMainUrl == "") {
                                     _toast(
                                         "O produto deve possuir pelo menos uma imagem",
                                         context);
@@ -408,20 +359,20 @@ class _CadastroProdutoState extends State<CadastroProduto> {
                                       _imgMain = _img5;
                                       _img5 = null;
                                     }
-                                  }
-                                  if (btPointer == 1) {
-                                    if (campoEsportivo.currentState
+                                  } else if (btPointer == 1) {
+                                    if (campoEsportivoEditar.currentState
                                         .validate()) {
-                                      _cadastraMaterialEsportivo().then(
-                                          (value) => Navigator.push(context,
-                                                  MaterialPageRoute(builder:
-                                                      (BuildContext context) {
-                                                return Home();
-                                              })));
+                                      _editaMaterialEsportivo().then((value) =>
+                                          Navigator.push(context,
+                                              MaterialPageRoute(builder:
+                                                  (BuildContext context) {
+                                            return Home();
+                                          })));
                                     }
                                   } else if (btPointer == 2) {
-                                    if (camposLivros.currentState.validate()) {
-                                      _cadastraLivro().then((value) =>
+                                    if (camposLivrosEditar.currentState
+                                        .validate()) {
+                                      _editaLivro().then((value) =>
                                           Navigator.push(context,
                                               MaterialPageRoute(builder:
                                                   (BuildContext context) {
@@ -429,26 +380,21 @@ class _CadastroProdutoState extends State<CadastroProduto> {
                                           })));
                                     }
                                   } else if (btPointer == 3) {
-                                    _cadastraEscritorio().then((value) =>
+                                    _editaEscritorio().then((value) =>
                                         Navigator.push(context,
                                             MaterialPageRoute(builder:
                                                 (BuildContext context) {
                                           return Home();
                                         })));
                                   } else if (btPointer == 4) {
-                                    if (campoEletro.currentState.validate()) {
-                                      if (voltagemInformada == false) {
-                                        _toast(
-                                            "A voltagem precisa ser informada",
-                                            context);
-                                      } else {
-                                        _cadastraEletro().then((value) =>
-                                            Navigator.push(context,
-                                                MaterialPageRoute(builder:
-                                                    (BuildContext context) {
-                                              return Home();
-                                            })));
-                                      }
+                                    if (campoEletroEditar.currentState
+                                        .validate()) {
+                                      _editaEletro().then((value) =>
+                                          Navigator.push(context,
+                                              MaterialPageRoute(builder:
+                                                  (BuildContext context) {
+                                            return Home();
+                                          })));
                                     }
                                   }
                                 }
@@ -482,40 +428,67 @@ class _CadastroProdutoState extends State<CadastroProduto> {
             children: <Widget>[
               GestureDetector(
                   onLongPress: _imgRemoverMain,
-                  child: _imgMain != null
+                  child: _imgMainUrl != ""
                       ? Container(
-                          child: new Image.file(
-                            _imgMain,
+                          child: new Image.network(
+                            _imgMainUrl,
                             fit: BoxFit.cover,
                             height: 100,
                             width: 100,
                           ),
                         )
-                      : _imgSelector(1)),
+                      : _imgMain != null
+                          ? Container(
+                              child: new Image.file(
+                                _imgMain,
+                                fit: BoxFit.cover,
+                                height: 100,
+                                width: 100,
+                              ),
+                            )
+                          : _imgSelector(1)),
               GestureDetector(
                   onLongPress: _imgRemover2,
-                  child: _img2 != null
+                  child: _img2Url != ""
                       ? Container(
-                          child: new Image.file(
-                            _img2,
+                          child: new Image.network(
+                            _img2Url,
                             fit: BoxFit.cover,
                             height: 100,
                             width: 100,
                           ),
                         )
-                      : _imgSelector(2)),
+                      : _img2 != null
+                          ? Container(
+                              child: new Image.file(
+                                _img2,
+                                fit: BoxFit.cover,
+                                height: 100,
+                                width: 100,
+                              ),
+                            )
+                          : _imgSelector(2)),
               GestureDetector(
                   onLongPress: _imgRemover3,
-                  child: _img3 != null
+                  child: _img3Url != ""
                       ? Container(
-                          child: new Image.file(
-                            _img3,
+                          child: new Image.network(
+                            _img3Url,
                             fit: BoxFit.cover,
                             height: 100,
                             width: 100,
                           ),
                         )
-                      : _imgSelector(3)),
+                      : _img3 != null
+                          ? Container(
+                              child: new Image.file(
+                                _img3,
+                                fit: BoxFit.cover,
+                                height: 100,
+                                width: 100,
+                              ),
+                            )
+                          : _imgSelector(3)),
             ],
           ),
           Container(
@@ -526,28 +499,46 @@ class _CadastroProdutoState extends State<CadastroProduto> {
               children: <Widget>[
                 GestureDetector(
                     onLongPress: _imgRemover4,
-                    child: _img4 != null
+                    child: _img4Url != ""
                         ? Container(
-                            child: new Image.file(
-                              _img4,
+                            child: new Image.network(
+                              _img4Url,
                               fit: BoxFit.cover,
                               height: 100,
                               width: 100,
                             ),
                           )
-                        : _imgSelector(4)),
+                        : _img4 != null
+                            ? Container(
+                                child: new Image.file(
+                                  _img4,
+                                  fit: BoxFit.cover,
+                                  height: 100,
+                                  width: 100,
+                                ),
+                              )
+                            : _imgSelector(4)),
                 GestureDetector(
                     onLongPress: _imgRemover5,
-                    child: _img5 != null
+                    child: _img5Url != ""
                         ? Container(
-                            child: new Image.file(
-                              _img5,
+                            child: new Image.network(
+                              _img5Url,
                               fit: BoxFit.cover,
                               height: 100,
                               width: 100,
                             ),
                           )
-                        : _imgSelector(5)),
+                        : _img5 != null
+                            ? Container(
+                                child: new Image.file(
+                                  _img5,
+                                  fit: BoxFit.cover,
+                                  height: 100,
+                                  width: 100,
+                                ),
+                              )
+                            : _imgSelector(5)),
               ],
             ),
           ),
@@ -575,14 +566,19 @@ class _CadastroProdutoState extends State<CadastroProduto> {
               onImageSelected: (image) {
                 setState(() {
                   if (caller == 1) {
+                    imgMainModif = true;
                     _imgMain = image;
                   } else if (caller == 2) {
+                    img2Modif = true;
                     _img2 = image;
                   } else if (caller == 3) {
+                    img3Modif = true;
                     _img3 = image;
                   } else if (caller == 4) {
+                    img4Modif = true;
                     _img4 = image;
                   } else if (caller == 5) {
+                    img5Modif = true;
                     _img5 = image;
                   }
                 });
@@ -621,30 +617,40 @@ class _CadastroProdutoState extends State<CadastroProduto> {
 
   _imgRemoverMain() {
     setState(() {
+      imgMainModif = true;
+      _imgMainUrl = "";
       _imgMain = null;
     });
   }
 
   _imgRemover2() {
     setState(() {
+      img2Modif = true;
+      _img2Url = "";
       _img2 = null;
     });
   }
 
   _imgRemover3() {
     setState(() {
+      img3Modif = true;
+      _img3Url = "";
       _img3 = null;
     });
   }
 
   _imgRemover4() {
     setState(() {
+      img4Modif = true;
+      _img4Url = "";
       _img4 = null;
     });
   }
 
   _imgRemover5() {
     setState(() {
+      img5Modif = true;
+      _img5Url = "";
       _img5 = null;
     });
   }
@@ -701,20 +707,13 @@ class _CadastroProdutoState extends State<CadastroProduto> {
               ],
             ),
             Form(
-              key: campoEsportivo,
+              key: campoEsportivoEditar,
               child: Container(
                 margin: EdgeInsets.only(top: 12),
                 child: TextFormField(
                   style: _fieldstyle,
                   decoration: _buildDecoration("Marca"),
                   controller: marcaEsportivoController,
-                  validator: (text) {
-                    if (text.isEmpty) {
-                      return "A Marca deve ser informada";
-                    } else {
-                      return null;
-                    }
-                  },
                 ),
               ),
             ),
@@ -725,37 +724,23 @@ class _CadastroProdutoState extends State<CadastroProduto> {
       return Container(
         height: 160,
         child: Form(
-          key: camposLivros,
+          key: camposLivrosEditar,
           child: Column(
             children: <Widget>[
               Container(
                 margin: EdgeInsets.only(top: 12),
                 child: TextFormField(
                   style: _fieldstyle,
-                  decoration: _buildDecoration("Título"),
+                  decoration: _buildDecoration(actualTituloLivro),
                   controller: livroTituloController,
-                  validator: (text) {
-                    if (text.isEmpty) {
-                      return "O título deve ser informado";
-                    } else {
-                      return null;
-                    }
-                  },
                 ),
               ),
               Container(
                 margin: EdgeInsets.only(top: 12),
                 child: TextFormField(
                   style: _fieldstyle,
-                  decoration: _buildDecoration("Editora"),
+                  decoration: _buildDecoration(actualEditoraLivro),
                   controller: livroEditoraController,
-                  validator: (text) {
-                    if (text.isEmpty) {
-                      return "A Editora deve ser informada";
-                    } else {
-                      return null;
-                    }
-                  },
                 ),
               ),
             ],
@@ -814,20 +799,13 @@ class _CadastroProdutoState extends State<CadastroProduto> {
               ],
             ),
             Form(
-              key: campoEletro,
+              key: campoEletroEditar,
               child: Container(
                 margin: EdgeInsets.only(top: 12),
                 child: TextFormField(
                   style: _fieldstyle,
                   decoration: _buildDecoration("Marca"),
                   controller: marcaEletroController,
-                  validator: (text) {
-                    if (text.isEmpty) {
-                      return "A Marca deve ser informada";
-                    } else {
-                      return null;
-                    }
-                  },
                 ),
               ),
             ),
@@ -846,7 +824,7 @@ class _CadastroProdutoState extends State<CadastroProduto> {
         backgroundColor: Colors.black.withOpacity(0.8));
   }
 
-  Future _cadastraMaterialEsportivo() async {
+  Future _editaMaterialEsportivo() async {
     setState(() {
       canPop = false;
       loading = true;
@@ -856,24 +834,23 @@ class _CadastroProdutoState extends State<CadastroProduto> {
     print(priceAux);
 
     String adStatus = "em provisionamento";
-    Timestamp insertionDate = Timestamp.fromDate(DateTime.now());
-    Map<String, dynamic> cadastraProduto = {
+    Timestamp insertioDate = Timestamp.fromDate(DateTime.now());
+    Map<String, dynamic> editaProduto = {
       "description": descriptionController.text,
-      "insertionDate": insertionDate,
+      "insertionDate": insertioDate,
       "location": productLocation,
       "name": nameController.text,
       "ownerID": widget.userID,
       "price": double.parse(priceAux),
       "type": "material esportivo",
       "media": "-",
-      "productAddress": productAddress,
       "adStatus": adStatus,
       "marca": marcaEsportivoController.text,
       "tamanho": tamanho == null ? "" : tamanho,
     };
 
     final newProduct =
-        await databaseReference.collection("products").add(cadastraProduto);
+        await databaseReference.collection("products").add(editaProduto);
     String idWriter = newProduct.documentID;
 
     Map<String, dynamic> setID = {
@@ -900,29 +877,36 @@ class _CadastroProdutoState extends State<CadastroProduto> {
       final StorageUploadTask task =
           storageRef.ref().child("/productsIMG/$idWriter/img5").putFile(aux5);
       img5InDB = await (await task.onComplete).ref.getDownloadURL();
+    } else {
+      img5InDB = _img5Url;
     }
     if (aux4 != null) {
       final StorageUploadTask task =
           storageRef.ref().child("/productsIMG/$idWriter/img4").putFile(aux4);
       img4InDB = await (await task.onComplete).ref.getDownloadURL();
+    } else {
+      img4InDB = _img4Url;
     }
     if (aux3 != null) {
       final StorageUploadTask task =
           storageRef.ref().child("/productsIMG/$idWriter/img3").putFile(aux3);
       img3InDB = await (await task.onComplete).ref.getDownloadURL();
+    } else {
+      img3InDB = _img3Url;
     }
     if (aux2 != null) {
       final StorageUploadTask task =
           storageRef.ref().child("/productsIMG/$idWriter/img2").putFile(aux2);
       img2InDB = await (await task.onComplete).ref.getDownloadURL();
+    } else {
+      img2InDB = _img2Url;
     }
     if (aux != null) {
       final StorageUploadTask task =
           storageRef.ref().child("/productsIMG/$idWriter/mainIMG").putFile(aux);
       img1InDB = await (await task.onComplete).ref.getDownloadURL();
-
       await task.onComplete;
-
+    } else {
       Map<String, dynamic> imgListDB = {
         "productID": idWriter,
         "productMainIMG": img1InDB == null ? "" : img1InDB,
@@ -942,7 +926,7 @@ class _CadastroProdutoState extends State<CadastroProduto> {
           .document(idWriter)
           .updateData(setStatus);
     }
-    _toast("Produto cadastrado", context);
+    _toast("Produto editado", context);
 
     setState(() {
       canPop = true;
@@ -950,43 +934,43 @@ class _CadastroProdutoState extends State<CadastroProduto> {
     });
   }
 
-  Future _cadastraLivro() async {
+  Future _editaLivro() async {
     setState(() {
       canPop = false;
       loading = true;
     });
 
     String priceAux = priceController.text.replaceAll(",", ".");
+    print(priceAux);
 
-    String adStatus = "em provisionamento";
-    Timestamp insertionDate = Timestamp.fromDate(DateTime.now());
-    Map<String, dynamic> cadastraProduto = {
-      "description": descriptionController.text,
-      "insertionDate": insertionDate,
+    String adStatus = "em atualização";
+    String description = descriptionController.text.isEmpty
+        ? actualDescription
+        : descriptionController.text;
+    String name =
+        nameController.text.isEmpty ? actualName : nameController.text;
+    String titulo = livroTituloController.text.isEmpty
+        ? actualTituloLivro
+        : livroTituloController.text;
+    String editora = livroEditoraController.text.isEmpty
+        ? actualEditoraLivro
+        : livroEditoraController.text;
+    Map<String, dynamic> editaProduto = {
+      "description": description,
       "location": productLocation,
-      "name": nameController.text,
+      "name": name,
       "ownerID": widget.userID,
       "price": double.parse(priceAux),
-      "productAddress": productAddress,
       "type": "livro",
-      "media": "-",
       "adStatus": adStatus,
-      "titulo": livroTituloController.text,
-      "editora": livroEditoraController.text,
-    };
-
-    final newProduct =
-        await databaseReference.collection("products").add(cadastraProduto);
-    String idWriter = newProduct.documentID;
-
-    Map<String, dynamic> setID = {
-      "ID": idWriter,
+      "titulo": titulo,
+      "editora": editora,
     };
 
     await databaseReference
         .collection("products")
-        .document(idWriter)
-        .updateData(setID);
+        .document(widget.productID)
+        .updateData(editaProduto);
 
     File aux = _imgMain;
     File aux2 = _img2;
@@ -999,35 +983,53 @@ class _CadastroProdutoState extends State<CadastroProduto> {
     String img4InDB;
     String img5InDB;
 
+    if (imgMainModif == true) {}
     if (aux5 != null) {
-      final StorageUploadTask task =
-          storageRef.ref().child("/productsIMG/$idWriter/img5").putFile(aux5);
+      final StorageUploadTask task = storageRef
+          .ref()
+          .child("/productsIMG/${widget.productID}/img5")
+          .putFile(aux5);
       img5InDB = await (await task.onComplete).ref.getDownloadURL();
+    } else {
+      img5InDB = _img5Url;
     }
     if (aux4 != null) {
-      final StorageUploadTask task =
-          storageRef.ref().child("/productsIMG/$idWriter/img4").putFile(aux4);
+      final StorageUploadTask task = storageRef
+          .ref()
+          .child("/productsIMG/${widget.productID}/img4")
+          .putFile(aux4);
       img4InDB = await (await task.onComplete).ref.getDownloadURL();
+    } else {
+      img4InDB = _img4Url;
     }
     if (aux3 != null) {
-      final StorageUploadTask task =
-          storageRef.ref().child("/productsIMG/$idWriter/img3").putFile(aux3);
+      final StorageUploadTask task = storageRef
+          .ref()
+          .child("/productsIMG/${widget.productID}/img3")
+          .putFile(aux3);
       img3InDB = await (await task.onComplete).ref.getDownloadURL();
+    } else {
+      img3InDB = _img3Url;
     }
     if (aux2 != null) {
-      final StorageUploadTask task =
-          storageRef.ref().child("/productsIMG/$idWriter/img2").putFile(aux2);
+      final StorageUploadTask task = storageRef
+          .ref()
+          .child("/productsIMG/${widget.productID}/img2")
+          .putFile(aux2);
       img2InDB = await (await task.onComplete).ref.getDownloadURL();
+    } else {
+      img2InDB = _img2Url;
     }
     if (aux != null) {
-      final StorageUploadTask task =
-          storageRef.ref().child("/productsIMG/$idWriter/mainIMG").putFile(aux);
+      final StorageUploadTask task = storageRef
+          .ref()
+          .child("/productsIMG/${widget.productID}/mainIMG")
+          .putFile(aux);
       img1InDB = await (await task.onComplete).ref.getDownloadURL();
-
-      await task.onComplete;
+    } else {
+      img1InDB = _imgMainUrl;
 
       Map<String, dynamic> imgListDB = {
-        "productID": idWriter,
         "productMainIMG": img1InDB == null ? "" : img1InDB,
         "productIMG2": img2InDB == null ? "" : img2InDB,
         "productIMG3": img3InDB == null ? "" : img3InDB,
@@ -1035,26 +1037,20 @@ class _CadastroProdutoState extends State<CadastroProduto> {
         "productIMG5": img5InDB == null ? "" : img5InDB,
       };
 
-      var taskIMG =
-          await databaseReference.collection("productIMGs").add(imgListDB);
-
-      Map<String, dynamic> imgIDwriter = {
-        "docID": taskIMG.documentID,
-      };
-      databaseReference
+      await databaseReference
           .collection("productIMGs")
-          .document(taskIMG.documentID)
-          .updateData(imgIDwriter);
+          .document(imgDOCid)
+          .updateData(imgListDB);
 
       Map<String, dynamic> setStatus = {
         "adStatus": "ativo",
       };
       await databaseReference
           .collection("products")
-          .document(idWriter)
+          .document(widget.productID)
           .updateData(setStatus);
     }
-    _toast("Produto cadastrado", context);
+    _toast("Produto editado", context);
 
     setState(() {
       loading = false;
@@ -1062,22 +1058,20 @@ class _CadastroProdutoState extends State<CadastroProduto> {
     });
   }
 
-  Future _cadastraEscritorio() async {
+  Future _editaEscritorio() async {
     setState(() {
       loading = true;
       canPop = false;
     });
 
     String priceAux = priceController.text.replaceAll(",", ".");
-    print(priceAux);
 
     String adStatus = "em provisionamento";
-    Timestamp insertionDate = Timestamp.fromDate(DateTime.now());
-    Map<String, dynamic> cadastraProduto = {
+    Timestamp insertioDate = Timestamp.fromDate(DateTime.now());
+    Map<String, dynamic> editaProduto = {
       "description": descriptionController.text,
-      "insertionDate": insertionDate,
+      "insertionDate": insertioDate,
       "location": productLocation,
-      "productAddress": productAddress,
       "name": nameController.text,
       "ownerID": widget.userID,
       "price": double.parse(priceAux),
@@ -1087,7 +1081,7 @@ class _CadastroProdutoState extends State<CadastroProduto> {
     };
 
     final newProduct =
-        await databaseReference.collection("products").add(cadastraProduto);
+        await databaseReference.collection("products").add(editaProduto);
     String idWriter = newProduct.documentID;
 
     Map<String, dynamic> setID = {
@@ -1156,7 +1150,7 @@ class _CadastroProdutoState extends State<CadastroProduto> {
           .document(idWriter)
           .updateData(setStatus);
     }
-    _toast("Produto cadastrado", context);
+    _toast("Produto editado", context);
 
     setState(() {
       canPop = true;
@@ -1164,7 +1158,7 @@ class _CadastroProdutoState extends State<CadastroProduto> {
     });
   }
 
-  Future _cadastraEletro() async {
+  Future _editaEletro() async {
     setState(() {
       loading = true;
       canPop = false;
@@ -1174,14 +1168,13 @@ class _CadastroProdutoState extends State<CadastroProduto> {
     print(priceAux);
 
     String adStatus = "em provisionamento";
-    Timestamp insertionDate = Timestamp.fromDate(DateTime.now());
-    Map<String, dynamic> cadastraProduto = {
+    Timestamp insertioDate = Timestamp.fromDate(DateTime.now());
+    Map<String, dynamic> editaProduto = {
       "description": descriptionController.text,
-      "insertionDate": insertionDate,
+      "insertionDate": insertioDate,
       "location": productLocation,
       "name": nameController.text,
       "ownerID": widget.userID,
-      "productAddress": productAddress,
       "price": double.parse(priceAux),
       "type": "eletrodomestico",
       "media": "-",
@@ -1191,7 +1184,7 @@ class _CadastroProdutoState extends State<CadastroProduto> {
     };
 
     final newProduct =
-        await databaseReference.collection("products").add(cadastraProduto);
+        await databaseReference.collection("products").add(editaProduto);
     String idWriter = newProduct.documentID;
 
     Map<String, dynamic> setID = {
@@ -1260,7 +1253,7 @@ class _CadastroProdutoState extends State<CadastroProduto> {
           .document(idWriter)
           .updateData(setStatus);
     }
-    _toast("Produto cadastrado", context);
+    _toast("Produto editado", context);
 
     setState(() {
       canPop = true;
@@ -1283,6 +1276,7 @@ class _CadastroProdutoState extends State<CadastroProduto> {
 
     if (result.address != null) {
       setState(() {
+        alteredAddress = true;
         productAddress = result.address;
       });
     }
@@ -1424,5 +1418,51 @@ class _CadastroProdutoState extends State<CadastroProduto> {
         ),
       );
     }
+  }
+
+  getProductData() async {
+    await databaseReference
+        .collection("products")
+        .where("ID", isEqualTo: widget.productID)
+        .getDocuments()
+        .then((QuerySnapshot snapshot) {
+      snapshot.documents.forEach((f) {
+        Map productData = f.data;
+        productAddress = productData["productAddress"];
+        productLocation = productData["location"];
+        actualDescription = productData["description"];
+        actualName = productData["name"];
+        actualPrice = productData["price"].toString();
+        actualType = productData["type"];
+        if (actualType == "material esportivo") {
+          btPointer = 1;
+        } else if (actualType == "livro") {
+          btPointer = 2;
+          livrosPressed = true;
+          actualEditoraLivro = productData["editora"];
+          actualTituloLivro = productData["titulo"];
+        } else if (actualType == "material de escritorio") {
+          btPointer = 3;
+        } else if (actualType == "eletrodomestico") {
+          btPointer = 4;
+        }
+      });
+    });
+    await databaseReference
+        .collection("productIMGs")
+        .where("productID", isEqualTo: widget.productID)
+        .getDocuments()
+        .then((QuerySnapshot snapshot) {
+      snapshot.documents.forEach((f) {
+        Map productIMG = f.data;
+
+        _imgMainUrl = productIMG["productMainIMG"];
+        _img2Url = productIMG["productIMG2"];
+        _img3Url = productIMG["productIMG3"];
+        _img4Url = productIMG["productIMG4"];
+        _img5Url = productIMG["productIMG5"];
+        imgDOCid = productIMG["docID"];
+      });
+    });
   }
 }

@@ -44,11 +44,11 @@ class _ListaMeusProdutosBuilderState extends State<ListaMeusProdutosBuilder> {
         .where("ownerID", isEqualTo: userID)
         .getDocuments()
         .then((QuerySnapshot snapshot) {
-          if(snapshot.documents.length == 0){
-            setState(() {
-              listIsEmpty = true;
-            });
-          }
+      if (snapshot.documents.length == 0) {
+        setState(() {
+          listIsEmpty = true;
+        });
+      }
       snapshot.documents.forEach((f) {
         Map productData = f.data;
         setState(() {
@@ -190,14 +190,6 @@ class _ListaMeusProdutosBuilderState extends State<ListaMeusProdutosBuilder> {
     );
   }
 
-  _iconDeletar() {
-    return Icon(
-      Icons.delete_forever,
-      color: Colors.red,
-      size: 30.0,
-    );
-  }
-
   Widget listGen(List<_MyProducts> _listaMeusProdutos) {
     return ListView.builder(
       itemCount: _listaMeusProdutos.length,
@@ -235,21 +227,6 @@ class _ListaMeusProdutosBuilderState extends State<ListaMeusProdutosBuilder> {
                         Row(
                           children: <Widget>[
                             _textPreco(_listaMeusProdutos[index].preco),
-                          ],
-                        ),
-                        Row(
-                          children: <Widget>[
-                            _textData(_listaMeusProdutos[index].addDate),
-                            Expanded(
-                              child: Container(
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.end,
-                                  children: <Widget>[
-                                    _iconDeletar(),
-                                  ],
-                                ),
-                              ),
-                            ),
                           ],
                         ),
                       ],

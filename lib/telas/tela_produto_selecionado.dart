@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:aplicativo_shareon/models/usuario_model.dart';
+import 'package:aplicativo_shareon/telas/tela_edita_produto.dart';
 import 'package:aplicativo_shareon/telas/tela_reserva_proxima.dart';
 import 'package:aplicativo_shareon/telas/tela_reservar.dart';
 import 'package:aplicativo_shareon/utils/shareon_appbar.dart';
@@ -639,7 +640,11 @@ class _ProdutoSelecionadoState extends State<ProdutoSelecionado> {
     } else if (myProduct == true) {
       return RaisedButton(
         color: Colors.white,
-        onPressed: () {},
+        onPressed: () {
+          Navigator.of(context).push(MaterialPageRoute(builder: (BuildContext context){
+            return EditaProduto(userID: userID, productID: widget.productID,);
+          }));
+        },
         child: _text("Editar", resumo: true),
       );
     } else if (myProduct == false) {

@@ -151,7 +151,6 @@ class _HomeState extends State<Home> {
     } else if (controllerPointer == 11) {
       return Creditos();
     } else if (controllerPointer == 12) {
-      return CadastroProduto(userID);
     } else if (controllerPointer == 21) {
       return tela_testes();
     }
@@ -347,10 +346,11 @@ class _HomeState extends State<Home> {
           ),
           GestureDetector(
             onTap: () {
-              setState(() {
                 Navigator.pop(context);
-                controllerPointer = 12;
-              });
+                Navigator.of(context)
+                    .push(MaterialPageRoute(builder: (BuildContext context) {
+                  return CadastroProduto(userID);
+                }));
             },
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.end,
@@ -977,7 +977,7 @@ class _HomeState extends State<Home> {
     }
   }
 
-   setAddress(String value) {
+  setAddress(String value) {
     setState(() {
       userAddress = value;
     });
