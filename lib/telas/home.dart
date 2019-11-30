@@ -68,7 +68,7 @@ class _HomeState extends State<Home> {
   final databaseReference = Firestore.instance;
   GlobalKey<ScaffoldState> _drawerKey = GlobalKey();
   SharedPreferencesController sharedPreferencesController =
-      new SharedPreferencesController();
+  new SharedPreferencesController();
   UserModel model = new UserModel();
 
   @override
@@ -316,7 +316,7 @@ class _HomeState extends State<Home> {
             onTap: () {
               setState(() {
                 Navigator.pop(context);
-                controllerPointer = 11;
+                controllerPointer = 10;
               });
             },
             child: Row(
@@ -559,38 +559,12 @@ class _HomeState extends State<Home> {
               ],
             ),
           ),
+
           GestureDetector(
             onTap: () {
               setState(() {
                 Navigator.pop(context);
                 controllerPointer = 8;
-              });
-            },
-            child: Row(
-              children: <Widget>[
-                Container(
-                  margin: EdgeInsets.only(
-                    left: 10,
-                  ),
-                  child: _iconDicas(),
-                ),
-                SizedBox(
-                  width: 270,
-                  child: Container(
-                    margin: EdgeInsets.only(
-                      left: 15,
-                    ),
-                    child: _text("Dicas de Segurança"),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          GestureDetector(
-            onTap: () {
-              setState(() {
-                Navigator.pop(context);
-                controllerPointer = 9;
               });
             },
             child: Row(
@@ -617,7 +591,7 @@ class _HomeState extends State<Home> {
             onTap: () {
               setState(() {
                 Navigator.pop(context);
-                controllerPointer = 10;
+                controllerPointer = 9;
               });
             },
             child: Row(
@@ -689,12 +663,12 @@ class _HomeState extends State<Home> {
             color: Colors.white,
             child: urlImgPerfil == null
                 ? Center(
-                    child: CircularProgressIndicator(),
-                  )
+              child: CircularProgressIndicator(),
+            )
                 : Image.network(
-                    urlImgPerfil,
-                    fit: BoxFit.cover,
-                  ),
+              urlImgPerfil,
+              fit: BoxFit.cover,
+            ),
           ),
         ),
       ),
