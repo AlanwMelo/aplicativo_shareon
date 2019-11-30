@@ -51,15 +51,17 @@ class _ListaMeusProdutosBuilderState extends State<ListaMeusProdutosBuilder> {
       }
       snapshot.documents.forEach((f) {
         Map productData = f.data;
-        setState(() {
-          _listaMeusProdutos.add(new _MyProducts(
-              productData["ID"],
-              productData["name"],
-              productData["price"],
-              productData["media"],
-              productData["insertionDate"]));
-          _listaMeusProdutos.sort((b, a) => a.addDate.compareTo(b.addDate));
-        });
+        if (productData["adStatus"] != "deletado") {
+          setState(() {
+            _listaMeusProdutos.add(new _MyProducts(
+                productData["ID"],
+                productData["name"],
+                productData["price"],
+                productData["media"],
+                productData["insertionDate"]));
+            _listaMeusProdutos.sort((b, a) => a.addDate.compareTo(b.addDate));
+          });
+        }
       });
     });
   }
@@ -140,23 +142,6 @@ class _ListaMeusProdutosBuilderState extends State<ListaMeusProdutosBuilder> {
           fontSize: 24,
           color: Colors.indigoAccent,
         ),
-      ),
-    );
-  }
-
-  _textData(Timestamp idx) {
-    int convertedDay = idx.toDate().day;
-    int convertedMonth = idx.toDate().month;
-    int convertedYear = idx.toDate().year;
-    String convertedTS =
-        "${convertedDay.toString().padLeft(2, "0")}/${convertedMonth.toString().padLeft(2, "0")}/$convertedYear";
-
-    return Text(
-      convertedTS,
-      style: TextStyle(
-        fontWeight: FontWeight.bold,
-        fontSize: 14,
-        color: Colors.black54,
       ),
     );
   }

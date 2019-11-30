@@ -43,7 +43,7 @@ class _EditaProdutoState extends State<EditaProduto> {
   final marcaEsportivoController = TextEditingController();
   int _radioValueME = 0;
   bool tamanhoInformado = false;
-  String tamanho;
+  String tamanho = "";
   String actualTamanho = "";
   String actualMarcaEsportivo = "";
 
@@ -60,9 +60,8 @@ class _EditaProdutoState extends State<EditaProduto> {
   final campoEletroEditar = GlobalKey<FormState>();
   final marcaEletroController = TextEditingController();
   bool voltagemInformada = false;
-  String voltagem;
-  String actualVoltagem = "";
-  String actualMarcaVoltagem = "";
+  String voltagem = "";
+  String actualMarcaEletro = "";
   int _radioValueEletro = 0;
 
   File _imgMain;
@@ -354,14 +353,15 @@ class _EditaProdutoState extends State<EditaProduto> {
                                       _imgMain = _img5;
                                       _img5 = null;
                                     }
-                                  } else if (btPointer == 1) {
+                                  }
+                                  if (btPointer == 1) {
                                     if (campoEsportivoEditar.currentState
                                         .validate()) {
                                       _editaMaterialEsportivo().then((value) =>
                                           Navigator.push(context,
                                               MaterialPageRoute(builder:
                                                   (BuildContext context) {
-                                            return Home();
+                                            return Home(optionalControllerPointer: 5);
                                           })));
                                     }
                                   } else if (btPointer == 2) {
@@ -371,7 +371,7 @@ class _EditaProdutoState extends State<EditaProduto> {
                                           Navigator.push(context,
                                               MaterialPageRoute(builder:
                                                   (BuildContext context) {
-                                            return Home();
+                                            return Home(optionalControllerPointer: 5);
                                           })));
                                     }
                                   } else if (btPointer == 3) {
@@ -379,7 +379,7 @@ class _EditaProdutoState extends State<EditaProduto> {
                                         Navigator.push(context,
                                             MaterialPageRoute(builder:
                                                 (BuildContext context) {
-                                          return Home();
+                                          return Home(optionalControllerPointer: 5);
                                         })));
                                   } else if (btPointer == 4) {
                                     if (campoEletroEditar.currentState
@@ -388,13 +388,27 @@ class _EditaProdutoState extends State<EditaProduto> {
                                           Navigator.push(context,
                                               MaterialPageRoute(builder:
                                                   (BuildContext context) {
-                                            return Home();
+                                            return Home(optionalControllerPointer: 5);
                                           })));
                                     }
                                   }
                                 }
                               },
                             ),
+                          ),
+                          Container(
+                            child: RaisedButton(
+                                child: Text(
+                                  "Excluir produto",
+                                  style: TextStyle(
+                                    fontSize: 20,
+                                  ),
+                                ),
+                                textColor: Colors.white,
+                                color: Colors.red,
+                                onPressed: () {
+                                  _alertDel(context);
+                                }),
                           ),
                         ],
                       ),
@@ -610,6 +624,10 @@ class _EditaProdutoState extends State<EditaProduto> {
               tamanhoInformado = true;
               tamanho = "G";
               break;
+            case 4:
+              tamanhoInformado = false;
+              tamanho = "";
+              break;
           }
         });
       }
@@ -618,27 +636,66 @@ class _EditaProdutoState extends State<EditaProduto> {
         margin: EdgeInsets.only(top: 8),
         child: Column(
           children: <Widget>[
+            _textBlack("Tamanho: "),
             Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: <Widget>[
-                _textBlack("Tamanho: "),
-                Radio(
-                  value: 1,
-                  groupValue: _radioValueME,
-                  onChanged: _handleRadioValueME,
+                Expanded(
+                  child: Container(
+                    child: Row(
+                      children: <Widget>[
+                        Radio(
+                          value: 1,
+                          groupValue: _radioValueME,
+                          onChanged: _handleRadioValueME,
+                        ),
+                        _textBlack("P"),
+                      ],
+                    ),
+                  ),
                 ),
-                _textBlack("P"),
-                Radio(
-                  value: 2,
-                  groupValue: _radioValueME,
-                  onChanged: _handleRadioValueME,
+                Expanded(
+                  child: Container(
+                    child: Row(
+                      children: <Widget>[
+                        Radio(
+                          value: 2,
+                          groupValue: _radioValueME,
+                          onChanged: _handleRadioValueME,
+                        ),
+                        _textBlack("M"),
+                      ],
+                    ),
+                  ),
                 ),
-                _textBlack("M"),
-                Radio(
-                  value: 3,
-                  groupValue: _radioValueME,
-                  onChanged: _handleRadioValueME,
+                Expanded(
+                  child: Container(
+                    child: Row(
+                      children: <Widget>[
+                        Radio(
+                          value: 3,
+                          groupValue: _radioValueME,
+                          onChanged: _handleRadioValueME,
+                        ),
+                        _textBlack("G"),
+                      ],
+                    ),
+                  ),
                 ),
-                _textBlack("G"),
+                Expanded(
+                  child: Container(
+                    child: Row(
+                      children: <Widget>[
+                        Radio(
+                          value: 4,
+                          groupValue: _radioValueME,
+                          onChanged: _handleRadioValueME,
+                        ),
+                        _textBlack("Vazio"),
+                      ],
+                    ),
+                  ),
+                )
               ],
             ),
             Form(
@@ -647,7 +704,7 @@ class _EditaProdutoState extends State<EditaProduto> {
                 margin: EdgeInsets.only(top: 12),
                 child: TextFormField(
                   style: _fieldstyle,
-                  decoration: _buildDecoration("Marca"),
+                  decoration: _buildDecoration(actualMarcaEsportivo),
                   controller: marcaEsportivoController,
                 ),
               ),
@@ -767,34 +824,32 @@ class _EditaProdutoState extends State<EditaProduto> {
 
     String priceAux = priceController.text.replaceAll(",", ".");
 
-    String adStatus = "em provisionamento";
-    Timestamp insertioDate = Timestamp.fromDate(DateTime.now());
+    String adStatus = "em atualização";
+    String description = descriptionController.text.isEmpty
+        ? actualDescription
+        : descriptionController.text;
+    String name =
+        nameController.text.isEmpty ? actualName : nameController.text;
+    String newTamanho = tamanho == "" ? "" : tamanho;
+    String marca = marcaEsportivoController.text.isEmpty
+        ? actualMarcaEsportivo
+        : marcaEsportivoController.text;
+
     Map<String, dynamic> editaProduto = {
-      "description": descriptionController.text,
-      "insertionDate": insertioDate,
+      "description": description,
       "location": productLocation,
-      "name": nameController.text,
-      "ownerID": widget.userID,
+      "name": name,
       "price": double.parse(priceAux),
       "type": "material esportivo",
-      "media": "-",
       "adStatus": adStatus,
-      "marca": marcaEsportivoController.text,
-      "tamanho": tamanho == null ? "" : tamanho,
-    };
-
-    final newProduct =
-        await databaseReference.collection("products").add(editaProduto);
-    String idWriter = newProduct.documentID;
-
-    Map<String, dynamic> setID = {
-      "ID": idWriter,
+      "tamanho": newTamanho,
+      "marca": marca,
     };
 
     await databaseReference
         .collection("products")
-        .document(idWriter)
-        .updateData(setID);
+        .document(widget.productID)
+        .updateData(editaProduto);
 
     File aux = _imgMain;
     File aux2 = _img2;
@@ -807,14 +862,44 @@ class _EditaProdutoState extends State<EditaProduto> {
     String img4InDB;
     String img5InDB;
 
+    if (aux5 != null) {
+      final StorageUploadTask task = storageRef
+          .ref()
+          .child("/productsIMG/${widget.productID}/img5")
+          .putFile(aux5);
+      img5InDB = await (await task.onComplete).ref.getDownloadURL();
+    }
+    if (aux4 != null) {
+      final StorageUploadTask task = storageRef
+          .ref()
+          .child("/productsIMG/${widget.productID}/img4")
+          .putFile(aux4);
+      img4InDB = await (await task.onComplete).ref.getDownloadURL();
+    }
+    if (aux3 != null) {
+      final StorageUploadTask task = storageRef
+          .ref()
+          .child("/productsIMG/${widget.productID}/img3")
+          .putFile(aux3);
+      img3InDB = await (await task.onComplete).ref.getDownloadURL();
+    }
+    if (aux2 != null) {
+      final StorageUploadTask task = storageRef
+          .ref()
+          .child("/productsIMG/${widget.productID}/img2")
+          .putFile(aux2);
+      img2InDB = await (await task.onComplete).ref.getDownloadURL();
+    }
     if (aux != null) {
-      final StorageUploadTask task =
-          storageRef.ref().child("/productsIMG/$idWriter/mainIMG").putFile(aux);
+      final StorageUploadTask task = storageRef
+          .ref()
+          .child("/productsIMG/${widget.productID}/mainIMG")
+          .putFile(aux);
       img1InDB = await (await task.onComplete).ref.getDownloadURL();
+
       await task.onComplete;
-    } else {
+
       Map<String, dynamic> imgListDB = {
-        "productID": idWriter,
         "productMainIMG": img1InDB == null ? "" : img1InDB,
         "productIMG2": img2InDB == null ? "" : img2InDB,
         "productIMG3": img3InDB == null ? "" : img3InDB,
@@ -822,14 +907,17 @@ class _EditaProdutoState extends State<EditaProduto> {
         "productIMG5": img5InDB == null ? "" : img5InDB,
       };
 
-      await databaseReference.collection("productIMGs").add(imgListDB);
+      await databaseReference
+          .collection("productIMGs")
+          .document(imgDOCid)
+          .updateData(imgListDB);
 
       Map<String, dynamic> setStatus = {
         "adStatus": "ativo",
       };
       await databaseReference
           .collection("products")
-          .document(idWriter)
+          .document(widget.productID)
           .updateData(setStatus);
     }
     _toast("Produto editado", context);
@@ -962,32 +1050,26 @@ class _EditaProdutoState extends State<EditaProduto> {
 
     String priceAux = priceController.text.replaceAll(",", ".");
 
-    String adStatus = "em provisionamento";
-    Timestamp insertioDate = Timestamp.fromDate(DateTime.now());
+    String adStatus = "em atualização";
+    String description = descriptionController.text.isEmpty
+        ? actualDescription
+        : descriptionController.text;
+    String name =
+        nameController.text.isEmpty ? actualName : nameController.text;
+
     Map<String, dynamic> editaProduto = {
-      "description": descriptionController.text,
-      "insertionDate": insertioDate,
+      "description": description,
       "location": productLocation,
-      "name": nameController.text,
+      "name": name,
       "ownerID": widget.userID,
       "price": double.parse(priceAux),
       "type": "material de escritorio",
-      "media": "-",
       "adStatus": adStatus,
     };
-
-    final newProduct =
-        await databaseReference.collection("products").add(editaProduto);
-    String idWriter = newProduct.documentID;
-
-    Map<String, dynamic> setID = {
-      "ID": idWriter,
-    };
-
     await databaseReference
         .collection("products")
-        .document(idWriter)
-        .updateData(setID);
+        .document(widget.productID)
+        .updateData(editaProduto);
 
     File aux = _imgMain;
     File aux2 = _img2;
@@ -1001,34 +1083,43 @@ class _EditaProdutoState extends State<EditaProduto> {
     String img5InDB;
 
     if (aux5 != null) {
-      final StorageUploadTask task =
-          storageRef.ref().child("/productsIMG/$idWriter/img5").putFile(aux5);
+      final StorageUploadTask task = storageRef
+          .ref()
+          .child("/productsIMG/${widget.productID}/img5")
+          .putFile(aux5);
       img5InDB = await (await task.onComplete).ref.getDownloadURL();
     }
     if (aux4 != null) {
-      final StorageUploadTask task =
-          storageRef.ref().child("/productsIMG/$idWriter/img4").putFile(aux4);
+      final StorageUploadTask task = storageRef
+          .ref()
+          .child("/productsIMG/${widget.productID}/img4")
+          .putFile(aux4);
       img4InDB = await (await task.onComplete).ref.getDownloadURL();
     }
     if (aux3 != null) {
-      final StorageUploadTask task =
-          storageRef.ref().child("/productsIMG/$idWriter/img3").putFile(aux3);
+      final StorageUploadTask task = storageRef
+          .ref()
+          .child("/productsIMG/${widget.productID}/img3")
+          .putFile(aux3);
       img3InDB = await (await task.onComplete).ref.getDownloadURL();
     }
     if (aux2 != null) {
-      final StorageUploadTask task =
-          storageRef.ref().child("/productsIMG/$idWriter/img2").putFile(aux2);
+      final StorageUploadTask task = storageRef
+          .ref()
+          .child("/productsIMG/${widget.productID}/img2")
+          .putFile(aux2);
       img2InDB = await (await task.onComplete).ref.getDownloadURL();
     }
     if (aux != null) {
-      final StorageUploadTask task =
-          storageRef.ref().child("/productsIMG/$idWriter/mainIMG").putFile(aux);
+      final StorageUploadTask task = storageRef
+          .ref()
+          .child("/productsIMG/${widget.productID}/mainIMG")
+          .putFile(aux);
       img1InDB = await (await task.onComplete).ref.getDownloadURL();
 
       await task.onComplete;
 
       Map<String, dynamic> imgListDB = {
-        "productID": idWriter,
         "productMainIMG": img1InDB == null ? "" : img1InDB,
         "productIMG2": img2InDB == null ? "" : img2InDB,
         "productIMG3": img3InDB == null ? "" : img3InDB,
@@ -1036,14 +1127,17 @@ class _EditaProdutoState extends State<EditaProduto> {
         "productIMG5": img5InDB == null ? "" : img5InDB,
       };
 
-      await databaseReference.collection("productIMGs").add(imgListDB);
+      await databaseReference
+          .collection("productIMGs")
+          .document(imgDOCid)
+          .updateData(imgListDB);
 
       Map<String, dynamic> setStatus = {
         "adStatus": "ativo",
       };
       await databaseReference
           .collection("products")
-          .document(idWriter)
+          .document(widget.productID)
           .updateData(setStatus);
     }
     _toast("Produto editado", context);
@@ -1062,34 +1156,33 @@ class _EditaProdutoState extends State<EditaProduto> {
 
     String priceAux = priceController.text.replaceAll(",", ".");
 
-    String adStatus = "em provisionamento";
-    Timestamp insertioDate = Timestamp.fromDate(DateTime.now());
+    String adStatus = "em atualização";
+    String description = descriptionController.text.isEmpty
+        ? actualDescription
+        : descriptionController.text;
+    String name =
+        nameController.text.isEmpty ? actualName : nameController.text;
+    String newVoltagem = voltagem == "" ? "" : voltagem;
+    String marca = marcaEletroController.text.isEmpty
+        ? actualMarcaEletro
+        : marcaEletroController.text;
+
     Map<String, dynamic> editaProduto = {
-      "description": descriptionController.text,
-      "insertionDate": insertioDate,
+      "description": description,
       "location": productLocation,
-      "name": nameController.text,
+      "name": name,
       "ownerID": widget.userID,
       "price": double.parse(priceAux),
       "type": "eletrodomestico",
-      "media": "-",
       "adStatus": adStatus,
-      "marca": marcaEletroController.text,
-      "voltagem": voltagem,
-    };
-
-    final newProduct =
-        await databaseReference.collection("products").add(editaProduto);
-    String idWriter = newProduct.documentID;
-
-    Map<String, dynamic> setID = {
-      "ID": idWriter,
+      "marca": marca,
+      "voltagem": newVoltagem,
     };
 
     await databaseReference
         .collection("products")
-        .document(idWriter)
-        .updateData(setID);
+        .document(widget.productID)
+        .updateData(editaProduto);
 
     File aux = _imgMain;
     File aux2 = _img2;
@@ -1103,34 +1196,43 @@ class _EditaProdutoState extends State<EditaProduto> {
     String img5InDB;
 
     if (aux5 != null) {
-      final StorageUploadTask task =
-          storageRef.ref().child("/productsIMG/$idWriter/img5").putFile(aux5);
+      final StorageUploadTask task = storageRef
+          .ref()
+          .child("/productsIMG/${widget.productID}/img5")
+          .putFile(aux5);
       img5InDB = await (await task.onComplete).ref.getDownloadURL();
     }
     if (aux4 != null) {
-      final StorageUploadTask task =
-          storageRef.ref().child("/productsIMG/$idWriter/img4").putFile(aux4);
+      final StorageUploadTask task = storageRef
+          .ref()
+          .child("/productsIMG/${widget.productID}/img4")
+          .putFile(aux4);
       img4InDB = await (await task.onComplete).ref.getDownloadURL();
     }
     if (aux3 != null) {
-      final StorageUploadTask task =
-          storageRef.ref().child("/productsIMG/$idWriter/img3").putFile(aux3);
+      final StorageUploadTask task = storageRef
+          .ref()
+          .child("/productsIMG/${widget.productID}/img3")
+          .putFile(aux3);
       img3InDB = await (await task.onComplete).ref.getDownloadURL();
     }
     if (aux2 != null) {
-      final StorageUploadTask task =
-          storageRef.ref().child("/productsIMG/$idWriter/img2").putFile(aux2);
+      final StorageUploadTask task = storageRef
+          .ref()
+          .child("/productsIMG/${widget.productID}/img2")
+          .putFile(aux2);
       img2InDB = await (await task.onComplete).ref.getDownloadURL();
     }
     if (aux != null) {
-      final StorageUploadTask task =
-          storageRef.ref().child("/productsIMG/$idWriter/mainIMG").putFile(aux);
+      final StorageUploadTask task = storageRef
+          .ref()
+          .child("/productsIMG/${widget.productID}/mainIMG")
+          .putFile(aux);
       img1InDB = await (await task.onComplete).ref.getDownloadURL();
 
       await task.onComplete;
 
       Map<String, dynamic> imgListDB = {
-        "productID": idWriter,
         "productMainIMG": img1InDB == null ? "" : img1InDB,
         "productIMG2": img2InDB == null ? "" : img2InDB,
         "productIMG3": img3InDB == null ? "" : img3InDB,
@@ -1138,14 +1240,17 @@ class _EditaProdutoState extends State<EditaProduto> {
         "productIMG5": img5InDB == null ? "" : img5InDB,
       };
 
-      await databaseReference.collection("productIMGs").add(imgListDB);
+      await databaseReference
+          .collection("productIMGs")
+          .document(imgDOCid)
+          .updateData(imgListDB);
 
       Map<String, dynamic> setStatus = {
         "adStatus": "ativo",
       };
       await databaseReference
           .collection("products")
-          .document(idWriter)
+          .document(widget.productID)
           .updateData(setStatus);
     }
     _toast("Produto editado", context);
@@ -1280,6 +1385,102 @@ class _EditaProdutoState extends State<EditaProduto> {
     );
   }
 
+  _alertDel(BuildContext context) {
+    return showDialog(
+      context: context,
+      builder: (context) {
+        return GestureDetector(
+          onTap: () => Navigator.pop(context),
+          child: Container(
+            color: Colors.white.withOpacity(0.1),
+            child: Center(
+              child: ClipRRect(
+                borderRadius: BorderRadius.all(Radius.circular(16)),
+                child: GestureDetector(
+                  onTap: () => null,
+                  child: Container(
+                    color: Colors.white,
+                    height: 180,
+                    width: 300,
+                    child: Container(
+                      child: Column(
+                        children: <Widget>[
+                          Container(
+                            margin: EdgeInsets.only(bottom: 8, top: 8),
+                            child: Text(
+                              "Excluir",
+                              style: TextStyle(
+                                decoration: TextDecoration.none,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.red,
+                                fontSize: 25,
+                              ),
+                            ),
+                          ),
+                          Container(
+                            margin: EdgeInsets.all(8),
+                            child: _textConfirmacao(
+                                "Deseja mesmo excluir o produto? Esta ação não poderá ser desfeita"),
+                          ),
+                          Expanded(
+                            child: Container(
+                              color: Colors.indigoAccent,
+                              margin: EdgeInsets.only(
+                                top: 8,
+                              ),
+                              child: Row(
+                                children: <Widget>[
+                                  Expanded(
+                                    child: Container(
+                                      height: 100,
+                                      child: RaisedButton(
+                                        color: Colors.indigoAccent,
+                                        onPressed: () {
+                                          _excluir();
+                                        },
+                                        child: Text(
+                                          "Excluir",
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  Expanded(
+                                    child: Container(
+                                      height: 100,
+                                      child: RaisedButton(
+                                        color: Colors.indigoAccent,
+                                        onPressed: () {
+                                          Navigator.pop(context);
+                                        },
+                                        child: Text(
+                                          "Cancelar",
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   _textConfirmacao(String texto, {bool titulo = false, bool center = false}) {
     if (titulo) {
       return Text(
@@ -1305,6 +1506,7 @@ class _EditaProdutoState extends State<EditaProduto> {
     } else {
       return Text(
         "$texto",
+        textAlign: TextAlign.center,
         style: TextStyle(
           fontWeight: FontWeight.normal,
           color: Colors.black,
@@ -1330,6 +1532,19 @@ class _EditaProdutoState extends State<EditaProduto> {
         actualPrice = productData["price"].toString();
         actualType = productData["type"];
         if (actualType == "material esportivo") {
+          materiaisEsportivosPressed = true;
+          actualMarcaEsportivo = productData["marca"];
+          tamanho = productData["tamanho"];
+          if (tamanho == "P") {
+            _radioValueME = 1;
+          }
+          if (tamanho == "M") {
+            _radioValueME = 2;
+          }
+          if (tamanho == "G") {
+            _radioValueME = 3;
+          }
+
           btPointer = 1;
         } else if (actualType == "livro") {
           btPointer = 2;
@@ -1338,8 +1553,21 @@ class _EditaProdutoState extends State<EditaProduto> {
           actualTituloLivro = productData["titulo"];
         } else if (actualType == "material de escritorio") {
           btPointer = 3;
+          materiaisEscritorioPressed = true;
         } else if (actualType == "eletrodomestico") {
           btPointer = 4;
+          eletrodomesticosPressed = true;
+          actualMarcaEletro = productData["marca"];
+          voltagem = productData["voltagem"];
+          if (voltagem == "110") {
+            _radioValueEletro = 1;
+          }
+          if (voltagem == "220") {
+            _radioValueEletro = 2;
+          }
+          if (voltagem == "bivolt") {
+            _radioValueEletro = 3;
+          }
         }
       });
     });
@@ -1395,5 +1623,67 @@ class _EditaProdutoState extends State<EditaProduto> {
         _img5 = cached5.file;
       });
     }
+  }
+
+  _excluir() async {
+
+    Navigator.of(context).pop();
+
+    setState(() {
+      canPop = false;
+      loading = true;
+    });
+
+    Map<String, dynamic> editaProduto = {
+      "adStatus": "deletado",
+    };
+    await databaseReference
+        .collection("products")
+        .document(widget.productID)
+        .updateData(editaProduto);
+    await databaseReference
+        .collection("productIMGs")
+        .document(imgDOCid)
+        .delete();
+    if (_imgMain != null) {
+      await storageRef
+          .ref()
+          .child("/productsIMG/${widget.productID}/mainIMG")
+          .delete();
+    }
+    if (_img2 != null) {
+      await storageRef
+          .ref()
+          .child("/productsIMG/${widget.productID}/img2")
+          .delete();
+    }
+    if (_img3 != null) {
+      await storageRef
+          .ref()
+          .child("/productsIMG/${widget.productID}/img3")
+          .delete();
+    }
+    if (_img4 != null) {
+      await storageRef
+          .ref()
+          .child("/productsIMG/${widget.productID}/img4")
+          .delete();
+    }
+    if (_img5 != null) {
+      await storageRef
+          .ref()
+          .child("/productsIMG/${widget.productID}/img5")
+          .delete();
+    }
+
+    setState(() {
+      canPop = true;
+      loading = false;
+    });
+    _toast("Produto excluido", context);
+
+    Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) {
+      return Home(optionalControllerPointer: 5);
+    }));
   }
 }

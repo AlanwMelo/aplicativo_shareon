@@ -932,7 +932,16 @@ class _CadastroProdutoState extends State<CadastroProduto> {
         "productIMG5": img5InDB == null ? "" : img5InDB,
       };
 
-      await databaseReference.collection("productIMGs").add(imgListDB);
+      var taskIMG =
+          await databaseReference.collection("productIMGs").add(imgListDB);
+
+      Map<String, dynamic> imgIDwriter = {
+        "docID": taskIMG.documentID,
+      };
+      databaseReference
+          .collection("productIMGs")
+          .document(taskIMG.documentID)
+          .updateData(imgIDwriter);
 
       Map<String, dynamic> setStatus = {
         "adStatus": "ativo",
@@ -1146,7 +1155,16 @@ class _CadastroProdutoState extends State<CadastroProduto> {
         "productIMG5": img5InDB == null ? "" : img5InDB,
       };
 
-      await databaseReference.collection("productIMGs").add(imgListDB);
+      var taskIMG =
+          await databaseReference.collection("productIMGs").add(imgListDB);
+
+      Map<String, dynamic> imgIDwriter = {
+        "docID": taskIMG.documentID,
+      };
+      databaseReference
+          .collection("productIMGs")
+          .document(taskIMG.documentID)
+          .updateData(imgIDwriter);
 
       Map<String, dynamic> setStatus = {
         "adStatus": "ativo",
@@ -1250,7 +1268,16 @@ class _CadastroProdutoState extends State<CadastroProduto> {
         "productIMG5": img5InDB == null ? "" : img5InDB,
       };
 
-      await databaseReference.collection("productIMGs").add(imgListDB);
+      var taskIMG =
+          await databaseReference.collection("productIMGs").add(imgListDB);
+
+      Map<String, dynamic> imgIDwriter = {
+        "docID": taskIMG.documentID,
+      };
+      databaseReference
+          .collection("productIMGs")
+          .document(taskIMG.documentID)
+          .updateData(imgIDwriter);
 
       Map<String, dynamic> setStatus = {
         "adStatus": "ativo",
