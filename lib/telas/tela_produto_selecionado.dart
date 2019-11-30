@@ -5,6 +5,7 @@ import 'package:aplicativo_shareon/models/usuario_model.dart';
 import 'package:aplicativo_shareon/telas/tela_edita_produto.dart';
 import 'package:aplicativo_shareon/telas/tela_reserva_proxima.dart';
 import 'package:aplicativo_shareon/telas/tela_reservar.dart';
+import 'package:aplicativo_shareon/telas/tela_validacao.dart';
 import 'package:aplicativo_shareon/utils/shareon_appbar.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -608,7 +609,20 @@ class _ProdutoSelecionadoState extends State<ProdutoSelecionado> {
   }
 
   prodDestination() {
-    if (reservaAprovada.length > 0) {
+    if (reservaEmAndamento.length > 0) {
+      return RaisedButton(
+        color: Colors.white,
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (BuildContext context) {
+              return TelaValidacao(userId: userID, solicitationId: reservaEmAndamento[0].solicitationID,);
+            }),
+          );
+        },
+        child: _text("Validar devolução", resumo: true),
+      );
+    } else if (reservaAprovada.length > 0) {
       int timeNow = Timestamp.fromDate(DateTime.now()).millisecondsSinceEpoch;
       int nearestTime =
           reservaAprovada[0].programedInitDate.millisecondsSinceEpoch;
@@ -621,6 +635,7 @@ class _ProdutoSelecionadoState extends State<ProdutoSelecionado> {
               context,
               MaterialPageRoute(builder: (BuildContext context) {
                 return TelaReservaProxima(
+                  userId: userID,
                   solicitationID: solicitationID,
                 );
               }),
@@ -628,21 +643,27 @@ class _ProdutoSelecionadoState extends State<ProdutoSelecionado> {
           },
           child: _text("Validar retirada", resumo: true),
         );
-      }else{return RaisedButton(
-        color: Colors.white,
-        onPressed: () {
-          _toast("Só existo", context);
-        },
-        child: _text("Editar reserva", resumo: true),
-      );}
+      } else {
+        return RaisedButton(
+          color: Colors.white,
+          onPressed: () {
+            _toast("Só existo", context);
+          },
+          child: _text("Editar reserva", resumo: true),
+        );
+      }
     } else if (myProduct == null) {
       return Container();
     } else if (myProduct == true) {
       return RaisedButton(
         color: Colors.white,
         onPressed: () {
-          Navigator.of(context).push(MaterialPageRoute(builder: (BuildContext context){
-            return EditaProduto(userID: userID, productID: widget.productID,);
+          Navigator.of(context)
+              .push(MaterialPageRoute(builder: (BuildContext context) {
+            return EditaProduto(
+              userID: userID,
+              productID: widget.productID,
+            );
           }));
         },
         child: _text("Editar", resumo: true),
@@ -712,7 +733,9 @@ class _ProdutoSelecionadoState extends State<ProdutoSelecionado> {
               });
             }
             if (productData["status"] == "em andamento") {
-              reservaEmAndamento.add(new _ReservaProxima(productData["solicitationID"], productData["programedInitDate"]));
+              reservaEmAndamento.add(new _ReservaProxima(
+                  productData["solicitationID"],
+                  productData["programedInitDate"]));
             }
           },
         );

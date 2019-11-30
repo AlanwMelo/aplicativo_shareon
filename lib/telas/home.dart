@@ -821,15 +821,6 @@ class _HomeState extends State<Home> {
       size: 20.0,
     );
   }
-
-  _iconDicas() {
-    return Icon(
-      Icons.warning,
-      color: Colors.black54,
-      size: 20.0,
-    );
-  }
-
   _iconFAQ() {
     return Icon(
       Icons.help_outline,
