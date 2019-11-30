@@ -6,6 +6,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_masked_text/flutter_masked_text.dart';
 import 'package:google_map_location_picker/google_map_location_picker.dart';
 import 'package:toast/toast.dart';
@@ -69,16 +70,11 @@ class _EditaProdutoState extends State<EditaProduto> {
   File _img3;
   File _img4;
   File _img5;
-  bool imgMainModif = false;
-  bool img2Modif = false;
-  bool img3Modif = false;
-  bool img4Modif = false;
-  bool img5Modif = false;
-  String _imgMainUrl = "";
-  String _img2Url = "";
-  String _img3Url = "";
-  String _img4Url = "";
-  String _img5Url = "";
+  String _imgMainString;
+  String _img2String;
+  String _img3String;
+  String _img4String;
+  String _img5String;
   int btPointer;
   bool livrosPressed = false;
   bool eletrodomesticosPressed = false;
@@ -332,8 +328,7 @@ class _EditaProdutoState extends State<EditaProduto> {
                                       _img2 == null &&
                                       _img3 == null &&
                                       _img4 == null &&
-                                      _img5 == null &&
-                                      _imgMainUrl == "") {
+                                      _img5 == null) {
                                     _toast(
                                         "O produto deve possuir pelo menos uma imagem",
                                         context);
@@ -428,67 +423,40 @@ class _EditaProdutoState extends State<EditaProduto> {
             children: <Widget>[
               GestureDetector(
                   onLongPress: _imgRemoverMain,
-                  child: _imgMainUrl != ""
+                  child: _imgMain != null
                       ? Container(
-                          child: new Image.network(
-                            _imgMainUrl,
+                          child: new Image.file(
+                            _imgMain,
                             fit: BoxFit.cover,
                             height: 100,
                             width: 100,
                           ),
                         )
-                      : _imgMain != null
-                          ? Container(
-                              child: new Image.file(
-                                _imgMain,
-                                fit: BoxFit.cover,
-                                height: 100,
-                                width: 100,
-                              ),
-                            )
-                          : _imgSelector(1)),
+                      : _imgSelector(1)),
               GestureDetector(
                   onLongPress: _imgRemover2,
-                  child: _img2Url != ""
+                  child: _img2 != null
                       ? Container(
-                          child: new Image.network(
-                            _img2Url,
+                          child: new Image.file(
+                            _img2,
                             fit: BoxFit.cover,
                             height: 100,
                             width: 100,
                           ),
                         )
-                      : _img2 != null
-                          ? Container(
-                              child: new Image.file(
-                                _img2,
-                                fit: BoxFit.cover,
-                                height: 100,
-                                width: 100,
-                              ),
-                            )
-                          : _imgSelector(2)),
+                      : _imgSelector(2)),
               GestureDetector(
                   onLongPress: _imgRemover3,
-                  child: _img3Url != ""
+                  child: _img3 != null
                       ? Container(
-                          child: new Image.network(
-                            _img3Url,
+                          child: new Image.file(
+                            _img3,
                             fit: BoxFit.cover,
                             height: 100,
                             width: 100,
                           ),
                         )
-                      : _img3 != null
-                          ? Container(
-                              child: new Image.file(
-                                _img3,
-                                fit: BoxFit.cover,
-                                height: 100,
-                                width: 100,
-                              ),
-                            )
-                          : _imgSelector(3)),
+                      : _imgSelector(3)),
             ],
           ),
           Container(
@@ -499,46 +467,28 @@ class _EditaProdutoState extends State<EditaProduto> {
               children: <Widget>[
                 GestureDetector(
                     onLongPress: _imgRemover4,
-                    child: _img4Url != ""
+                    child: _img4 != null
                         ? Container(
-                            child: new Image.network(
-                              _img4Url,
+                            child: new Image.file(
+                              _img4,
                               fit: BoxFit.cover,
                               height: 100,
                               width: 100,
                             ),
                           )
-                        : _img4 != null
-                            ? Container(
-                                child: new Image.file(
-                                  _img4,
-                                  fit: BoxFit.cover,
-                                  height: 100,
-                                  width: 100,
-                                ),
-                              )
-                            : _imgSelector(4)),
+                        : _imgSelector(4)),
                 GestureDetector(
                     onLongPress: _imgRemover5,
-                    child: _img5Url != ""
+                    child: _img5 != null
                         ? Container(
-                            child: new Image.network(
-                              _img5Url,
+                            child: new Image.file(
+                              _img5,
                               fit: BoxFit.cover,
                               height: 100,
                               width: 100,
                             ),
                           )
-                        : _img5 != null
-                            ? Container(
-                                child: new Image.file(
-                                  _img5,
-                                  fit: BoxFit.cover,
-                                  height: 100,
-                                  width: 100,
-                                ),
-                              )
-                            : _imgSelector(5)),
+                        : _imgSelector(5)),
               ],
             ),
           ),
@@ -566,19 +516,14 @@ class _EditaProdutoState extends State<EditaProduto> {
               onImageSelected: (image) {
                 setState(() {
                   if (caller == 1) {
-                    imgMainModif = true;
                     _imgMain = image;
                   } else if (caller == 2) {
-                    img2Modif = true;
                     _img2 = image;
                   } else if (caller == 3) {
-                    img3Modif = true;
                     _img3 = image;
                   } else if (caller == 4) {
-                    img4Modif = true;
                     _img4 = image;
                   } else if (caller == 5) {
-                    img5Modif = true;
                     _img5 = image;
                   }
                 });
@@ -617,40 +562,30 @@ class _EditaProdutoState extends State<EditaProduto> {
 
   _imgRemoverMain() {
     setState(() {
-      imgMainModif = true;
-      _imgMainUrl = "";
       _imgMain = null;
     });
   }
 
   _imgRemover2() {
     setState(() {
-      img2Modif = true;
-      _img2Url = "";
       _img2 = null;
     });
   }
 
   _imgRemover3() {
     setState(() {
-      img3Modif = true;
-      _img3Url = "";
       _img3 = null;
     });
   }
 
   _imgRemover4() {
     setState(() {
-      img4Modif = true;
-      _img4Url = "";
       _img4 = null;
     });
   }
 
   _imgRemover5() {
     setState(() {
-      img5Modif = true;
-      _img5Url = "";
       _img5 = null;
     });
   }
@@ -873,34 +808,6 @@ class _EditaProdutoState extends State<EditaProduto> {
     String img4InDB;
     String img5InDB;
 
-    if (aux5 != null) {
-      final StorageUploadTask task =
-          storageRef.ref().child("/productsIMG/$idWriter/img5").putFile(aux5);
-      img5InDB = await (await task.onComplete).ref.getDownloadURL();
-    } else {
-      img5InDB = _img5Url;
-    }
-    if (aux4 != null) {
-      final StorageUploadTask task =
-          storageRef.ref().child("/productsIMG/$idWriter/img4").putFile(aux4);
-      img4InDB = await (await task.onComplete).ref.getDownloadURL();
-    } else {
-      img4InDB = _img4Url;
-    }
-    if (aux3 != null) {
-      final StorageUploadTask task =
-          storageRef.ref().child("/productsIMG/$idWriter/img3").putFile(aux3);
-      img3InDB = await (await task.onComplete).ref.getDownloadURL();
-    } else {
-      img3InDB = _img3Url;
-    }
-    if (aux2 != null) {
-      final StorageUploadTask task =
-          storageRef.ref().child("/productsIMG/$idWriter/img2").putFile(aux2);
-      img2InDB = await (await task.onComplete).ref.getDownloadURL();
-    } else {
-      img2InDB = _img2Url;
-    }
     if (aux != null) {
       final StorageUploadTask task =
           storageRef.ref().child("/productsIMG/$idWriter/mainIMG").putFile(aux);
@@ -983,15 +890,12 @@ class _EditaProdutoState extends State<EditaProduto> {
     String img4InDB;
     String img5InDB;
 
-    if (imgMainModif == true) {}
     if (aux5 != null) {
       final StorageUploadTask task = storageRef
           .ref()
           .child("/productsIMG/${widget.productID}/img5")
           .putFile(aux5);
       img5InDB = await (await task.onComplete).ref.getDownloadURL();
-    } else {
-      img5InDB = _img5Url;
     }
     if (aux4 != null) {
       final StorageUploadTask task = storageRef
@@ -999,8 +903,6 @@ class _EditaProdutoState extends State<EditaProduto> {
           .child("/productsIMG/${widget.productID}/img4")
           .putFile(aux4);
       img4InDB = await (await task.onComplete).ref.getDownloadURL();
-    } else {
-      img4InDB = _img4Url;
     }
     if (aux3 != null) {
       final StorageUploadTask task = storageRef
@@ -1008,8 +910,6 @@ class _EditaProdutoState extends State<EditaProduto> {
           .child("/productsIMG/${widget.productID}/img3")
           .putFile(aux3);
       img3InDB = await (await task.onComplete).ref.getDownloadURL();
-    } else {
-      img3InDB = _img3Url;
     }
     if (aux2 != null) {
       final StorageUploadTask task = storageRef
@@ -1017,8 +917,6 @@ class _EditaProdutoState extends State<EditaProduto> {
           .child("/productsIMG/${widget.productID}/img2")
           .putFile(aux2);
       img2InDB = await (await task.onComplete).ref.getDownloadURL();
-    } else {
-      img2InDB = _img2Url;
     }
     if (aux != null) {
       final StorageUploadTask task = storageRef
@@ -1026,8 +924,8 @@ class _EditaProdutoState extends State<EditaProduto> {
           .child("/productsIMG/${widget.productID}/mainIMG")
           .putFile(aux);
       img1InDB = await (await task.onComplete).ref.getDownloadURL();
-    } else {
-      img1InDB = _imgMainUrl;
+
+      await task.onComplete;
 
       Map<String, dynamic> imgListDB = {
         "productMainIMG": img1InDB == null ? "" : img1InDB,
@@ -1456,13 +1354,58 @@ class _EditaProdutoState extends State<EditaProduto> {
       snapshot.documents.forEach((f) {
         Map productIMG = f.data;
 
-        _imgMainUrl = productIMG["productMainIMG"];
-        _img2Url = productIMG["productIMG2"];
-        _img3Url = productIMG["productIMG3"];
-        _img4Url = productIMG["productIMG4"];
-        _img5Url = productIMG["productIMG5"];
         imgDOCid = productIMG["docID"];
+        _imgMainString = productIMG["productMainIMG"];
+        _img2String = productIMG["productIMG2"];
+        _img3String = productIMG["productIMG3"];
+        _img4String = productIMG["productIMG4"];
+        _img5String = productIMG["productIMG5"];
+
+        print("5 $_img5String");
+        print("4 $_img4String");
+        print("3 $_img3String");
+        if (_img3String == "") {
+          print(true);
+        }
+        print("2 $_img2String");
+        print("1 $_imgMainString");
+
+        cacheMounter();
       });
     });
+    setState(() {});
+  }
+
+  cacheMounter() async {
+    if (_imgMainString != "") {
+      var cachedMain = await DefaultCacheManager().downloadFile(_imgMainString);
+      setState(() {
+        _imgMain = cachedMain.file;
+      });
+    }
+    if (_img2String != "") {
+      var cached2 = await DefaultCacheManager().downloadFile(_img2String);
+      setState(() {
+        _img2 = cached2.file;
+      });
+    }
+    if (_img3String != "") {
+      var cached3 = await DefaultCacheManager().downloadFile(_img3String);
+      setState(() {
+        _img3 = cached3.file;
+      });
+    }
+    if (_img4String != "") {
+      var cached4 = await DefaultCacheManager().downloadFile(_img4String);
+      setState(() {
+        _img4 = cached4.file;
+      });
+    }
+    if (_img5String != "") {
+      var cached5 = await DefaultCacheManager().downloadFile(_img5String);
+      setState(() {
+        _img5 = cached5.file;
+      });
+    }
   }
 }
