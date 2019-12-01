@@ -1321,6 +1321,7 @@ class _EditaProdutoState extends State<EditaProduto> {
                             child: Text(
                               "Voltar",
                               style: TextStyle(
+                                fontFamily: 'RobotoMono',
                                 decoration: TextDecoration.none,
                                 fontWeight: FontWeight.bold,
                                 color: Colors.black,
@@ -1352,6 +1353,7 @@ class _EditaProdutoState extends State<EditaProduto> {
                                       child: Text(
                                         "Voltar",
                                         style: TextStyle(
+                                          fontFamily: 'RobotoMono',
                                           color: Colors.white,
                                         ),
                                       ),
@@ -1369,6 +1371,7 @@ class _EditaProdutoState extends State<EditaProduto> {
                                       child: Text(
                                         "Cancelar",
                                         style: TextStyle(
+                                          fontFamily: 'RobotoMono',
                                           color: Colors.white,
                                         ),
                                       ),
@@ -1490,6 +1493,7 @@ class _EditaProdutoState extends State<EditaProduto> {
       return Text(
         "$texto",
         style: TextStyle(
+          fontFamily: 'RobotoMono',
           fontWeight: FontWeight.bold,
           color: Colors.red,
           fontSize: 16,
@@ -1501,6 +1505,7 @@ class _EditaProdutoState extends State<EditaProduto> {
         "$texto",
         textAlign: TextAlign.center,
         style: TextStyle(
+          fontFamily: 'RobotoMono',
           fontWeight: FontWeight.normal,
           color: Colors.black,
           fontSize: 16,
@@ -1512,6 +1517,7 @@ class _EditaProdutoState extends State<EditaProduto> {
         "$texto",
         textAlign: TextAlign.center,
         style: TextStyle(
+          fontFamily: 'RobotoMono',
           fontWeight: FontWeight.normal,
           color: Colors.black,
           fontSize: 16,

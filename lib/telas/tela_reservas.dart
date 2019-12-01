@@ -13,9 +13,7 @@ class _TelaReservasState extends State<TelaReservas> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: homeReservas(),
-    );
+    return homeReservas();
   }
 
   homeReservas() {
@@ -35,7 +33,9 @@ class _TelaReservasState extends State<TelaReservas> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
-                        reservasMeusProdutos == false ? _text(" Minhas reservas") : _text(" Reservas dos meus produtos"),
+                        reservasMeusProdutos == false
+                            ? _text(" Minhas reservas")
+                            : _text(" Reservas dos meus produtos"),
                       ],
                     ),
                   ),
@@ -116,8 +116,9 @@ class _TelaReservasState extends State<TelaReservas> {
                         color: Colors.white, child: ListaReservasBuilder()),
                   )
                 : Expanded(
-              child: Container(
-                  color: Colors.white, child: ListaReservasMeuProdutosBuilder())),
+                    child: Container(
+                        color: Colors.white,
+                        child: ListaReservasMeuProdutosBuilder())),
           ],
         ),
       ),

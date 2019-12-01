@@ -209,7 +209,7 @@ class _ListaMainBuilderState extends State<ListaMainBuilder> {
       "R\$ $idx",
       style: TextStyle(
         fontWeight: FontWeight.bold,
-        fontSize: 16,
+        fontSize: 14,
       ),
     );
   }

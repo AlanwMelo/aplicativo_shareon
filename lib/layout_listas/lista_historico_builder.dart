@@ -180,7 +180,7 @@ class _ListaHistoricoBuilderState extends State<ListaHistoricoBuilder> {
       "R\$ $idx",
       style: TextStyle(
         fontWeight: FontWeight.bold,
-        fontSize: 16,
+        fontSize: 14,
       ),
     );
   }

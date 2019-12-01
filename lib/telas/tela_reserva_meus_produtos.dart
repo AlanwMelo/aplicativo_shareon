@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:aplicativo_shareon/telas/home.dart';
 import 'package:aplicativo_shareon/telas/tela_validacao.dart';
 import 'package:aplicativo_shareon/utils/shareon_appbar.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -26,13 +27,12 @@ class _TelaReservaMeusProdutosState extends State<TelaReservaMeusProdutos> {
   String tomadorID;
   String tomadorName;
   String solicitationStatus;
-  Timestamp estimatedStartDate;
-  Timestamp estimatedEndDate;
+  Timestamp programedStartDate;
+  Timestamp programedEndDate;
   String convertedEstimatedStartDate;
   String convertedEstimatedEndDate;
-
+  bool loading = false;
   String convertedEstimatedPrice;
-
   double estimatedPrice;
 
   @override
@@ -45,7 +45,14 @@ class _TelaReservaMeusProdutosState extends State<TelaReservaMeusProdutos> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: shareonAppbar(context, ""),
-      body: loadData(context),
+      body: loading == false
+          ? loadData(context)
+          : Container(
+              color: Colors.white,
+              child: Center(
+                child: CircularProgressIndicator(),
+              ),
+            ),
       backgroundColor: Colors.indigoAccent,
     );
   }
@@ -60,26 +67,26 @@ class _TelaReservaMeusProdutosState extends State<TelaReservaMeusProdutos> {
         Map solicitationData = f.data;
         productID = solicitationData["productID"];
         solicitationStatus = solicitationData["status"];
-        estimatedStartDate = solicitationData["programedInitDate"];
+        programedStartDate = solicitationData["programedInitDate"];
 
-        int convertedStartDay = estimatedStartDate.toDate().day;
-        int convertedStartMonth = estimatedStartDate.toDate().month;
-        int convertedStartYear = estimatedStartDate.toDate().year;
+        int convertedStartDay = programedStartDate.toDate().day;
+        int convertedStartMonth = programedStartDate.toDate().month;
+        int convertedStartYear = programedStartDate.toDate().year;
 
-        int convertedStartHour = estimatedStartDate.toDate().hour;
-        int convertedStartMinute = estimatedStartDate.toDate().minute;
+        int convertedStartHour = programedStartDate.toDate().hour;
+        int convertedStartMinute = programedStartDate.toDate().minute;
         convertedEstimatedStartDate =
             "${convertedStartDay.toString().padLeft(2, "0")}/${convertedStartMonth.toString().padLeft(2, "0")}/${convertedStartYear.toString()} às "
             "${convertedStartHour.toString().padLeft(2, "0")}:${convertedStartMinute.toString().padLeft(2, "0")}";
 
-        estimatedEndDate = solicitationData["programedEndDate"];
+        programedEndDate = solicitationData["programedEndDate"];
 
-        int convertedEndDay = estimatedStartDate.toDate().day;
-        int convertedEndMonth = estimatedStartDate.toDate().month;
-        int convertedEndYear = estimatedStartDate.toDate().year;
+        int convertedEndDay = programedStartDate.toDate().day;
+        int convertedEndMonth = programedStartDate.toDate().month;
+        int convertedEndYear = programedStartDate.toDate().year;
 
-        int convertedEndHour = estimatedEndDate.toDate().hour;
-        int convertedEndMinute = estimatedEndDate.toDate().minute;
+        int convertedEndHour = programedEndDate.toDate().hour;
+        int convertedEndMinute = programedEndDate.toDate().minute;
         convertedEstimatedEndDate =
             "${convertedEndDay.toString().padLeft(2, "0")}/${convertedEndMonth.toString().padLeft(2, "0")}/${convertedEndYear.toString()} às "
             "${convertedEndHour.toString().padLeft(2, "0")}:${convertedEndMinute.toString().padLeft(2, "0")}";
@@ -280,57 +287,121 @@ class _TelaReservaMeusProdutosState extends State<TelaReservaMeusProdutos> {
   }
 
   _containerBotoes() {
-    if (solicitationStatus == "aprovada") {
+    int timeNow = Timestamp.fromDate(DateTime.now()).millisecondsSinceEpoch;
+    int startTime = programedStartDate.millisecondsSinceEpoch;
+
+    if (solicitationStatus == "em andamento") {
       return Container(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.end,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: <Widget>[
             Container(
-              width: 400,
-              margin: EdgeInsets.only(bottom: 20),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: <Widget>[
-                  Container(
-                    width: 130,
-                    child: RaisedButton(
-                      color: Colors.red,
-                      onPressed: () {},
-                      child: Text(
-                        "Cancelar",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ),
-                  Container(
-                    width: 130,
-                    child: RaisedButton(
-                      color: Colors.white,
-                      onPressed: () {
-                        Navigator.push(context,
-                            MaterialPageRoute(builder: (BuildContext context) {
-                          return TelaValidacao(
-                              userId: widget.userId,
-                              solicitationId: widget.solicitationID);
-                        }));
-                      },
-                      child: Text(
-                        "Validar retirada",
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
+              width: 350,
+              child: RaisedButton(
+                color: Colors.white,
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (BuildContext context) {
+                      return TelaValidacao(
+                        userId: widget.userId,
+                        solicitationId: widget.solicitationID,
+                      );
+                    }),
+                  );
+                },
+                child: _text("Validar devolução", resumo: true),
               ),
-            )
+            ),
           ],
         ),
       );
+    } else if (solicitationStatus == "aprovada") {
+      if ((startTime - timeNow) <= 3600000) {
+        return Container(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: <Widget>[
+              Container(
+                width: 400,
+                margin: EdgeInsets.only(bottom: 20),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: <Widget>[
+                    Container(
+                      width: 130,
+                      child: RaisedButton(
+                        color: Colors.red,
+                        onPressed: () {
+                          _alertCancelamento(context);
+                        },
+                        child: Text(
+                          "Cancelar",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
+                    Container(
+                      width: 130,
+                      child: RaisedButton(
+                        color: Colors.white,
+                        onPressed: () {
+                          Navigator.push(context, MaterialPageRoute(
+                              builder: (BuildContext context) {
+                            return TelaValidacao(
+                                userId: widget.userId,
+                                solicitationId: widget.solicitationID);
+                          }));
+                        },
+                        child: Text(
+                          "Validar retirada",
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              )
+            ],
+          ),
+        );
+      } else {
+        return Container(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: <Widget>[
+              Container(
+                width: 400,
+                margin: EdgeInsets.only(bottom: 20),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: <Widget>[
+                    Container(
+                      width: 130,
+                      child: RaisedButton(
+                        color: Colors.red,
+                        onPressed: () {},
+                        child: Text(
+                          "Cancelar",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              )
+            ],
+          ),
+        );
+      }
     } else if (solicitationStatus == "pendente") {
       return Container(
         child: Column(
@@ -346,7 +417,9 @@ class _TelaReservaMeusProdutosState extends State<TelaReservaMeusProdutos> {
                     width: 130,
                     child: RaisedButton(
                       color: Colors.red,
-                      onPressed: () {},
+                      onPressed: () {
+                        _alertCancelamento(context);
+                      },
                       child: Text(
                         "Cancelar",
                         style: TextStyle(
@@ -376,5 +449,135 @@ class _TelaReservaMeusProdutosState extends State<TelaReservaMeusProdutos> {
         ),
       );
     }
+  }
+
+  _cancelarReserva() async {
+    setState(() {
+      loading = true;
+    });
+
+    Map<String, dynamic> cancelamento = {
+      "finalEndDate": Timestamp.fromDate(DateTime.now()),
+      "status": "cancelada",
+      "motivoStatus": "cancelada pelo proprietario",
+    };
+
+    await databaseReference
+        .collection("solicitations")
+        .document(widget.solicitationID)
+        .updateData(cancelamento);
+
+    setState(() {
+      loading = false;
+    });
+
+    Navigator.of(context)
+        .pushReplacement(MaterialPageRoute(builder: (BuildContext context) {
+      return Home(optionalControllerPointer: 3);
+    }));
+  }
+
+  _alertCancelamento(BuildContext context) {
+    return showDialog(
+      context: context,
+      builder: (context) {
+        return GestureDetector(
+          onTap: () => Navigator.pop(context),
+          child: Container(
+            color: Colors.white.withOpacity(0.1),
+            child: Center(
+              child: ClipRRect(
+                borderRadius: BorderRadius.all(Radius.circular(16)),
+                child: GestureDetector(
+                  onTap: () => null,
+                  child: Container(
+                    color: Colors.white,
+                    height: 120,
+                    width: 300,
+                    child: Container(
+                      child: Column(
+                        children: <Widget>[
+                          Container(
+                            margin: EdgeInsets.only(bottom: 8, top: 8),
+                            child: Text(
+                              "Cancelar reserva",
+                              style: TextStyle(
+                                decoration: TextDecoration.none,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.red,
+                                fontSize: 24,
+                              ),
+                            ),
+                          ),
+                          Text(
+                            "Deseja mesmo cancelar esta reserva?",
+                            style: TextStyle(
+                              fontFamily: 'RobotoMono',
+                              color: Colors.black,
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              decoration: TextDecoration.none,
+                            ),
+                          ),
+                          Expanded(
+                            child: Container(
+                              color: Colors.indigoAccent,
+                              margin: EdgeInsets.only(
+                                top: 8,
+                              ),
+                              child: Row(
+                                children: <Widget>[
+                                  Expanded(
+                                    child: Container(
+                                      height: 100,
+                                      child: RaisedButton(
+                                        color: Colors.indigoAccent,
+                                        onPressed: () {
+                                          setState(() {
+                                            _cancelarReserva();
+                                            Navigator.pop(context);
+                                          });
+                                        },
+                                        child: Text(
+                                          "Cancelar",
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  Expanded(
+                                    child: Container(
+                                      height: 100,
+                                      child: RaisedButton(
+                                        color: Colors.indigoAccent,
+                                        onPressed: () {
+                                          Navigator.pop(context);
+                                        },
+                                        child: Text(
+                                          "Voltar",
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
   }
 }

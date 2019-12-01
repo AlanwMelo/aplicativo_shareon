@@ -214,7 +214,7 @@ class _ListaReservasBuilderState extends State<ListaReservasBuilder> {
       "R\$ ${idx.toString()}",
       style: TextStyle(
         fontWeight: FontWeight.bold,
-        fontSize: 16,
+        fontSize: 14,
       ),
     );
   }

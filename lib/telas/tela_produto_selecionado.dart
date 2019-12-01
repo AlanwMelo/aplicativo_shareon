@@ -3,9 +3,9 @@ import 'dart:convert';
 
 import 'package:aplicativo_shareon/models/usuario_model.dart';
 import 'package:aplicativo_shareon/telas/tela_edita_produto.dart';
-import 'package:aplicativo_shareon/telas/tela_verifica_reserva.dart';
 import 'package:aplicativo_shareon/telas/tela_reservar.dart';
 import 'package:aplicativo_shareon/telas/tela_validacao.dart';
+import 'package:aplicativo_shareon/telas/tela_verifica_reserva.dart';
 import 'package:aplicativo_shareon/utils/shareon_appbar.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -77,6 +77,7 @@ class _ProdutoSelecionadoState extends State<ProdutoSelecionado> {
   List<_ReservaProxima> reservaAprovada = [];
   List<_ReservaProxima> reservaEmAndamento = [];
   bool emailVerified;
+  bool loading = false;
 
   @override
   void initState() {
@@ -103,7 +104,14 @@ class _ProdutoSelecionadoState extends State<ProdutoSelecionado> {
     } else if (productInFavorites == true) {
       favoriteController = "Remover dos Favoritos";
     }
-    return _produtoSelecionado(context);
+    return loading == false
+        ? _produtoSelecionado(context)
+        : Container(
+            color: Colors.white,
+            child: Center(
+              child: CircularProgressIndicator(),
+            ),
+          );
   }
 
   getProductData() async {
@@ -617,7 +625,10 @@ class _ProdutoSelecionadoState extends State<ProdutoSelecionado> {
           Navigator.push(
             context,
             MaterialPageRoute(builder: (BuildContext context) {
-              return TelaValidacao(userId: userID, solicitationId: reservaEmAndamento[0].solicitationID,);
+              return TelaValidacao(
+                userId: userID,
+                solicitationId: reservaEmAndamento[0].solicitationID,
+              );
             }),
           );
         },
@@ -648,7 +659,7 @@ class _ProdutoSelecionadoState extends State<ProdutoSelecionado> {
         return RaisedButton(
           color: Colors.white,
           onPressed: () {
-            _toast("Só existo", context);
+            _alertCancelamento(context);
           },
           child: _text("Cancelar reserva", resumo: true),
         );
@@ -924,5 +935,135 @@ class _ProdutoSelecionadoState extends State<ProdutoSelecionado> {
         ),
       );
     }
+  }
+
+  _cancelarReserva() async {
+    setState(() {
+      loading = true;
+    });
+
+    Map<String, dynamic> cancelamento = {
+      "finalEndDate": Timestamp.fromDate(DateTime.now()),
+      "status": "cancelada",
+      "motivoStatus": "cancelada pelo tomador",
+    };
+
+    await databaseReference
+        .collection("solicitations")
+        .document(solicitationID)
+        .updateData(cancelamento);
+
+    setState(() {
+      loading = false;
+    });
+
+    Navigator.of(context)
+        .pushReplacement(MaterialPageRoute(builder: (BuildContext context) {
+      return Home(optionalControllerPointer: 3);
+    }));
+  }
+
+  _alertCancelamento(BuildContext context) {
+    return showDialog(
+      context: context,
+      builder: (context) {
+        return GestureDetector(
+          onTap: () => Navigator.pop(context),
+          child: Container(
+            color: Colors.white.withOpacity(0.1),
+            child: Center(
+              child: ClipRRect(
+                borderRadius: BorderRadius.all(Radius.circular(16)),
+                child: GestureDetector(
+                  onTap: () => null,
+                  child: Container(
+                    color: Colors.white,
+                    height: 120,
+                    width: 300,
+                    child: Container(
+                      child: Column(
+                        children: <Widget>[
+                          Container(
+                            margin: EdgeInsets.only(bottom: 8, top: 8),
+                            child: Text(
+                              "Cancelar reserva",
+                              style: TextStyle(
+                                decoration: TextDecoration.none,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.red,
+                                fontSize: 24,
+                              ),
+                            ),
+                          ),
+                          Text(
+                            "Deseja mesmo cancelar esta reserva?",
+                            style: TextStyle(
+                              fontFamily: 'RobotoMono',
+                              color: Colors.black,
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              decoration: TextDecoration.none,
+                            ),
+                          ),
+                          Expanded(
+                            child: Container(
+                              color: Colors.indigoAccent,
+                              margin: EdgeInsets.only(
+                                top: 8,
+                              ),
+                              child: Row(
+                                children: <Widget>[
+                                  Expanded(
+                                    child: Container(
+                                      height: 100,
+                                      child: RaisedButton(
+                                        color: Colors.indigoAccent,
+                                        onPressed: () {
+                                          setState(() {
+                                            _cancelarReserva();
+                                            Navigator.pop(context);
+                                          });
+                                        },
+                                        child: Text(
+                                          "Cancelar",
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  Expanded(
+                                    child: Container(
+                                      height: 100,
+                                      child: RaisedButton(
+                                        color: Colors.indigoAccent,
+                                        onPressed: () {
+                                          Navigator.pop(context);
+                                        },
+                                        child: Text(
+                                          "Voltar",
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
   }
 }

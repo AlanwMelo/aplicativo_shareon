@@ -357,6 +357,7 @@ class _CadastroUsuarioState extends State<CadastroUsuario> {
                               "O CPF informado já está em uso",
                               textAlign: TextAlign.center,
                               style: TextStyle(
+                                fontFamily: 'RobotoMono',
                                 decoration: TextDecoration.none,
                                 fontWeight: FontWeight.bold,
                                 color: Colors.red,
@@ -476,6 +477,7 @@ class _CadastroUsuarioState extends State<CadastroUsuario> {
       return Text(
         "$texto",
         style: TextStyle(
+          fontFamily: 'RobotoMono',
           fontWeight: FontWeight.bold,
           color: Colors.red,
           fontSize: 16,
@@ -487,6 +489,7 @@ class _CadastroUsuarioState extends State<CadastroUsuario> {
         "$texto",
         textAlign: TextAlign.center,
         style: TextStyle(
+          fontFamily: 'RobotoMono',
           fontWeight: FontWeight.normal,
           color: Colors.black,
           fontSize: 16,
@@ -497,6 +500,7 @@ class _CadastroUsuarioState extends State<CadastroUsuario> {
       return Text(
         "$texto",
         style: TextStyle(
+          fontFamily: 'RobotoMono',
           fontWeight: FontWeight.normal,
           color: Colors.black,
           fontSize: 16,
@@ -531,6 +535,7 @@ class _CadastroUsuarioState extends State<CadastroUsuario> {
                             child: Text(
                               "Voltar",
                               style: TextStyle(
+                                fontFamily: 'RobotoMono',
                                 decoration: TextDecoration.none,
                                 fontWeight: FontWeight.bold,
                                 color: Colors.black,
@@ -566,6 +571,7 @@ class _CadastroUsuarioState extends State<CadastroUsuario> {
                                         child: Text(
                                           "Voltar",
                                           style: TextStyle(
+                                            fontFamily: 'RobotoMono',
                                             color: Colors.white,
                                           ),
                                         ),
@@ -631,6 +637,7 @@ class _CadastroUsuarioState extends State<CadastroUsuario> {
                             child: Text(
                               "Autenticação",
                               style: TextStyle(
+                                fontFamily: 'RobotoMono',
                                 decoration: TextDecoration.none,
                                 fontWeight: FontWeight.bold,
                                 color: Colors.red,
@@ -645,7 +652,7 @@ class _CadastroUsuarioState extends State<CadastroUsuario> {
                             margin: EdgeInsets.all(8),
                             child: _textConfirmacao(
                                 "Um email de autenticação será enviado ao email informado. \n\nPor favor siga os passos"
-                                "descritos nele para poder utilizar todas as funcionalidades do APP",
+                                "descritos nele para poder utilizar todas as funcionalidades do app",
                                 center: true),
                           ),
                           Expanded(
@@ -670,6 +677,7 @@ class _CadastroUsuarioState extends State<CadastroUsuario> {
                                         child: Text(
                                           "OK",
                                           style: TextStyle(
+                                            fontFamily: 'RobotoMono',
                                             color: Colors.white,
                                           ),
                                         ),

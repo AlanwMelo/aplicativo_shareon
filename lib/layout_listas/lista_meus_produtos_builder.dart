@@ -162,7 +162,7 @@ class _ListaMeusProdutosBuilderState extends State<ListaMeusProdutosBuilder> {
       "R\$ $idx",
       style: TextStyle(
         fontWeight: FontWeight.bold,
-        fontSize: 18,
+        fontSize: 14,
       ),
     );
   }
