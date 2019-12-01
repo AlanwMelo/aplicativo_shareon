@@ -173,6 +173,7 @@ class _TelaReservaProximaState extends State<TelaReservaProxima> {
     if (titulo == true) {
       return Text(
         "$texto",
+        textAlign: TextAlign.center,
         style: TextStyle(
           fontWeight: FontWeight.bold,
           color: Colors.white,

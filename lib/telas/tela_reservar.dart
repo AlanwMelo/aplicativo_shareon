@@ -44,14 +44,14 @@ class _TelaReservarState extends State<TelaReservar> {
   bool loading = false;
 
   // Strings
-  String _dataInicio = DateTime.now().day.toString() +
+  String _dataInicio = DateTime.now().day.toString().padLeft(2, "0") +
       "/" +
-      DateTime.now().month.toString() +
+      DateTime.now().month.toString().padLeft(2, "0") +
       "/" +
       DateTime.now().year.toString();
-  String _dataFim = DateTime.now().day.toString() +
+  String _dataFim = DateTime.now().day.toString().padLeft(2, "0") +
       "/" +
-      DateTime.now().month.toString() +
+      DateTime.now().month.toString().padLeft(2, "0") +
       "/" +
       DateTime.now().year.toString();
   String _horarioInicio = DateTime.now().hour.toString().padLeft(2, "0") +
