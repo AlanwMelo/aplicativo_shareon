@@ -935,7 +935,7 @@ class _HomeState extends State<Home> {
       userID = value;
       getUserData();
       timerReserva();
-      sharedPreferencesController.getEmailAuth().then(_verifyAuth);
+      sharedPreferencesController.getEmailAuth();
     });
   }
 
@@ -949,25 +949,7 @@ class _HomeState extends State<Home> {
     }
   }
 
-  _verifyAuth(bool value) async {
-    if (emailVerified == null) {
-      bool verifier = await model
-          .isAuthenticated(await FirebaseAuth.instance.currentUser());
-      if (verifier == true) {
-        sharedPreferencesController.setEmailAuth(true);
-        emailVerified = true;
-        Map<String, dynamic> authATT = {
-          "authenticated": true,
-        };
-        await databaseReference
-            .collection("users")
-            .document(userID)
-            .updateData(authATT);
-      } else {
-        emailVerified = false;
-      }
-    }
-  }
+
 
   setAddress(String value) {
     setState(() {

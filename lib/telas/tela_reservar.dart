@@ -723,7 +723,7 @@ class _TelaReservarState extends State<TelaReservar> {
     DateTime retirada = dataInicio;
     DateTime devolucao = dataFim;
     duracao = (devolucao.difference(retirada).inMinutes);
-    valordoProduto = valordoDoProduto / (60);
+    valordoProduto = valordoDoProduto ~/ (60);
     var calcValorProduto = duracao.toDouble() * valordoProduto;
     getTimeString(duracao);
     calcValorProdutoConversor = calcValorProduto.toStringAsFixed(2);

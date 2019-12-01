@@ -1,3 +1,4 @@
+import 'package:aplicativo_shareon/telas/tela_em_andamento.dart';
 import 'package:aplicativo_shareon/telas/tela_verifica_reserva.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
@@ -90,10 +91,21 @@ class _ListaReservasBuilderState extends State<ListaReservasBuilder> {
             : listGen(_listaReservas);
   }
 
-  _onClick(BuildContext context, String idx) {
-    Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) {
-      return TelaVerificaReserva(userId: userID, solicitationID: idx);
-    }));
+  _onClick(
+      BuildContext context, String solicitationID, String solicitationStatus) {
+    if (solicitationStatus == "em andamento") {
+      Navigator.push(context,
+          MaterialPageRoute(builder: (BuildContext context) {
+            return TelaEmAndamento(
+                userId: userID, solicitationID: solicitationID);
+          }));
+    } else {
+      Navigator.push(context,
+          MaterialPageRoute(builder: (BuildContext context) {
+            return TelaVerificaReserva(
+                userId: userID, solicitationID: solicitationID);
+          }));
+    }
   }
 
 //objetos
@@ -233,7 +245,7 @@ class _ListaReservasBuilderState extends State<ListaReservasBuilder> {
       itemExtent: 150,
       itemBuilder: (BuildContext context, int index) {
         return GestureDetector(
-          onTap: () => _onClick(context, _listaReservas[index].solicitationID),
+          onTap: () => _onClick(context, _listaReservas[index].solicitationID, _listaReservas[index].status),
           child: Container(
             decoration: BoxDecoration(
               color: Colors.grey[200],

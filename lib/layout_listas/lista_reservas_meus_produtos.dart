@@ -1,3 +1,4 @@
+import 'package:aplicativo_shareon/telas/tela_em_andamento_meus_produtos.dart';
 import 'package:aplicativo_shareon/telas/tela_reserva_meus_produtos.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
@@ -92,10 +93,21 @@ class _ListaReservasMeuProdutosBuilderState
             : listGen(_listaReservas);
   }
 
-  _onClick(BuildContext context, String idx) {
-    Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) {
-      return TelaReservaMeusProdutos(userId: userID, solicitationID: idx);
-    }));
+  _onClick(
+      BuildContext context, String solicitationID, String solicitationStatus) {
+    if (solicitationStatus == "em andamento") {
+      Navigator.push(context,
+          MaterialPageRoute(builder: (BuildContext context) {
+            return TelaEmAndamentoMeusProdutos(
+                userId: userID, solicitationID: solicitationID);
+          }));
+    } else {
+      Navigator.push(context,
+          MaterialPageRoute(builder: (BuildContext context) {
+        return TelaReservaMeusProdutos(
+            userId: userID, solicitationID: solicitationID);
+      }));
+    }
   }
 
 //objetos
@@ -235,7 +247,8 @@ class _ListaReservasMeuProdutosBuilderState
       itemExtent: 150,
       itemBuilder: (BuildContext context, int index) {
         return GestureDetector(
-          onTap: () => _onClick(context, _listaReservas[index].solicitationID),
+          onTap: () => _onClick(context, _listaReservas[index].solicitationID,
+              _listaReservas[index].status),
           child: Container(
             decoration: BoxDecoration(
               color: Colors.grey[200],
