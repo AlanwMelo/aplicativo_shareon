@@ -4,7 +4,6 @@ import 'dart:math';
 import 'dart:typed_data';
 import 'dart:ui';
 
-import 'package:aplicativo_shareon/utils/shareon_appbar.dart';
 import 'package:barcode_scan/barcode_scan.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
@@ -34,6 +33,8 @@ class _TelaValidacaoState extends State<TelaValidacao> {
   Map<String, dynamic> qrMap;
   bool loading = false;
   bool canPop = true;
+  String validacao = "Validação";
+  String otherUserID = "";
   final databaseReference = Firestore.instance;
 
   @override
@@ -61,7 +62,11 @@ class _TelaValidacaoState extends State<TelaValidacao> {
       },
       child: Scaffold(
         backgroundColor: Colors.indigoAccent,
-        appBar: shareonAppbar(context, ""),
+        appBar: AppBar(
+          title: Text(validacao),
+          centerTitle: true,
+          backgroundColor: Colors.indigoAccent,
+        ),
         body: telaValidacao(),
       ),
     );
@@ -101,7 +106,7 @@ class _TelaValidacaoState extends State<TelaValidacao> {
               child: Container(
                 margin: EdgeInsets.only(top: 8),
                 child: _text(
-                    "Ou se preferir digite sua senha no celular dele, ou peça para que ele digite a dele."),
+                    "Ou se preferir digite seu PIN no celular dele, ou peça para que ele digite o dele abaixo."),
               ),
             ),
             Container(
@@ -260,6 +265,26 @@ class _TelaValidacaoState extends State<TelaValidacao> {
           }
         } else {
           _updatePIN();
+        }
+      });
+    });
+    await databaseReference
+        .collection("solicitations")
+        .where("solicitationID", isEqualTo: widget.solicitationId)
+        .getDocuments()
+        .then((QuerySnapshot snapshot) {
+      snapshot.documents.forEach((f) {
+        Map solicitationData = f.data;
+
+        if (solicitationData["ownerID"] == widget.userId) {
+          otherUserID = solicitationData["requesterID"];
+        } else {
+          otherUserID = solicitationData["ownerID"];
+        }
+        if (solicitationData["status"] == "aprovada") {
+          validacao = "Validar retirada";
+        } else if (solicitationData["status"] == "em andamento") {
+          validacao = "Validar devolução";
         }
       });
     });
