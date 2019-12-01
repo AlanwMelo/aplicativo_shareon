@@ -1,9 +1,11 @@
+import 'dart:async';
 import 'dart:io';
+import 'dart:math';
 import 'dart:typed_data';
 import 'dart:ui';
 
-import 'package:aplicativo_shareon/utils/shareon_appbar.dart';
 import 'package:barcode_scan/barcode_scan.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -13,22 +15,60 @@ import 'package:qr_flutter/qr_flutter.dart';
 import 'package:toast/toast.dart';
 
 class TelaValidacao extends StatefulWidget {
+  final String userId;
+  final String solicitationId;
+
+  TelaValidacao({@required this.userId, @required this.solicitationId});
+
   @override
   _TelaValidacaoState createState() => _TelaValidacaoState();
 }
 
 class _TelaValidacaoState extends State<TelaValidacao> {
   String barcode = "";
-  int pin = 5728;
-  int pinDuration = 32;
+  int pin = 0;
+  Timestamp pinCreatedTime;
+  int pinDuration = 0;
   GlobalKey globalKey = new GlobalKey();
+  Map<String, dynamic> qrMap;
+  bool loading = false;
+  bool canPop = true;
+  String validacao = "Validação";
+  String otherUserID = "";
+  final databaseReference = Firestore.instance;
+
+  @override
+  void initState() {
+    Timer.periodic(Duration(seconds: 30), (Timer t) => timerPIN());
+    getData();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.indigoAccent,
-      appBar: shareonAppbar(context, ""),
-      body: telaValidacao(),
+    qrMap = {
+      "otherUserID": widget.userId,
+      "otherUserPIN": pin,
+      "solicitationID": widget.solicitationId,
+    };
+    return WillPopScope(
+      onWillPop: () async {
+        if (canPop == true) {
+          return true;
+        } else {
+          _toast("Aguarde os dados serem carregados", context);
+          return false;
+        }
+      },
+      child: Scaffold(
+        backgroundColor: Colors.indigoAccent,
+        appBar: AppBar(
+          title: Text(validacao),
+          centerTitle: true,
+          backgroundColor: Colors.indigoAccent,
+        ),
+        body: telaValidacao(),
+      ),
     );
   }
 
@@ -49,6 +89,7 @@ class _TelaValidacaoState extends State<TelaValidacao> {
             Container(
               margin: EdgeInsets.only(top: 8, bottom: 8),
               child: RaisedButton(
+                color: Colors.white,
                 onPressed: () {
                   scan();
                 },
@@ -60,12 +101,12 @@ class _TelaValidacaoState extends State<TelaValidacao> {
                 ),
               ),
             ),
-            _qrZone(""),
+            _qrZone(qrMap.toString()),
             Center(
               child: Container(
                 margin: EdgeInsets.only(top: 8),
                 child: _text(
-                    "Ou se preferir digite sua senha no celular dele, ou peça para que ele digite a dele."),
+                    "Ou se preferir digite seu PIN no celular dele, ou peça para que ele digite o dele abaixo."),
               ),
             ),
             Container(
@@ -108,7 +149,10 @@ class _TelaValidacaoState extends State<TelaValidacao> {
                     width: 400,
                     margin: EdgeInsets.only(bottom: 10, top: 8),
                     child: RaisedButton(
-                      onPressed: () {},
+                      color: Colors.white,
+                      onPressed: () {
+                        _updatePIN();
+                      },
                       child: Text(
                         "Validar",
                         style: TextStyle(
@@ -169,10 +213,7 @@ class _TelaValidacaoState extends State<TelaValidacao> {
   Future scan() async {
     try {
       String barcode = await BarcodeScanner.scan();
-      setState(() => Toast.show("$barcode", context,
-          duration: 3,
-          gravity: Toast.BOTTOM,
-          backgroundColor: Colors.black.withOpacity(0.8)));
+      setState(() => _toast(barcode, context));
     } on PlatformException catch (e) {
       if (e.code == BarcodeScanner.CameraAccessDenied) {
         setState(() {
@@ -193,73 +234,171 @@ class _TelaValidacaoState extends State<TelaValidacao> {
     if (pinDuration > 1) {
       return _textAlerta(
           "Seu PIN é: $pin. E é válido por mais $pinDuration minutos.");
-    }
-    else {
+    } else if (pinDuration == 1) {
       return _textAlerta(
           "Seu PIN é: $pin. E é válido por mais $pinDuration minuto.");
+    } else {
+      return _textAlerta("Seu PIN é: $pin. E é válido por menos de um minuto.");
     }
   }
-}
 
-_qrZone(String qrText) {
-  return Container(
-    child: ConstrainedBox(
-      constraints: BoxConstraints(
-        minWidth: 300,
-        minHeight: 300,
-        maxHeight: 300,
-        maxWidth: 300,
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.all(
-          Radius.circular(20),
+  Future getData() async {
+    await databaseReference
+        .collection("users")
+        .where("userID", isEqualTo: widget.userId)
+        .getDocuments()
+        .then((QuerySnapshot snapshot) {
+      snapshot.documents.forEach((f) async {
+        Map userData = f.data;
+
+        if (userData["lastPINCreatedTS"] != null) {
+          Timestamp createdDate = userData["lastPINCreatedTS"];
+          int timeNow =
+              Timestamp.fromDate(DateTime.now()).millisecondsSinceEpoch;
+          int createdAux = createdDate.millisecondsSinceEpoch;
+
+          if ((timeNow - createdAux) > 120000) {
+            _updatePIN();
+          } else {
+            pin = userData["PIN"];
+            pinCreatedTime = userData["lastPINCreatedTS"];
+          }
+        } else {
+          _updatePIN();
+        }
+      });
+    });
+    await databaseReference
+        .collection("solicitations")
+        .where("solicitationID", isEqualTo: widget.solicitationId)
+        .getDocuments()
+        .then((QuerySnapshot snapshot) {
+      snapshot.documents.forEach((f) {
+        Map solicitationData = f.data;
+
+        if (solicitationData["ownerID"] == widget.userId) {
+          otherUserID = solicitationData["requesterID"];
+        } else {
+          otherUserID = solicitationData["ownerID"];
+        }
+        if (solicitationData["status"] == "aprovada") {
+          validacao = "Validar retirada";
+        } else if (solicitationData["status"] == "em andamento") {
+          validacao = "Validar devolução";
+        }
+      });
+    });
+    setState(() {});
+  }
+
+  _updatePIN() async {
+    var newPinString = "";
+
+    var randomizer = new Random();
+    for (var i = 0; i < 4; i++) {
+      newPinString = newPinString + randomizer.nextInt(9).toString();
+    }
+
+    int newPIN = int.parse(newPinString);
+
+    pinCreatedTime = Timestamp.fromDate(DateTime.now());
+    pin = newPIN;
+    pinDuration = 2;
+
+    Map<String, dynamic> updatePin = {
+      "lastPINCreatedTS": Timestamp.fromDate(DateTime.now()),
+      "PIN": newPIN,
+    };
+
+    await databaseReference
+        .collection("users")
+        .document(widget.userId)
+        .updateData(updatePin);
+  }
+
+  timerPIN() {
+    int timePin = pinCreatedTime.millisecondsSinceEpoch;
+    int timeNow = Timestamp.fromDate(DateTime.now()).millisecondsSinceEpoch;
+    int dif = (timeNow - timePin);
+    int difInMin = (dif ~/ 60000).toInt();
+    if (difInMin >= 3) {
+      _updatePIN();
+      pinDuration = (2 - difInMin);
+    } else {
+      pinDuration = (2 - difInMin);
+    }
+    setState(() {});
+  }
+
+  _qrZone(String qrText) {
+    return Container(
+      child: ConstrainedBox(
+        constraints: BoxConstraints(
+          minWidth: 300,
+          minHeight: 300,
+          maxHeight: 300,
+          maxWidth: 300,
         ),
-        child: QrImage(
-          backgroundColor: Colors.white,
-          data: "Teste: Meu nome não é Batima",
-          size: 300,
+        child: ClipRRect(
+          borderRadius: BorderRadius.all(
+            Radius.circular(20),
+          ),
+          child: pin == 0
+              ? Container()
+              : QrImage(
+                  backgroundColor: Colors.white,
+                  data: qrText,
+                  size: 300,
+                ),
         ),
       ),
-    ),
-  );
-}
+    );
+  }
 
-_textAlerta(String texto) {
-  return Text(
-    "$texto",
-    style: TextStyle(
-      fontWeight: FontWeight.bold,
-      color: Colors.yellow,
-    ),
-  );
-}
-
-_text(String texto, {bool titulo = false, bool resumo = false}) {
-  if (titulo == true) {
+  _textAlerta(String texto) {
     return Text(
       "$texto",
       style: TextStyle(
         fontWeight: FontWeight.bold,
-        color: Colors.white,
-        fontSize: 30,
+        color: Colors.yellow,
       ),
     );
-  } else if (resumo == true) {
-    return Text(
-      "$texto",
-      style: TextStyle(
-        fontSize: 16,
-      ),
-    );
-  } else {
-    return Text(
-      "$texto",
-      textAlign: TextAlign.center,
-      style: TextStyle(
-        fontWeight: FontWeight.bold,
-        color: Colors.white,
-        fontSize: 16,
-      ),
-    );
+  }
+
+  _text(String texto, {bool titulo = false, bool resumo = false}) {
+    if (titulo == true) {
+      return Text(
+        "$texto",
+        style: TextStyle(
+          fontWeight: FontWeight.bold,
+          color: Colors.white,
+          fontSize: 30,
+        ),
+      );
+    } else if (resumo == true) {
+      return Text(
+        "$texto",
+        style: TextStyle(
+          fontSize: 16,
+        ),
+      );
+    } else {
+      return Text(
+        "$texto",
+        textAlign: TextAlign.center,
+        style: TextStyle(
+          fontWeight: FontWeight.bold,
+          color: Colors.white,
+          fontSize: 16,
+        ),
+      );
+    }
+  }
+
+  _toast(String x, BuildContext context) {
+    Toast.show(x, context,
+        duration: 3,
+        gravity: Toast.BOTTOM,
+        backgroundColor: Colors.black.withOpacity(0.8));
   }
 }

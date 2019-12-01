@@ -7,9 +7,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class TelaReservaProxima extends StatefulWidget {
+  final String userId;
   final String solicitationID;
 
-  TelaReservaProxima({@required this.solicitationID});
+  TelaReservaProxima({@required this.userId, @required this.solicitationID});
 
   @override
   _TelaReservaProximaState createState() => _TelaReservaProximaState();
@@ -148,7 +149,7 @@ class _TelaReservaProximaState extends State<TelaReservaProxima> {
                       onPressed: () {
                         Navigator.push(context,
                             MaterialPageRoute(builder: (BuildContext context) {
-                          return TelaValidacao();
+                          return TelaValidacao(userId: widget.userId, solicitationId: widget.solicitationID);
                         }));
                       },
                       child: Text(
@@ -172,6 +173,7 @@ class _TelaReservaProximaState extends State<TelaReservaProxima> {
     if (titulo == true) {
       return Text(
         "$texto",
+        textAlign: TextAlign.center,
         style: TextStyle(
           fontWeight: FontWeight.bold,
           color: Colors.white,

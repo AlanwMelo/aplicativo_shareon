@@ -365,7 +365,8 @@ class _EditaProdutoState extends State<EditaProduto> {
                                           Navigator.push(context,
                                               MaterialPageRoute(builder:
                                                   (BuildContext context) {
-                                            return Home(optionalControllerPointer: 5);
+                                            return Home(
+                                                optionalControllerPointer: 5);
                                           })));
                                     }
                                   } else if (btPointer == 2) {
@@ -375,7 +376,8 @@ class _EditaProdutoState extends State<EditaProduto> {
                                           Navigator.push(context,
                                               MaterialPageRoute(builder:
                                                   (BuildContext context) {
-                                            return Home(optionalControllerPointer: 5);
+                                            return Home(
+                                                optionalControllerPointer: 5);
                                           })));
                                     }
                                   } else if (btPointer == 3) {
@@ -383,7 +385,8 @@ class _EditaProdutoState extends State<EditaProduto> {
                                         Navigator.push(context,
                                             MaterialPageRoute(builder:
                                                 (BuildContext context) {
-                                          return Home(optionalControllerPointer: 5);
+                                          return Home(
+                                              optionalControllerPointer: 5);
                                         })));
                                   } else if (btPointer == 4) {
                                     if (campoEletroEditar.currentState
@@ -392,7 +395,8 @@ class _EditaProdutoState extends State<EditaProduto> {
                                           Navigator.push(context,
                                               MaterialPageRoute(builder:
                                                   (BuildContext context) {
-                                            return Home(optionalControllerPointer: 5);
+                                            return Home(
+                                                optionalControllerPointer: 5);
                                           })));
                                     }
                                   }
@@ -1307,10 +1311,10 @@ class _EditaProdutoState extends State<EditaProduto> {
                   onTap: () => null,
                   child: Container(
                     color: Colors.white,
-                    height: 160,
                     width: 300,
                     child: Container(
                       child: Column(
+                        mainAxisSize: MainAxisSize.min,
                         children: <Widget>[
                           Container(
                             margin: EdgeInsets.only(bottom: 8, top: 8),
@@ -1329,53 +1333,51 @@ class _EditaProdutoState extends State<EditaProduto> {
                             child: _textConfirmacao(
                                 "Deseja mesmo voltar? Os dados preenchidos serão perdidos"),
                           ),
-                          Expanded(
-                            child: Container(
-                              color: Colors.indigoAccent,
-                              margin: EdgeInsets.only(
-                                top: 8,
-                              ),
-                              child: Row(
-                                children: <Widget>[
-                                  Expanded(
-                                    child: Container(
-                                      height: 100,
-                                      child: RaisedButton(
-                                        color: Colors.indigoAccent,
-                                        onPressed: () {
-                                          Navigator.of(context).pop();
-                                          Navigator.of(context).pop();
-                                        },
-                                        child: Text(
-                                          "Voltar",
-                                          style: TextStyle(
-                                            color: Colors.white,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  Expanded(
-                                    child: Container(
-                                      height: 100,
-                                      child: RaisedButton(
-                                        color: Colors.indigoAccent,
-                                        onPressed: () {
-                                          Navigator.pop(context);
-                                        },
-                                        child: Text(
-                                          "Cancelar",
-                                          style: TextStyle(
-                                            color: Colors.white,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
+                          Container(
+                            color: Colors.indigoAccent,
+                            margin: EdgeInsets.only(
+                              top: 8,
                             ),
-                          )
+                            child: Row(
+                              children: <Widget>[
+                                Expanded(
+                                  child: Container(
+                                    height: 60,
+                                    child: RaisedButton(
+                                      color: Colors.indigoAccent,
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                        Navigator.of(context).pop();
+                                      },
+                                      child: Text(
+                                        "Voltar",
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                Expanded(
+                                  child: Container(
+                                    height: 60,
+                                    child: RaisedButton(
+                                      color: Colors.indigoAccent,
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                      },
+                                      child: Text(
+                                        "Cancelar",
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
                         ],
                       ),
                     ),
@@ -1404,10 +1406,10 @@ class _EditaProdutoState extends State<EditaProduto> {
                   onTap: () => null,
                   child: Container(
                     color: Colors.white,
-                    height: 180,
                     width: 300,
                     child: Container(
                       child: Column(
+                        mainAxisSize: MainAxisSize.min,
                         children: <Widget>[
                           Container(
                             margin: EdgeInsets.only(bottom: 8, top: 8),
@@ -1426,52 +1428,50 @@ class _EditaProdutoState extends State<EditaProduto> {
                             child: _textConfirmacao(
                                 "Deseja mesmo excluir o produto? Esta ação não poderá ser desfeita"),
                           ),
-                          Expanded(
-                            child: Container(
-                              color: Colors.indigoAccent,
-                              margin: EdgeInsets.only(
-                                top: 8,
-                              ),
-                              child: Row(
-                                children: <Widget>[
-                                  Expanded(
-                                    child: Container(
-                                      height: 100,
-                                      child: RaisedButton(
-                                        color: Colors.indigoAccent,
-                                        onPressed: () {
-                                          _excluir();
-                                        },
-                                        child: Text(
-                                          "Excluir",
-                                          style: TextStyle(
-                                            color: Colors.white,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  Expanded(
-                                    child: Container(
-                                      height: 100,
-                                      child: RaisedButton(
-                                        color: Colors.indigoAccent,
-                                        onPressed: () {
-                                          Navigator.pop(context);
-                                        },
-                                        child: Text(
-                                          "Cancelar",
-                                          style: TextStyle(
-                                            color: Colors.white,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
+                          Container(
+                            color: Colors.indigoAccent,
+                            margin: EdgeInsets.only(
+                              top: 8,
                             ),
-                          )
+                            child: Row(
+                              children: <Widget>[
+                                Expanded(
+                                  child: Container(
+                                    height: 60,
+                                    child: RaisedButton(
+                                      color: Colors.indigoAccent,
+                                      onPressed: () {
+                                        _excluir();
+                                      },
+                                      child: Text(
+                                        "Excluir",
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                Expanded(
+                                  child: Container(
+                                    height: 60,
+                                    child: RaisedButton(
+                                      color: Colors.indigoAccent,
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                      },
+                                      child: Text(
+                                        "Cancelar",
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
                         ],
                       ),
                     ),
@@ -1630,7 +1630,6 @@ class _EditaProdutoState extends State<EditaProduto> {
   }
 
   _excluir() async {
-
     Navigator.of(context).pop();
 
     setState(() {

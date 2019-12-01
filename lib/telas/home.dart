@@ -144,8 +144,6 @@ class _HomeState extends State<Home> {
       return homeFAQ();
     } else if (controllerPointer == 9) {
       return Creditos();
-    } else if (controllerPointer == 10) {
-      return CadastroProduto(userID);
     } else if (controllerPointer == 21) {
       return tela_testes();
     }
@@ -505,12 +503,38 @@ class _HomeState extends State<Home> {
               ],
             ),
           ),
-
-          GestureDetector(
+          /* GestureDetector(
             onTap: () {
               setState(() {
                 Navigator.pop(context);
                 controllerPointer = 6;
+              });
+            },
+            child: Row(
+              children: <Widget>[
+                Container(
+                  margin: EdgeInsets.only(
+                    left: 10,
+                  ),
+                  child: _iconChat(),
+                ),
+                SizedBox(
+                  width: 270,
+                  child: Container(
+                    margin: EdgeInsets.only(
+                      left: 15,
+                    ),
+                    child: _text("Chat"),
+                  ),
+                ),
+              ],
+            ),
+          ),*/
+          GestureDetector(
+            onTap: () {
+              setState(() {
+                Navigator.pop(context);
+                controllerPointer = 7;
               });
             },
             child: Row(
