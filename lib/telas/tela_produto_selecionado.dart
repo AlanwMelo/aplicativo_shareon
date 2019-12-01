@@ -650,7 +650,7 @@ class _ProdutoSelecionadoState extends State<ProdutoSelecionado> {
           onPressed: () {
             _toast("Só existo", context);
           },
-          child: _text("Editar reserva", resumo: true),
+          child: _text("Cancelar reserva", resumo: true),
         );
       }
     } else if (myProduct == null) {

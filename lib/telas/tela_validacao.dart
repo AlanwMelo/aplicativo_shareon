@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
 import 'dart:typed_data';
@@ -26,14 +27,15 @@ class TelaValidacao extends StatefulWidget {
 
 class _TelaValidacaoState extends State<TelaValidacao> {
   String barcode = "";
-  int pin = 0;
+  String pin = "";
   Timestamp pinCreatedTime;
   int pinDuration = 0;
   GlobalKey globalKey = new GlobalKey();
-  Map<String, dynamic> qrMap;
+  String qrMap;
   bool loading = false;
   bool canPop = true;
   String validacao = "Validação";
+  int retiradaDevolucao; // 0 retirada 1 devolução
   String otherUserID = "";
   final databaseReference = Firestore.instance;
 
@@ -46,11 +48,8 @@ class _TelaValidacaoState extends State<TelaValidacao> {
 
   @override
   Widget build(BuildContext context) {
-    qrMap = {
-      "otherUserID": widget.userId,
-      "otherUserPIN": pin,
-      "solicitationID": widget.solicitationId,
-    };
+    qrMap =
+        "{\"otherUserID\": \"${widget.userId}\", \"otherUserPIN\": \"$pin\", \"solicitationID\": \"${widget.solicitationId}\"}";
     return WillPopScope(
       onWillPop: () async {
         if (canPop == true) {
@@ -213,7 +212,7 @@ class _TelaValidacaoState extends State<TelaValidacao> {
   Future scan() async {
     try {
       String barcode = await BarcodeScanner.scan();
-      setState(() => _toast(barcode, context));
+      _validator(barcode, qrCall: true);
     } on PlatformException catch (e) {
       if (e.code == BarcodeScanner.CameraAccessDenied) {
         setState(() {
@@ -283,8 +282,10 @@ class _TelaValidacaoState extends State<TelaValidacao> {
         }
         if (solicitationData["status"] == "aprovada") {
           validacao = "Validar retirada";
+          retiradaDevolucao = 0;
         } else if (solicitationData["status"] == "em andamento") {
           validacao = "Validar devolução";
+          retiradaDevolucao = 1;
         }
       });
     });
@@ -292,14 +293,10 @@ class _TelaValidacaoState extends State<TelaValidacao> {
   }
 
   _updatePIN() async {
-    var newPinString = "";
+    String newPIN = "";
 
-    var randomizer = new Random();
-    for (var i = 0; i < 4; i++) {
-      newPinString = newPinString + randomizer.nextInt(9).toString();
-    }
-
-    int newPIN = int.parse(newPinString);
+    newPIN =
+        "${Random().nextInt(10)}${Random().nextInt(10)}${Random().nextInt(10)}${Random().nextInt(10)}";
 
     pinCreatedTime = Timestamp.fromDate(DateTime.now());
     pin = newPIN;
@@ -314,6 +311,8 @@ class _TelaValidacaoState extends State<TelaValidacao> {
         .collection("users")
         .document(widget.userId)
         .updateData(updatePin);
+
+    setState(() {});
   }
 
   timerPIN() {
@@ -343,8 +342,10 @@ class _TelaValidacaoState extends State<TelaValidacao> {
           borderRadius: BorderRadius.all(
             Radius.circular(20),
           ),
-          child: pin == 0
-              ? Container()
+          child: pin == ""
+              ? Container(
+                  color: Colors.white,
+                )
               : QrImage(
                   backgroundColor: Colors.white,
                   data: qrText,
@@ -400,5 +401,52 @@ class _TelaValidacaoState extends State<TelaValidacao> {
         duration: 3,
         gravity: Toast.BOTTOM,
         backgroundColor: Colors.black.withOpacity(0.8));
+  }
+
+  _validator(String barcode, {bool qrCall = false}) async {
+    if (qrCall == true) {
+      try {
+        Map validator = jsonDecode(barcode);
+
+        if (validator["solicitationId"] != widget.solicitationId) {
+          _toast("Este QRCode é o de outra reserva", context);
+        } else if (validator["otherUserID"] == widget.userId) {
+          _toast("Você não pode validar uma reserva com seu próprio QRCode", context);
+        } else {
+          await databaseReference
+              .collection("users")
+              .where("userID", isEqualTo: validator["otherUserID"])
+              .getDocuments()
+              .timeout(Duration(seconds: 60))
+              .then((QuerySnapshot snapshot) {
+            snapshot.documents.forEach((f) async {
+              Map validaQR = f.data;
+
+              if (validaQR["PIN"] != validator["otherUserPIN"]) {
+                _toast("erro PIN incorreto", context);
+              } else {
+                // 0 retirada 1 devolução
+                if (retiradaDevolucao == 0) {
+                  Map<String, dynamic> validaTransacao = {
+                    "finalEndDate": Timestamp.fromDate(DateTime.now()),
+                    "status": "concluido",
+                    "finalEndPrice": "fazer",
+                    "finalEndDuration": "fazer",
+                    "motivoStatus": "devolução",
+                  };
+                }
+                if (retiradaDevolucao == 1) {}
+
+                // await databaseReference.collection("solicitations").where("")
+              }
+            });
+          });
+        }
+
+        _toast(barcode, context);
+      } catch (e) {
+        print(e);
+      }
+    } else {}
   }
 }
