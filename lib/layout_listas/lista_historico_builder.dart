@@ -17,9 +17,10 @@ class _ProductsHist {
   var preco;
   String status;
   Timestamp endDate;
+  String mainIMG;
 
   _ProductsHist(this.productID, this.name, this.preco, this.media, this.status,
-      this.endDate);
+      this.endDate, this.mainIMG);
 }
 
 class _ListaHistoricoBuilderState extends State<ListaHistoricoBuilder> {
@@ -93,40 +94,24 @@ class _ListaHistoricoBuilderState extends State<ListaHistoricoBuilder> {
 //objetos
 
   _img(String idx) {
-    String productMainIMG;
-
-    return FutureBuilder(
-      future: databaseReference
-          .collection("productIMGs")
-          .where("productID", isEqualTo: idx)
-          .getDocuments()
-          .then((QuerySnapshot snapshot) {
-        snapshot.documents.forEach((f) {
-          Map productData = f.data;
-          productMainIMG = productData["productMainIMG"];
-        });
-      }),
-      builder: (context, snapshot) {
-        return ClipRRect(
-          borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(16),
-              topRight: Radius.zero,
-              bottomRight: Radius.zero,
-              bottomLeft: Radius.circular(16)),
-          child: Container(
-            height: 150,
-            width: 150,
-            child: productMainIMG == null
-                ? Center(
-                    child: CircularProgressIndicator(),
-                  )
-                : Image.network(
-                    productMainIMG,
-                    fit: BoxFit.cover,
-                  ),
-          ),
-        );
-      },
+    return ClipRRect(
+      borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(16),
+          topRight: Radius.zero,
+          bottomRight: Radius.zero,
+          bottomLeft: Radius.circular(16)),
+      child: Container(
+        height: 150,
+        width: 150,
+        child: idx == null
+            ? Center(
+                child: CircularProgressIndicator(),
+              )
+            : Image.network(
+                idx,
+                fit: BoxFit.cover,
+              ),
+      ),
     );
   }
 
@@ -209,7 +194,7 @@ class _ListaHistoricoBuilderState extends State<ListaHistoricoBuilder> {
             child: Row(
               mainAxisSize: MainAxisSize.max,
               children: <Widget>[
-                _img(_listaHist[index].productID),
+                _img(_listaHist[index].mainIMG),
                 Expanded(
                   child: Container(
                     padding: EdgeInsets.all(12),
@@ -268,12 +253,28 @@ class _ListaHistoricoBuilderState extends State<ListaHistoricoBuilder> {
         .where("ID", isEqualTo: id)
         .getDocuments()
         .then((QuerySnapshot snapshot) {
-      snapshot.documents.forEach((f) {
+      snapshot.documents.forEach((f) async {
         Map productData = f.data;
-        setState(() {
-          _listaHistorico.add(new _ProductsHist(id, productData["name"],
-              productData["price"], productData["media"], status, endDate));
-          _listaHistorico.sort((a, b) => a.endDate.compareTo(b.endDate));
+
+        await databaseReference
+            .collection("productIMGs")
+            .where("productID", isEqualTo: productData["ID"])
+            .getDocuments()
+            .then((QuerySnapshot snapshot) {
+          snapshot.documents.forEach((f) {
+            Map productIMG = f.data;
+
+            _listaHistorico.add(new _ProductsHist(
+                id,
+                productData["name"],
+                productData["price"],
+                productData["media"],
+                status,
+                endDate,
+                productIMG["productMainIMG"]));
+            _listaHistorico.sort((a, b) => a.endDate.compareTo(b.endDate));
+            setState(() {});
+          });
         });
       });
     });

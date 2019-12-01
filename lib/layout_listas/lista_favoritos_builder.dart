@@ -16,9 +16,10 @@ class _FavoritesData {
   String media;
   var preco;
   Timestamp addDate;
+  String productMAINimg;
 
-  _FavoritesData(
-      this.productID, this.name, this.preco, this.media, this.addDate);
+  _FavoritesData(this.productID, this.name, this.preco, this.media,
+      this.addDate, this.productMAINimg);
 }
 
 class _ListaFavoritosBuilderState extends State<ListaFavoritosBuilder> {
@@ -85,40 +86,24 @@ class _ListaFavoritosBuilderState extends State<ListaFavoritosBuilder> {
 //objetos
 
   _img(String idx) {
-    String productMainIMG;
-
-    return FutureBuilder(
-      future: databaseReference
-          .collection("productIMGs")
-          .where("productID", isEqualTo: idx)
-          .getDocuments()
-          .then((QuerySnapshot snapshot) {
-        snapshot.documents.forEach((f) {
-          Map productData = f.data;
-          productMainIMG = productData["productMainIMG"];
-        });
-      }),
-      builder: (context, snapshot) {
-        return ClipRRect(
-          borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(16),
-              topRight: Radius.zero,
-              bottomRight: Radius.zero,
-              bottomLeft: Radius.circular(16)),
-          child: Container(
-            height: 150,
-            width: 150,
-            child: productMainIMG == null
-                ? Center(
-                    child: CircularProgressIndicator(),
-                  )
-                : Image.network(
-                    productMainIMG,
-                    fit: BoxFit.cover,
-                  ),
-          ),
-        );
-      },
+    return ClipRRect(
+      borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(16),
+          topRight: Radius.zero,
+          bottomRight: Radius.zero,
+          bottomLeft: Radius.circular(16)),
+      child: Container(
+        height: 150,
+        width: 150,
+        child: idx == null
+            ? Center(
+                child: CircularProgressIndicator(),
+              )
+            : Image.network(
+                idx,
+                fit: BoxFit.cover,
+              ),
+      ),
     );
   }
 
@@ -202,7 +187,7 @@ class _ListaFavoritosBuilderState extends State<ListaFavoritosBuilder> {
               child: Row(
                 mainAxisSize: MainAxisSize.max,
                 children: <Widget>[
-                  _img(_listaFav[index].productID),
+                  _img(_listaFav[index].productMAINimg),
                   Expanded(
                     child: Container(
                       padding: EdgeInsets.all(8),
@@ -258,12 +243,27 @@ class _ListaFavoritosBuilderState extends State<ListaFavoritosBuilder> {
         .where("ID", isEqualTo: id)
         .getDocuments()
         .then((QuerySnapshot snapshot) {
-      snapshot.documents.forEach((f) {
+      snapshot.documents.forEach((f) async {
         Map productData = f.data;
-        setState(() {
-          _listaFav.add(new _FavoritesData(id, productData["name"],
-              productData["price"], productData["media"], addDate));
-          _listaFav.sort((a, b) => b.addDate.compareTo(a.addDate));
+
+        await databaseReference
+            .collection("productIMGs")
+            .where("productID", isEqualTo: productData["ID"])
+            .getDocuments()
+            .then((QuerySnapshot snapshot) {
+          snapshot.documents.forEach((f) {
+            Map productIMG = f.data;
+
+            _listaFav.add(new _FavoritesData(
+                id,
+                productData["name"],
+                productData["price"],
+                productData["media"],
+                addDate,
+                productIMG["productMainIMG"]));
+            _listaFav.sort((a, b) => b.addDate.compareTo(a.addDate));
+            setState(() {});
+          });
         });
       });
     });

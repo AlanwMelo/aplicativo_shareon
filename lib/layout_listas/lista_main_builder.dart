@@ -19,8 +19,10 @@ class _Products {
   String media;
   var preco;
   double distance;
+  String mainIMG;
 
-  _Products(this.productID, this.name, this.preco, this.media, this.distance);
+  _Products(this.productID, this.name, this.preco, this.media, this.distance,
+      this.mainIMG);
 }
 
 class _ListaMainBuilderState extends State<ListaMainBuilder> {
@@ -64,25 +66,36 @@ class _ListaMainBuilderState extends State<ListaMainBuilder> {
         .where("adStatus", isEqualTo: "ativo")
         .getDocuments()
         .then((QuerySnapshot snapshot) {
-      snapshot.documents.forEach((f) {
-        if(snapshot.documents.length == 0){
+      snapshot.documents.forEach((f) async {
+        if (snapshot.documents.length == 0) {
           setState(() {
             listIsEmpty = true;
           });
         }
         Map productData = f.data;
         if (productData["ownerID"] != userID) {
-          setState(() {
-            GeoPoint aux = productData["location"];
-            _listaMain.add(new _Products(
-              productData["ID"],
-              productData["name"],
-              productData["price"],
-              productData["media"],
-              _calcDist(userLocation.latitude, userLocation.longitude,
-                  aux.latitude, aux.longitude),
-            ));
-            _listaMain.sort((a, b) => a.distance.compareTo(b.distance));
+          await databaseReference
+              .collection("productIMGs")
+              .where("productID", isEqualTo: productData["ID"])
+              .getDocuments()
+              .then((QuerySnapshot snapshot) {
+            snapshot.documents.forEach((f) {
+              Map productIMG = f.data;
+
+              setState(() {
+                GeoPoint aux = productData["location"];
+                _listaMain.add(new _Products(
+                  productData["ID"],
+                  productData["name"],
+                  productData["price"],
+                  productData["media"],
+                  _calcDist(userLocation.latitude, userLocation.longitude,
+                      aux.latitude, aux.longitude),
+                  productIMG["productMainIMG"],
+                ));
+                _listaMain.sort((a, b) => a.distance.compareTo(b.distance));
+              });
+            });
           });
         }
       });
@@ -118,40 +131,24 @@ class _ListaMainBuilderState extends State<ListaMainBuilder> {
 //objetos
 
   _img(String idx) {
-    String productMainIMG;
-
-    return FutureBuilder(
-      future: databaseReference
-          .collection("productIMGs")
-          .where("productID", isEqualTo: idx)
-          .getDocuments()
-          .then((QuerySnapshot snapshot) {
-        snapshot.documents.forEach((f) {
-          Map productData = f.data;
-          productMainIMG = productData["productMainIMG"];
-        });
-      }),
-      builder: (context, snapshot) {
-        return ClipRRect(
-          borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(16),
-              topRight: Radius.zero,
-              bottomRight: Radius.zero,
-              bottomLeft: Radius.circular(16)),
-          child: Container(
-            height: 150,
-            width: 150,
-            child: productMainIMG == null
-                ? Center(
-                    child: CircularProgressIndicator(),
-                  )
-                : Image.network(
-                    productMainIMG,
-                    fit: BoxFit.cover,
-                  ),
-          ),
-        );
-      },
+    return ClipRRect(
+      borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(16),
+          topRight: Radius.zero,
+          bottomRight: Radius.zero,
+          bottomLeft: Radius.circular(16)),
+      child: Container(
+        height: 150,
+        width: 150,
+        child: idx == null
+            ? Center(
+                child: CircularProgressIndicator(),
+              )
+            : Image.network(
+                idx,
+                fit: BoxFit.cover,
+              ),
+      ),
     );
   }
 
@@ -239,7 +236,7 @@ class _ListaMainBuilderState extends State<ListaMainBuilder> {
             child: Row(
               mainAxisSize: MainAxisSize.max,
               children: <Widget>[
-                _img(_listaMain[index].productID),
+                _img(_listaMain[index].mainIMG),
                 Expanded(
                   child: Container(
                     padding: EdgeInsets.all(12),

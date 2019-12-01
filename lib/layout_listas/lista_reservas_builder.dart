@@ -19,9 +19,10 @@ class _Reservas {
   String status;
   String solicitationID;
   Timestamp programedInitDate;
+  String mainIMG;
 
   _Reservas(this.productID, this.name, this.preco, this.media, this.status,
-      this.solicitationID, this.programedInitDate);
+      this.solicitationID, this.programedInitDate, this.mainIMG);
 }
 
 class _ListaReservasBuilderState extends State<ListaReservasBuilder> {
@@ -96,55 +97,38 @@ class _ListaReservasBuilderState extends State<ListaReservasBuilder> {
     if (solicitationStatus == "em andamento") {
       Navigator.push(context,
           MaterialPageRoute(builder: (BuildContext context) {
-            return TelaEmAndamento(
-                userId: userID, solicitationID: solicitationID);
-          }));
+        return TelaEmAndamento(userId: userID, solicitationID: solicitationID);
+      }));
     } else {
       Navigator.push(context,
           MaterialPageRoute(builder: (BuildContext context) {
-            return TelaVerificaReserva(
-                userId: userID, solicitationID: solicitationID);
-          }));
+        return TelaVerificaReserva(
+            userId: userID, solicitationID: solicitationID);
+      }));
     }
   }
 
 //objetos
 
   _img(String idx) {
-    String productMainIMG;
-
-    return FutureBuilder(
-      future: databaseReference
-          .collection("productIMGs")
-          .where("productID", isEqualTo: idx)
-          .getDocuments()
-          .then((QuerySnapshot snapshot) {
-        snapshot.documents.forEach((f) {
-          Map productData = f.data;
-          productMainIMG = productData["productMainIMG"];
-        });
-      }),
-      builder: (context, snapshot) {
-        return ClipRRect(
-          borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(16),
-              topRight: Radius.zero,
-              bottomRight: Radius.zero,
-              bottomLeft: Radius.circular(16)),
-          child: Container(
-            height: 150,
-            width: 150,
-            child: productMainIMG == null
-                ? Center(
-                    child: CircularProgressIndicator(),
-                  )
-                : Image.network(
-                    productMainIMG,
-                    fit: BoxFit.cover,
-                  ),
-          ),
-        );
-      },
+    return ClipRRect(
+      borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(16),
+          topRight: Radius.zero,
+          bottomRight: Radius.zero,
+          bottomLeft: Radius.circular(16)),
+      child: Container(
+        height: 150,
+        width: 150,
+        child: idx == null
+            ? Center(
+                child: CircularProgressIndicator(),
+              )
+            : Image.network(
+                idx,
+                fit: BoxFit.cover,
+              ),
+      ),
     );
   }
 
@@ -245,7 +229,8 @@ class _ListaReservasBuilderState extends State<ListaReservasBuilder> {
       itemExtent: 150,
       itemBuilder: (BuildContext context, int index) {
         return GestureDetector(
-          onTap: () => _onClick(context, _listaReservas[index].solicitationID, _listaReservas[index].status),
+          onTap: () => _onClick(context, _listaReservas[index].solicitationID,
+              _listaReservas[index].status),
           child: Container(
             decoration: BoxDecoration(
               color: Colors.grey[200],
@@ -255,7 +240,7 @@ class _ListaReservasBuilderState extends State<ListaReservasBuilder> {
             child: Row(
               mainAxisSize: MainAxisSize.max,
               children: <Widget>[
-                _img(_listaReservas[index].productID),
+                _img(_listaReservas[index].mainIMG),
                 Expanded(
                   child: Container(
                     padding: EdgeInsets.all(12),
@@ -322,19 +307,31 @@ class _ListaReservasBuilderState extends State<ListaReservasBuilder> {
         .where("ID", isEqualTo: id)
         .getDocuments()
         .then((QuerySnapshot snapshot) {
-      snapshot.documents.forEach((f) {
+      snapshot.documents.forEach((f) async {
         Map productData = f.data;
-        setState(() {
-          _listaReservas.add(new _Reservas(
-              id,
-              productData["name"],
-              estimatedEndPrice,
-              productData["media"],
-              status,
-              solicitationID,
-              initDate));
-          _listaReservas.sort(
-              (a, b) => a.programedInitDate.compareTo(b.programedInitDate));
+
+        await databaseReference
+            .collection("productIMGs")
+            .where("productID", isEqualTo: productData["ID"])
+            .getDocuments()
+            .then((QuerySnapshot snapshot) {
+          snapshot.documents.forEach((f) {
+            Map productIMG = f.data;
+
+            _listaReservas.add(new _Reservas(
+                id,
+                productData["name"],
+                estimatedEndPrice,
+                productData["media"],
+                status,
+                solicitationID,
+                initDate,
+                productIMG["productMainIMG"]));
+            _listaReservas.sort(
+                (a, b) => a.programedInitDate.compareTo(b.programedInitDate));
+
+            setState(() {});
+          });
         });
       });
     });

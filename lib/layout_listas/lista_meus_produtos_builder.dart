@@ -17,8 +17,10 @@ class _MyProducts {
   var preco;
   String media;
   Timestamp addDate;
+  String mainIMG;
 
-  _MyProducts(this.productID, this.name, this.preco, this.media, this.addDate);
+  _MyProducts(this.productID, this.name, this.preco, this.media, this.addDate,
+      this.mainIMG);
 }
 
 class _ListaMeusProdutosBuilderState extends State<ListaMeusProdutosBuilder> {
@@ -49,17 +51,29 @@ class _ListaMeusProdutosBuilderState extends State<ListaMeusProdutosBuilder> {
           listIsEmpty = true;
         });
       }
-      snapshot.documents.forEach((f) {
+      snapshot.documents.forEach((f) async {
         Map productData = f.data;
         if (productData["adStatus"] != "deletado") {
-          setState(() {
-            _listaMeusProdutos.add(new _MyProducts(
-                productData["ID"],
-                productData["name"],
-                productData["price"],
-                productData["media"],
-                productData["insertionDate"]));
-            _listaMeusProdutos.sort((b, a) => a.addDate.compareTo(b.addDate));
+          await databaseReference
+              .collection("productIMGs")
+              .where("productID", isEqualTo: productData["ID"])
+              .getDocuments()
+              .then((QuerySnapshot snapshot) {
+            {
+              snapshot.documents.forEach((f) {
+                Map productIMG = f.data;
+
+                _listaMeusProdutos.add(new _MyProducts(
+                    productData["ID"],
+                    productData["name"],
+                    productData["price"],
+                    productData["media"],
+                    productData["insertionDate"],
+                    productIMG["productMainIMG"]));
+              });
+              _listaMeusProdutos.sort((b, a) => a.addDate.compareTo(b.addDate));
+              setState(() {});
+            }
           });
         }
       });
@@ -95,40 +109,24 @@ class _ListaMeusProdutosBuilderState extends State<ListaMeusProdutosBuilder> {
 //objetos
 
   _img(String idx) {
-    String productMainIMG;
-
-    return FutureBuilder(
-      future: databaseReference
-          .collection("productIMGs")
-          .where("productID", isEqualTo: idx)
-          .getDocuments()
-          .then((QuerySnapshot snapshot) {
-        snapshot.documents.forEach((f) {
-          Map productData = f.data;
-          productMainIMG = productData["productMainIMG"];
-        });
-      }),
-      builder: (context, snapshot) {
-        return ClipRRect(
-          borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(16),
-              topRight: Radius.zero,
-              bottomRight: Radius.zero,
-              bottomLeft: Radius.circular(16)),
-          child: Container(
-            height: 150,
-            width: 150,
-            child: productMainIMG == null
-                ? Center(
-                    child: CircularProgressIndicator(),
-                  )
-                : Image.network(
-                    productMainIMG,
-                    fit: BoxFit.cover,
-                  ),
-          ),
-        );
-      },
+    return ClipRRect(
+      borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(16),
+          topRight: Radius.zero,
+          bottomRight: Radius.zero,
+          bottomLeft: Radius.circular(16)),
+      child: Container(
+        height: 150,
+        width: 150,
+        child: idx == null
+            ? Center(
+                child: CircularProgressIndicator(),
+              )
+            : Image.network(
+                idx,
+                fit: BoxFit.cover,
+              ),
+      ),
     );
   }
 
@@ -191,7 +189,7 @@ class _ListaMeusProdutosBuilderState extends State<ListaMeusProdutosBuilder> {
             child: Row(
               mainAxisSize: MainAxisSize.max,
               children: <Widget>[
-                _img(_listaMeusProdutos[index].productID),
+                _img(_listaMeusProdutos[index].mainIMG),
                 Expanded(
                   child: Container(
                     padding: EdgeInsets.all(8),
