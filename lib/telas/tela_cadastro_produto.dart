@@ -1383,10 +1383,10 @@ class _CadastroProdutoState extends State<CadastroProduto> {
                   onTap: () => null,
                   child: Container(
                     color: Colors.white,
-                    height: 160,
                     width: 300,
                     child: Container(
                       child: Column(
+                        mainAxisSize: MainAxisSize.min,
                         children: <Widget>[
                           Container(
                             margin: EdgeInsets.only(bottom: 8, top: 8),
@@ -1405,53 +1405,51 @@ class _CadastroProdutoState extends State<CadastroProduto> {
                             child: _textConfirmacao(
                                 "Deseja mesmo voltar? Os dados preenchidos serão perdidos"),
                           ),
-                          Expanded(
-                            child: Container(
-                              color: Colors.indigoAccent,
-                              margin: EdgeInsets.only(
-                                top: 8,
-                              ),
-                              child: Row(
-                                children: <Widget>[
-                                  Expanded(
-                                    child: Container(
-                                      height: 100,
-                                      child: RaisedButton(
-                                        color: Colors.indigoAccent,
-                                        onPressed: () {
-                                          Navigator.of(context).pop();
-                                          Navigator.of(context).pop();
-                                        },
-                                        child: Text(
-                                          "Voltar",
-                                          style: TextStyle(
-                                            color: Colors.white,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  Expanded(
-                                    child: Container(
-                                      height: 100,
-                                      child: RaisedButton(
-                                        color: Colors.indigoAccent,
-                                        onPressed: () {
-                                          Navigator.pop(context);
-                                        },
-                                        child: Text(
-                                          "Cancelar",
-                                          style: TextStyle(
-                                            color: Colors.white,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
+                          Container(
+                            color: Colors.indigoAccent,
+                            margin: EdgeInsets.only(
+                              top: 8,
                             ),
-                          )
+                            child: Row(
+                              children: <Widget>[
+                                Expanded(
+                                  child: Container(
+                                    height: 60,
+                                    child: RaisedButton(
+                                      color: Colors.indigoAccent,
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                        Navigator.of(context).pop();
+                                      },
+                                      child: Text(
+                                        "Voltar",
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                Expanded(
+                                  child: Container(
+                                    height: 60,
+                                    child: RaisedButton(
+                                      color: Colors.indigoAccent,
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                      },
+                                      child: Text(
+                                        "Cancelar",
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
                         ],
                       ),
                     ),
