@@ -6,29 +6,33 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-class TelaReservaProxima extends StatefulWidget {
+class TelaVerificaReserva extends StatefulWidget {
   final String userId;
   final String solicitationID;
 
-  TelaReservaProxima({@required this.userId, @required this.solicitationID});
+  TelaVerificaReserva({@required this.userId, @required this.solicitationID});
 
   @override
-  _TelaReservaProximaState createState() => _TelaReservaProximaState();
+  _TelaVerificaReservaState createState() => _TelaVerificaReservaState();
 }
 
-class _TelaReservaProximaState extends State<TelaReservaProxima> {
+class _TelaVerificaReservaState extends State<TelaVerificaReserva> {
   final databaseReference = Firestore.instance;
   String productIMG;
   String productName;
   String productID;
-  String ownerID ;
+  String ownerID;
+
   String ownerName;
-  Timestamp estimatedStartDate;
-  Timestamp estimatedEndDate;
+  String productAddress = "";
+  Timestamp programedStartDate;
+  Timestamp programedEndDate;
   String convertedEstimatedStartDate;
-  String convertedEstimatedEndDate ;
-  String convertedEstimatedPrice ;
-  double estimatedPrice ;
+  String convertedEstimatedEndDate;
+
+  String convertedEstimatedPrice;
+
+  double estimatedPrice;
 
   @override
   void initState() {
@@ -54,23 +58,32 @@ class _TelaReservaProximaState extends State<TelaReservaProxima> {
       snapshot.documents.forEach((f) {
         Map solicitationData = f.data;
         productID = solicitationData["productID"];
-        estimatedStartDate = solicitationData["programedInitDate"];
+        programedStartDate = solicitationData["programedInitDate"];
 
-        int convertedStartHour = estimatedStartDate.toDate().hour;
-        int convertedStartMinute = estimatedStartDate.toDate().minute;
+        int convertedStartDay = programedStartDate.toDate().day;
+        int convertedStartMonth = programedStartDate.toDate().month;
+        int convertedStartYear = programedStartDate.toDate().year;
+
+        int convertedStartHour = programedStartDate.toDate().hour;
+        int convertedStartMinute = programedStartDate.toDate().minute;
         convertedEstimatedStartDate =
-        "${convertedStartHour.toString().padLeft(2, "0")}:${convertedStartMinute.toString().padLeft(2, "0")}";
+            "${convertedStartDay.toString().padLeft(2, "0")}/${convertedStartMonth.toString().padLeft(2, "0")}/${convertedStartYear.toString()} às "
+            "${convertedStartHour.toString().padLeft(2, "0")}:${convertedStartMinute.toString().padLeft(2, "0")}";
 
-        estimatedEndDate = solicitationData["programedEndDate"];
+        programedEndDate = solicitationData["programedEndDate"];
 
-        int convertedEndHour = estimatedEndDate.toDate().hour;
-        int convertedEndMinute = estimatedEndDate.toDate().minute;
+        int convertedEndDay = programedStartDate.toDate().day;
+        int convertedEndMonth = programedStartDate.toDate().month;
+        int convertedEndYear = programedStartDate.toDate().year;
+
+        int convertedEndHour = programedEndDate.toDate().hour;
+        int convertedEndMinute = programedEndDate.toDate().minute;
         convertedEstimatedEndDate =
-        "${convertedEndHour.toString().padLeft(2, "0")}:${convertedEndMinute.toString().padLeft(2, "0")}";
+            "${convertedEndDay.toString().padLeft(2, "0")}/${convertedEndMonth.toString().padLeft(2, "0")}/${convertedEndYear.toString()} às "
+            "${convertedEndHour.toString().padLeft(2, "0")}:${convertedEndMinute.toString().padLeft(2, "0")}";
 
         var aux = solicitationData["estimatedEndPrice"];
         estimatedPrice = aux.toDouble();
-        print(estimatedPrice);
         getProductData(productID);
       });
     });
@@ -79,13 +92,10 @@ class _TelaReservaProximaState extends State<TelaReservaProxima> {
   homeReservaProxima(BuildContext context) {
     return SingleChildScrollView(
       child: Container(
-        margin: EdgeInsets.only(top: 20, left: 16, right: 16),
+        margin: EdgeInsets.only(left: 16, right: 16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Center(
-              child: _text("Você possui uma reserva em breve"),
-            ),
             Container(
               height: 300,
               margin: EdgeInsets.only(top: 8),
@@ -110,7 +120,19 @@ class _TelaReservaProximaState extends State<TelaReservaProxima> {
                   children: <Widget>[
                     Container(
                       margin: EdgeInsets.only(top: 8),
-                      child: _text("Dono: $ownerName"),
+                      child: Row(
+                        children: <Widget>[
+                          _text("Dono: "),
+                          Text(
+                            ownerName,
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Colors.yellow,
+                              fontSize: 20,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                     Container(
                       margin: EdgeInsets.only(top: 8),
@@ -122,7 +144,8 @@ class _TelaReservaProximaState extends State<TelaReservaProxima> {
                     ),
                     Container(
                       margin: EdgeInsets.only(top: 8),
-                      child: _text("Valor estimado: R\$${estimatedPrice.toStringAsFixed(2)}"),
+                      child: _text(
+                          "Valor estimado: R\$${estimatedPrice.toStringAsFixed(2)}"),
                     ),
                     Container(
                       margin: EdgeInsets.only(top: 8),
@@ -130,39 +153,14 @@ class _TelaReservaProximaState extends State<TelaReservaProxima> {
                         constraints: BoxConstraints(
                           minHeight: 70,
                         ),
-                        child: _text("Endereço do produto."),
+                        child: _text(productAddress),
                       ),
                     ),
                   ],
                 ),
               ),
             ),
-            Container(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: <Widget>[
-                  Container(
-                    width: 400,
-                    margin: EdgeInsets.only(bottom: 20),
-                    child: RaisedButton(
-                      color: Colors.white,
-                      onPressed: () {
-                        Navigator.push(context,
-                            MaterialPageRoute(builder: (BuildContext context) {
-                          return TelaValidacao(userId: widget.userId, solicitationId: widget.solicitationID);
-                        }));
-                      },
-                      child: Text(
-                        "Validar retirada",
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  )
-                ],
-              ),
-            ),
+            _containerBotoes(),
           ],
         ),
       ),
@@ -184,7 +182,7 @@ class _TelaReservaProximaState extends State<TelaReservaProxima> {
       return Text(
         "$texto",
         style: TextStyle(
-          fontSize: 16,
+          fontSize: 14,
         ),
       );
     } else {
@@ -247,6 +245,7 @@ class _TelaReservaProximaState extends State<TelaReservaProxima> {
         .then((QuerySnapshot snapshot) {
       snapshot.documents.forEach((f) {
         Map productData = f.data;
+        productAddress = productData["productAddress"];
         productName = productData["name"];
         ownerID = productData["ownerID"];
         getOwnerData(ownerID);
@@ -270,15 +269,78 @@ class _TelaReservaProximaState extends State<TelaReservaProxima> {
   }
 
   loadData(BuildContext context) {
-    if(productID == null){
+    if (productID == null) {
       return Center(
         child: CircularProgressIndicator(
           backgroundColor: Colors.white,
         ),
       );
-    }
-    else{
+    } else {
       return homeReservaProxima(context);
+    }
+  }
+
+  _containerBotoes() {
+    int timeNow = Timestamp.fromDate(DateTime.now()).millisecondsSinceEpoch;
+    int startTime = programedStartDate.millisecondsSinceEpoch;
+
+    if ((startTime - timeNow) <= 3600000) {
+      return Container(
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: <Widget>[
+            Container(
+              width: 130,
+              child: RaisedButton(
+                color: Colors.red,
+                onPressed: () {},
+                child: Text(
+                  "Cancelar",
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ),
+            Container(
+              width: 130,
+              child: RaisedButton(
+                color: Colors.white,
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (BuildContext context) {
+                      return TelaValidacao(
+                        userId: widget.userId,
+                        solicitationId: widget.solicitationID,
+                      );
+                    }),
+                  );
+                },
+                child: _text("Validar retirada", resumo: true),
+              ),
+            ),
+          ],
+        ),
+      );
+    } else {
+      return Center(
+        child: Container(
+          width: 130,
+          child: RaisedButton(
+            color: Colors.red,
+            onPressed: () {},
+            child: Text(
+              "Cancelar",
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+        ),
+      );
     }
   }
 }

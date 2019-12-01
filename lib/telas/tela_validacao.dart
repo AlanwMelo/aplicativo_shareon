@@ -411,7 +411,8 @@ class _TelaValidacaoState extends State<TelaValidacao> {
         if (validator["solicitationId"] != widget.solicitationId) {
           _toast("Este QRCode é o de outra reserva", context);
         } else if (validator["otherUserID"] == widget.userId) {
-          _toast("Você não pode validar uma reserva com seu próprio QRCode", context);
+          _toast("Você não pode validar uma reserva com seu próprio QRCode",
+              context);
         } else {
           await databaseReference
               .collection("users")
@@ -442,8 +443,6 @@ class _TelaValidacaoState extends State<TelaValidacao> {
             });
           });
         }
-
-        _toast(barcode, context);
       } catch (e) {
         print(e);
       }

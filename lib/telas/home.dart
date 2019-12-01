@@ -132,7 +132,7 @@ class _HomeState extends State<Home> {
     } else if (controllerPointer == 2) {
       return homeFavoritos();
     } else if (controllerPointer == 3) {
-      return homeReservas();
+      return TelaReservas();
     } else if (controllerPointer == 4) {
       return homeHistorico();
     } else if (controllerPointer == 5) {

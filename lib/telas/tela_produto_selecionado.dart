@@ -3,7 +3,7 @@ import 'dart:convert';
 
 import 'package:aplicativo_shareon/models/usuario_model.dart';
 import 'package:aplicativo_shareon/telas/tela_edita_produto.dart';
-import 'package:aplicativo_shareon/telas/tela_reserva_proxima.dart';
+import 'package:aplicativo_shareon/telas/tela_verifica_reserva.dart';
 import 'package:aplicativo_shareon/telas/tela_reservar.dart';
 import 'package:aplicativo_shareon/telas/tela_validacao.dart';
 import 'package:aplicativo_shareon/utils/shareon_appbar.dart';
@@ -635,7 +635,7 @@ class _ProdutoSelecionadoState extends State<ProdutoSelecionado> {
             Navigator.push(
               context,
               MaterialPageRoute(builder: (BuildContext context) {
-                return TelaReservaProxima(
+                return TelaVerificaReserva(
                   userId: userID,
                   solicitationID: solicitationID,
                 );

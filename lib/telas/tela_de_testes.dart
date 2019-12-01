@@ -1,4 +1,4 @@
-import 'package:aplicativo_shareon/telas/tela_reserva_proxima.dart';
+import 'package:aplicativo_shareon/telas/tela_verifica_reserva.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -41,7 +41,7 @@ class _tela_testes_state extends State<tela_testes> {
                 onPressed: () {
                   Navigator.push(context,
                       MaterialPageRoute(builder: (BuildContext context) {
-                    return TelaReservaProxima(solicitationID: "");
+                    return TelaVerificaReserva(solicitationID: "");
                   }));
                 },
                 child: Text("Tela \"Reserva Próxima\""),

@@ -1,4 +1,4 @@
-import 'package:aplicativo_shareon/telas/tela_produto_selecionado.dart';
+import 'package:aplicativo_shareon/telas/tela_verifica_reserva.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -92,7 +92,7 @@ class _ListaReservasBuilderState extends State<ListaReservasBuilder> {
 
   _onClick(BuildContext context, String idx) {
     Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) {
-      return ProdutoSelecionado(productID: idx);
+      return TelaVerificaReserva(userId: userID, solicitationID: idx);
     }));
   }
 
@@ -201,7 +201,7 @@ class _ListaReservasBuilderState extends State<ListaReservasBuilder> {
     int convertedHour = idx.toDate().hour;
     int convertedMinute = idx.toDate().minute;
     String convertedTS =
-        "as ${convertedHour.toString().padLeft(2, "0")}:${convertedMinute.toString().padLeft(2, "0")}";
+        "às ${convertedHour.toString().padLeft(2, "0")}:${convertedMinute.toString().padLeft(2, "0")}";
 
     return Text(
       convertedTS,
@@ -233,7 +233,7 @@ class _ListaReservasBuilderState extends State<ListaReservasBuilder> {
       itemExtent: 150,
       itemBuilder: (BuildContext context, int index) {
         return GestureDetector(
-          onTap: () => _onClick(context, _listaReservas[index].productID),
+          onTap: () => _onClick(context, _listaReservas[index].solicitationID),
           child: Container(
             decoration: BoxDecoration(
               color: Colors.grey[200],
