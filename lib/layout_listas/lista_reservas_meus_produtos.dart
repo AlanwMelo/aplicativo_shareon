@@ -189,7 +189,7 @@ class _ListaReservasMeuProdutosBuilderState
 
     return Text(
       convertedTS,
-      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: color),
+      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: color),
     );
   }
 
@@ -207,7 +207,7 @@ class _ListaReservasMeuProdutosBuilderState
 
     return Text(
       convertedTS,
-      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: color),
+      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: color),
     );
   }
 

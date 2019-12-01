@@ -64,10 +64,11 @@ class _HomeState extends State<Home> {
   String appBarText = "";
   String userAddress = "";
   bool emailVerified;
+  bool masterUser = false;
   final databaseReference = Firestore.instance;
   GlobalKey<ScaffoldState> _drawerKey = GlobalKey();
   SharedPreferencesController sharedPreferencesController =
-  new SharedPreferencesController();
+      new SharedPreferencesController();
   UserModel model = new UserModel();
 
   @override
@@ -277,39 +278,42 @@ class _HomeState extends State<Home> {
 
   _corpo() {
     return Container(
-      height: 600,
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: <Widget>[
-          GestureDetector(
-            onTap: () {
-              setState(() {
-                Navigator.pop(context);
-                controllerPointer = 21;
-              });
-            },
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: <Widget>[
-                Container(
-                  margin: EdgeInsets.only(
-                    left: 10,
-                  ),
-                  child: _iconCreditos(),
-                ),
-                SizedBox(
-                  width: 270,
+          masterUser == false
+              ? Container()
+              : GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      Navigator.pop(context);
+                      controllerPointer = 21;
+                    });
+                  },
                   child: Container(
-                    margin: EdgeInsets.only(
-                      left: 14,
+                    height: 50,
+                    child: Center(
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: <Widget>[
+                          Container(
+                            margin: EdgeInsets.only(left: 10, bottom: 3),
+                            child: _iconMaster(),
+                          ),
+                          SizedBox(
+                            width: 270,
+                            child: Container(
+                              margin: EdgeInsets.only(left: 14),
+                              child: _text("Master"),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                    child: _text("BT Testes"),
                   ),
                 ),
-              ],
-            ),
-          ),
           GestureDetector(
             onTap: () {
               setState(() {
@@ -317,25 +321,28 @@ class _HomeState extends State<Home> {
                 controllerPointer = 10;
               });
             },
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: <Widget>[
-                Container(
-                  margin: EdgeInsets.only(
-                    left: 10,
-                  ),
-                  child: _iconCreditos(),
-                ),
-                SizedBox(
-                  width: 270,
-                  child: Container(
-                    margin: EdgeInsets.only(
-                      left: 14,
+            child: Container(
+              height: 50,
+              child: Center(
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: <Widget>[
+                    Container(
+                      margin: EdgeInsets.only(left: 10, bottom: 3),
+                      child: _iconCreditos(),
                     ),
-                    child: _text("Meus créditos"),
-                  ),
+                    SizedBox(
+                      width: 270,
+                      child: Container(
+                        margin: EdgeInsets.only(
+                          left: 14,
+                        ),
+                        child: _text("Meus créditos"),
+                      ),
+                    ),
+                  ],
                 ),
-              ],
+              ),
             ),
           ),
           GestureDetector(
@@ -346,25 +353,28 @@ class _HomeState extends State<Home> {
                 return CadastroProduto(userID);
               }));
             },
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: <Widget>[
-                Container(
-                  margin: EdgeInsets.only(
-                    left: 10,
-                  ),
-                  child: _iconCamera(),
-                ),
-                SizedBox(
-                  width: 270,
-                  child: Container(
-                    margin: EdgeInsets.only(
-                      left: 14,
+            child: Container(
+              height: 50,
+              child: Center(
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: <Widget>[
+                    Container(
+                      margin: EdgeInsets.only(left: 10, bottom: 3),
+                      child: _iconCamera(),
                     ),
-                    child: _text("Adicionar anúncio"),
-                  ),
+                    SizedBox(
+                      width: 270,
+                      child: Container(
+                        margin: EdgeInsets.only(
+                          left: 14,
+                        ),
+                        child: _text("Adicionar anúncio"),
+                      ),
+                    ),
+                  ],
                 ),
-              ],
+              ),
             ),
           ),
           GestureDetector(
@@ -374,25 +384,28 @@ class _HomeState extends State<Home> {
                 controllerPointer = 1;
               });
             },
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: <Widget>[
-                Container(
-                  margin: EdgeInsets.only(
-                    left: 10,
-                  ),
-                  child: _iconAnuncios(),
-                ),
-                SizedBox(
-                  width: 270,
-                  child: Container(
-                    margin: EdgeInsets.only(
-                      left: 14,
+            child: Container(
+              height: 50,
+              child: Center(
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: <Widget>[
+                    Container(
+                      margin: EdgeInsets.only(left: 10, bottom: 3),
+                      child: _iconAnuncios(),
                     ),
-                    child: _text("Anúncios"),
-                  ),
+                    SizedBox(
+                      width: 270,
+                      child: Container(
+                        margin: EdgeInsets.only(
+                          left: 14,
+                        ),
+                        child: _text("Anúncios"),
+                      ),
+                    ),
+                  ],
                 ),
-              ],
+              ),
             ),
           ),
           GestureDetector(
@@ -402,24 +415,27 @@ class _HomeState extends State<Home> {
                 controllerPointer = 2;
               });
             },
-            child: Row(
-              children: <Widget>[
-                Container(
-                  margin: EdgeInsets.only(
-                    left: 10,
-                  ),
-                  child: _iconFavoritos(),
-                ),
-                SizedBox(
-                  width: 270,
-                  child: Container(
-                    margin: EdgeInsets.only(
-                      left: 14,
+            child: Container(
+              height: 50,
+              child: Center(
+                child: Row(
+                  children: <Widget>[
+                    Container(
+                      margin: EdgeInsets.only(left: 10, bottom: 3),
+                      child: _iconFavoritos(),
                     ),
-                    child: _text("Favoritos"),
-                  ),
+                    SizedBox(
+                      width: 270,
+                      child: Container(
+                        margin: EdgeInsets.only(
+                          left: 14,
+                        ),
+                        child: _text("Favoritos"),
+                      ),
+                    ),
+                  ],
                 ),
-              ],
+              ),
             ),
           ),
           GestureDetector(
@@ -429,24 +445,27 @@ class _HomeState extends State<Home> {
                 controllerPointer = 3;
               });
             },
-            child: Row(
-              children: <Widget>[
-                Container(
-                  margin: EdgeInsets.only(
-                    left: 10,
-                  ),
-                  child: _iconReservas(),
-                ),
-                SizedBox(
-                  width: 270,
-                  child: Container(
-                    margin: EdgeInsets.only(
-                      left: 14,
+            child: Container(
+              height: 50,
+              child: Center(
+                child: Row(
+                  children: <Widget>[
+                    Container(
+                      margin: EdgeInsets.only(left: 10, bottom: 3),
+                      child: _iconReservas(),
                     ),
-                    child: _text("Reservas"),
-                  ),
+                    SizedBox(
+                      width: 270,
+                      child: Container(
+                        margin: EdgeInsets.only(
+                          left: 14,
+                        ),
+                        child: _text("Reservas"),
+                      ),
+                    ),
+                  ],
                 ),
-              ],
+              ),
             ),
           ),
           GestureDetector(
@@ -456,24 +475,27 @@ class _HomeState extends State<Home> {
                 controllerPointer = 4;
               });
             },
-            child: Row(
-              children: <Widget>[
-                Container(
-                  margin: EdgeInsets.only(
-                    left: 10,
-                  ),
-                  child: _iconHistorico(),
-                ),
-                SizedBox(
-                  width: 270,
-                  child: Container(
-                    margin: EdgeInsets.only(
-                      left: 14,
+            child: Container(
+              height: 50,
+              child: Center(
+                child: Row(
+                  children: <Widget>[
+                    Container(
+                      margin: EdgeInsets.only(left: 10, bottom: 3),
+                      child: _iconHistorico(),
                     ),
-                    child: _text("Histórico"),
-                  ),
+                    SizedBox(
+                      width: 270,
+                      child: Container(
+                        margin: EdgeInsets.only(
+                          left: 14,
+                        ),
+                        child: _text("Histórico"),
+                      ),
+                    ),
+                  ],
                 ),
-              ],
+              ),
             ),
           ),
           GestureDetector(
@@ -483,24 +505,27 @@ class _HomeState extends State<Home> {
                 controllerPointer = 5;
               });
             },
-            child: Row(
-              children: <Widget>[
-                Container(
-                  margin: EdgeInsets.only(
-                    left: 10,
-                  ),
-                  child: _iconMeusProdutos(),
-                ),
-                SizedBox(
-                  width: 270,
-                  child: Container(
-                    margin: EdgeInsets.only(
-                      left: 14,
+            child: Container(
+              height: 50,
+              child: Center(
+                child: Row(
+                  children: <Widget>[
+                    Container(
+                      margin: EdgeInsets.only(left: 10, bottom: 3),
+                      child: _iconMeusProdutos(),
                     ),
-                    child: _text("Meus Produtos"),
-                  ),
+                    SizedBox(
+                      width: 270,
+                      child: Container(
+                        margin: EdgeInsets.only(
+                          left: 14,
+                        ),
+                        child: _text("Meus Produtos"),
+                      ),
+                    ),
+                  ],
                 ),
-              ],
+              ),
             ),
           ),
           /* GestureDetector(
@@ -537,27 +562,29 @@ class _HomeState extends State<Home> {
                 controllerPointer = 7;
               });
             },
-            child: Row(
-              children: <Widget>[
-                Container(
-                  margin: EdgeInsets.only(
-                    left: 10,
-                  ),
-                  child: _iconSuporte(),
-                ),
-                SizedBox(
-                  width: 270,
-                  child: Container(
-                    margin: EdgeInsets.only(
-                      left: 14,
+            child: Container(
+              height: 50,
+              child: Center(
+                child: Row(
+                  children: <Widget>[
+                    Container(
+                      margin: EdgeInsets.only(left: 10, bottom: 3),
+                      child: _iconSuporte(),
                     ),
-                    child: _text("Suporte"),
-                  ),
+                    SizedBox(
+                      width: 270,
+                      child: Container(
+                        margin: EdgeInsets.only(
+                          left: 14,
+                        ),
+                        child: _text("Suporte"),
+                      ),
+                    ),
+                  ],
                 ),
-              ],
+              ),
             ),
           ),
-
           GestureDetector(
             onTap: () {
               setState(() {
@@ -565,24 +592,27 @@ class _HomeState extends State<Home> {
                 controllerPointer = 7;
               });
             },
-            child: Row(
-              children: <Widget>[
-                Container(
-                  margin: EdgeInsets.only(
-                    left: 10,
-                  ),
-                  child: _iconConfig(),
-                ),
-                SizedBox(
-                  width: 270,
-                  child: Container(
-                    margin: EdgeInsets.only(
-                      left: 14,
+            child: Container(
+              height: 50,
+              child: Center(
+                child: Row(
+                  children: <Widget>[
+                    Container(
+                      margin: EdgeInsets.only(left: 10, bottom: 3),
+                      child: _iconConfig(),
                     ),
-                    child: _text("Configurações"),
-                  ),
+                    SizedBox(
+                      width: 270,
+                      child: Container(
+                        margin: EdgeInsets.only(
+                          left: 14,
+                        ),
+                        child: _text("Configurações"),
+                      ),
+                    ),
+                  ],
                 ),
-              ],
+              ),
             ),
           ),
           GestureDetector(
@@ -592,24 +622,27 @@ class _HomeState extends State<Home> {
                 controllerPointer = 8;
               });
             },
-            child: Row(
-              children: <Widget>[
-                Container(
-                  margin: EdgeInsets.only(
-                    left: 10,
-                  ),
-                  child: _iconFAQ(),
-                ),
-                SizedBox(
-                  width: 270,
-                  child: Container(
-                    margin: EdgeInsets.only(
-                      left: 14,
+            child: Container(
+              height: 50,
+              child: Center(
+                child: Row(
+                  children: <Widget>[
+                    Container(
+                      margin: EdgeInsets.only(left: 10, bottom: 3),
+                      child: _iconFAQ(),
                     ),
-                    child: _text("FAQ"),
-                  ),
+                    SizedBox(
+                      width: 270,
+                      child: Container(
+                        margin: EdgeInsets.only(
+                          left: 14,
+                        ),
+                        child: _text("FAQ"),
+                      ),
+                    ),
+                  ],
                 ),
-              ],
+              ),
             ),
           ),
           GestureDetector(
@@ -619,24 +652,25 @@ class _HomeState extends State<Home> {
                 alertExit(context);
               });
             },
-            child: Row(
-              children: <Widget>[
-                Container(
-                  margin: EdgeInsets.only(
-                    left: 10,
+            child: Container(
+              height: 50,
+              child: Row(
+                children: <Widget>[
+                  Container(
+                    margin: EdgeInsets.only(left: 10, bottom: 3),
+                    child: _iconExit(),
                   ),
-                  child: _iconExit(),
-                ),
-                SizedBox(
-                  width: 270,
-                  child: Container(
-                    margin: EdgeInsets.only(
-                      left: 14,
+                  SizedBox(
+                    width: 270,
+                    child: Container(
+                      margin: EdgeInsets.only(
+                        left: 14,
+                      ),
+                      child: _text("Sair"),
                     ),
-                    child: _text("Sair"),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ],
@@ -661,12 +695,12 @@ class _HomeState extends State<Home> {
             color: Colors.white,
             child: urlImgPerfil == null
                 ? Center(
-              child: CircularProgressIndicator(),
-            )
+                    child: CircularProgressIndicator(),
+                  )
                 : Image.network(
-              urlImgPerfil,
-              fit: BoxFit.cover,
-            ),
+                    urlImgPerfil,
+                    fit: BoxFit.cover,
+                  ),
           ),
         ),
       ),
@@ -751,6 +785,14 @@ class _HomeState extends State<Home> {
   _iconAnuncios() {
     return Icon(
       Icons.grid_on,
+      color: Colors.black54,
+      size: 24.0,
+    );
+  }
+
+  _iconMaster() {
+    return Icon(
+      Icons.error,
       color: Colors.black54,
       size: 24.0,
     );
@@ -877,15 +919,13 @@ class _HomeState extends State<Home> {
       snapshot.documents.forEach((f) {
         Map userData = f.data;
 
-        String name = userData["nome"];
-        String email = userData["email"];
-        String img = userData["imgURL"];
-        String address = userData["userAddress"];
-
-        sharedPreferencesController.setName(name);
-        sharedPreferencesController.setAddress(address);
-        sharedPreferencesController.setURLImg(img);
-        sharedPreferencesController.setEmail(email);
+        if (userData["master"] != null) {
+          masterUser = true;
+        }
+        sharedPreferencesController.setName(userData["nome"]);
+        sharedPreferencesController.setAddress(userData["userAddress"]);
+        sharedPreferencesController.setURLImg(userData["imgURL"]);
+        sharedPreferencesController.setEmail(userData["email"]);
       });
     });
   }
