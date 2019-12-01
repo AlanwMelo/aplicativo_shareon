@@ -3,7 +3,6 @@ import 'dart:io';
 
 import 'package:aplicativo_shareon/models/usuario_model.dart';
 import 'package:aplicativo_shareon/telas/tela_cadastro_produto.dart';
-import 'package:aplicativo_shareon/telas/tela_chat.dart';
 import 'package:aplicativo_shareon/telas/tela_configuracoes.dart';
 import 'package:aplicativo_shareon/telas/tela_creditos.dart';
 import 'package:aplicativo_shareon/telas/tela_de_testes.dart';
@@ -138,14 +137,12 @@ class _HomeState extends State<Home> {
     } else if (controllerPointer == 5) {
       return homeMeusProdutos();
     } else if (controllerPointer == 6) {
-      return homeChat();
-    } else if (controllerPointer == 7) {
       return homeSuporte();
-    } else if (controllerPointer == 8) {
+    } else if (controllerPointer == 7) {
       return homeConfigurcoes();
-    } else if (controllerPointer == 9) {
+    } else if (controllerPointer == 8) {
       return homeFAQ();
-    } else if (controllerPointer == 10) {
+    } else if (controllerPointer == 9) {
       return Creditos();
     } else if (controllerPointer == 21) {
       return tela_testes();
@@ -202,15 +199,16 @@ class _HomeState extends State<Home> {
                                 decoration: TextDecoration.none,
                                 fontWeight: FontWeight.bold,
                                 color: Colors.black,
-                                fontSize: 25,
+                                fontSize: 24,
                               ),
                             ),
                           ),
                           Text(
                             "Deseja mesmo sair do app?",
                             style: TextStyle(
+                              fontFamily: 'RobotoMono',
                               color: Colors.black,
-                              fontSize: 15,
+                              fontSize: 16,
                               fontWeight: FontWeight.bold,
                               decoration: TextDecoration.none,
                             ),
@@ -304,7 +302,7 @@ class _HomeState extends State<Home> {
                   width: 270,
                   child: Container(
                     margin: EdgeInsets.only(
-                      left: 15,
+                      left: 14,
                     ),
                     child: _text("BT Testes"),
                   ),
@@ -332,7 +330,7 @@ class _HomeState extends State<Home> {
                   width: 270,
                   child: Container(
                     margin: EdgeInsets.only(
-                      left: 15,
+                      left: 14,
                     ),
                     child: _text("Meus créditos"),
                   ),
@@ -361,7 +359,7 @@ class _HomeState extends State<Home> {
                   width: 270,
                   child: Container(
                     margin: EdgeInsets.only(
-                      left: 15,
+                      left: 14,
                     ),
                     child: _text("Adicionar anúncio"),
                   ),
@@ -389,7 +387,7 @@ class _HomeState extends State<Home> {
                   width: 270,
                   child: Container(
                     margin: EdgeInsets.only(
-                      left: 15,
+                      left: 14,
                     ),
                     child: _text("Anúncios"),
                   ),
@@ -416,7 +414,7 @@ class _HomeState extends State<Home> {
                   width: 270,
                   child: Container(
                     margin: EdgeInsets.only(
-                      left: 15,
+                      left: 14,
                     ),
                     child: _text("Favoritos"),
                   ),
@@ -443,7 +441,7 @@ class _HomeState extends State<Home> {
                   width: 270,
                   child: Container(
                     margin: EdgeInsets.only(
-                      left: 15,
+                      left: 14,
                     ),
                     child: _text("Reservas"),
                   ),
@@ -470,7 +468,7 @@ class _HomeState extends State<Home> {
                   width: 270,
                   child: Container(
                     margin: EdgeInsets.only(
-                      left: 15,
+                      left: 14,
                     ),
                     child: _text("Histórico"),
                   ),
@@ -497,7 +495,7 @@ class _HomeState extends State<Home> {
                   width: 270,
                   child: Container(
                     margin: EdgeInsets.only(
-                      left: 15,
+                      left: 14,
                     ),
                     child: _text("Meus Produtos"),
                   ),
@@ -551,7 +549,7 @@ class _HomeState extends State<Home> {
                   width: 270,
                   child: Container(
                     margin: EdgeInsets.only(
-                      left: 15,
+                      left: 14,
                     ),
                     child: _text("Suporte"),
                   ),
@@ -564,7 +562,7 @@ class _HomeState extends State<Home> {
             onTap: () {
               setState(() {
                 Navigator.pop(context);
-                controllerPointer = 8;
+                controllerPointer = 7;
               });
             },
             child: Row(
@@ -579,7 +577,7 @@ class _HomeState extends State<Home> {
                   width: 270,
                   child: Container(
                     margin: EdgeInsets.only(
-                      left: 15,
+                      left: 14,
                     ),
                     child: _text("Configurações"),
                   ),
@@ -591,7 +589,7 @@ class _HomeState extends State<Home> {
             onTap: () {
               setState(() {
                 Navigator.pop(context);
-                controllerPointer = 9;
+                controllerPointer = 8;
               });
             },
             child: Row(
@@ -606,7 +604,7 @@ class _HomeState extends State<Home> {
                   width: 270,
                   child: Container(
                     margin: EdgeInsets.only(
-                      left: 15,
+                      left: 14,
                     ),
                     child: _text("FAQ"),
                   ),
@@ -633,7 +631,7 @@ class _HomeState extends State<Home> {
                   width: 270,
                   child: Container(
                     margin: EdgeInsets.only(
-                      left: 15,
+                      left: 14,
                     ),
                     child: _text("Sair"),
                   ),
@@ -680,7 +678,7 @@ class _HomeState extends State<Home> {
       userName,
       style: TextStyle(
         color: Colors.white,
-        fontSize: 25,
+        fontSize: 24,
         fontWeight: FontWeight.bold,
       ),
     );
@@ -691,7 +689,7 @@ class _HomeState extends State<Home> {
       userMail,
       style: TextStyle(
         color: Colors.white,
-        fontSize: 15,
+        fontSize: 16,
         fontWeight: FontWeight.normal,
       ),
     );
@@ -744,7 +742,7 @@ class _HomeState extends State<Home> {
       x,
       style: TextStyle(
         color: Colors.black54,
-        fontSize: 20,
+        fontSize: 24,
         fontWeight: FontWeight.bold,
       ),
     );
@@ -754,7 +752,7 @@ class _HomeState extends State<Home> {
     return Icon(
       Icons.grid_on,
       color: Colors.black54,
-      size: 20.0,
+      size: 24.0,
     );
   }
 
@@ -762,7 +760,7 @@ class _HomeState extends State<Home> {
     return Icon(
       Icons.monetization_on,
       color: Colors.black54,
-      size: 20.0,
+      size: 24.0,
     );
   }
 
@@ -770,7 +768,7 @@ class _HomeState extends State<Home> {
     return Icon(
       Icons.camera_alt,
       color: Colors.black54,
-      size: 20.0,
+      size: 24.0,
     );
   }
 
@@ -778,7 +776,7 @@ class _HomeState extends State<Home> {
     return Icon(
       Icons.star,
       color: Colors.black54,
-      size: 20.0,
+      size: 24.0,
     );
   }
 
@@ -786,7 +784,7 @@ class _HomeState extends State<Home> {
     return Icon(
       Icons.playlist_add_check,
       color: Colors.black54,
-      size: 20.0,
+      size: 24.0,
     );
   }
 
@@ -794,7 +792,7 @@ class _HomeState extends State<Home> {
     return Icon(
       Icons.history,
       color: Colors.black54,
-      size: 20.0,
+      size: 24.0,
     );
   }
 
@@ -802,30 +800,23 @@ class _HomeState extends State<Home> {
     return Icon(
       Icons.assignment,
       color: Colors.black54,
-      size: 20.0,
+      size: 24.0,
     );
   }
-
-  // _iconChat() {
-  //   return Icon(
-  //     Icons.question_answer,
-  //     color: Colors.black54,
-  //     size: 20.0,
-  //   );
-  // }
 
   _iconSuporte() {
     return Icon(
       Icons.assistant,
       color: Colors.black54,
-      size: 20.0,
+      size: 24.0,
     );
   }
+
   _iconFAQ() {
     return Icon(
       Icons.help_outline,
       color: Colors.black54,
-      size: 20.0,
+      size: 24.0,
     );
   }
 
@@ -833,7 +824,7 @@ class _HomeState extends State<Home> {
     return Icon(
       Icons.settings,
       color: Colors.black54,
-      size: 20.0,
+      size: 24.0,
     );
   }
 
@@ -841,7 +832,7 @@ class _HomeState extends State<Home> {
     return Icon(
       Icons.exit_to_app,
       color: Colors.black54,
-      size: 20.0,
+      size: 24.0,
     );
   }
 

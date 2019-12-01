@@ -21,14 +21,14 @@ listaAvaliacoesBuilder() {
     itemExtent: 10,
     itemBuilder: (BuildContext context, int index) {
       return GestureDetector(
-        onTap: () => _OnClick(context),
+        onTap: () => _onClick(context),
         child: Text("AAAAAAAAAAAAAAAAAAAAA"),
       );
     },
   );
 }
 
-_OnClick(BuildContext context) {
+_onClick(BuildContext context) {
   Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) {
     return ProdutoSelecionado(productID: null,);
   }));
