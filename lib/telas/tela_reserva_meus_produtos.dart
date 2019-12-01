@@ -583,6 +583,7 @@ class _TelaReservaMeusProdutosState extends State<TelaReservaMeusProdutos> {
       },
     );
   }
+
   _aprovarReserva(BuildContext context) {
     return showDialog(
       context: context,
@@ -711,5 +712,10 @@ class _TelaReservaMeusProdutosState extends State<TelaReservaMeusProdutos> {
         duration: 3,
         gravity: Toast.BOTTOM,
         backgroundColor: Colors.black.withOpacity(0.8));
+
+    Navigator.of(context)
+        .pushReplacement(MaterialPageRoute(builder: (BuildContext context) {
+      return Home(optionalControllerPointer: 3);
+    }));
   }
 }
