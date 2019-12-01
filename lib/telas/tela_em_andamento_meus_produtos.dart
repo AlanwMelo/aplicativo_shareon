@@ -53,11 +53,11 @@ class _TelaEmAndamentoMeusProdutosState
       body: loading == false
           ? loadData(context)
           : Container(
-        color: Colors.white,
-        child: Center(
-          child: CircularProgressIndicator(),
-        ),
-      ),
+              color: Colors.white,
+              child: Center(
+                child: CircularProgressIndicator(),
+              ),
+            ),
       backgroundColor: Colors.indigoAccent,
     );
   }
@@ -74,51 +74,27 @@ class _TelaEmAndamentoMeusProdutosState
         finalStartDate = solicitationData["finalStartDate"];
         solicitationStatus = solicitationData["status"];
 
-        int convertedStartDay = finalStartDate
-            .toDate()
-            .day;
-        int convertedStartMonth = finalStartDate
-            .toDate()
-            .month;
-        int convertedStartYear = finalStartDate
-            .toDate()
-            .year;
+        int convertedStartDay = finalStartDate.toDate().day;
+        int convertedStartMonth = finalStartDate.toDate().month;
+        int convertedStartYear = finalStartDate.toDate().year;
 
-        int convertedStartHour = finalStartDate
-            .toDate()
-            .hour;
-        int convertedStartMinute = finalStartDate
-            .toDate()
-            .minute;
+        int convertedStartHour = finalStartDate.toDate().hour;
+        int convertedStartMinute = finalStartDate.toDate().minute;
         convertedEstimatedStartDate =
-        "${convertedStartDay.toString().padLeft(2, "0")}/${convertedStartMonth
-            .toString().padLeft(2, "0")}/${convertedStartYear.toString()} às "
-            "${convertedStartHour.toString().padLeft(
-            2, "0")}:${convertedStartMinute.toString().padLeft(2, "0")}";
+            "${convertedStartDay.toString().padLeft(2, "0")}/${convertedStartMonth.toString().padLeft(2, "0")}/${convertedStartYear.toString()} às "
+            "${convertedStartHour.toString().padLeft(2, "0")}:${convertedStartMinute.toString().padLeft(2, "0")}";
 
         programedEndDate = solicitationData["programedEndDate"];
 
-        int convertedEndDay = finalStartDate
-            .toDate()
-            .day;
-        int convertedEndMonth = finalStartDate
-            .toDate()
-            .month;
-        int convertedEndYear = finalStartDate
-            .toDate()
-            .year;
+        int convertedEndDay = finalStartDate.toDate().day;
+        int convertedEndMonth = finalStartDate.toDate().month;
+        int convertedEndYear = finalStartDate.toDate().year;
 
-        int convertedEndHour = programedEndDate
-            .toDate()
-            .hour;
-        int convertedEndMinute = programedEndDate
-            .toDate()
-            .minute;
+        int convertedEndHour = programedEndDate.toDate().hour;
+        int convertedEndMinute = programedEndDate.toDate().minute;
         convertedEstimatedEndDate =
-        "${convertedEndDay.toString().padLeft(2, "0")}/${convertedEndMonth
-            .toString().padLeft(2, "0")}/${convertedEndYear.toString()} às "
-            "${convertedEndHour.toString().padLeft(2, "0")}:${convertedEndMinute
-            .toString().padLeft(2, "0")}";
+            "${convertedEndDay.toString().padLeft(2, "0")}/${convertedEndMonth.toString().padLeft(2, "0")}/${convertedEndYear.toString()} às "
+            "${convertedEndHour.toString().padLeft(2, "0")}:${convertedEndMinute.toString().padLeft(2, "0")}";
 
         var aux = solicitationData["estimatedEndPrice"];
         actualPrice = aux.toDouble();
@@ -178,13 +154,13 @@ class _TelaEmAndamentoMeusProdutosState
                       child: _text("Retirada: $convertedEstimatedStartDate"),
                     ),
                     Container(
-                        margin: EdgeInsets.only(top: 8),
-                        child: Row(
-                          children: <Widget>[
-                            _text("Devolução: "),
-                            _textDevolucao(),
-                          ],
-                        ),
+                      margin: EdgeInsets.only(top: 8),
+                      child: Row(
+                        children: <Widget>[
+                          _text("Devolução: "),
+                          _textDevolucao(),
+                        ],
+                      ),
                     ),
                     Container(
                       margin: EdgeInsets.only(top: 8),
@@ -325,7 +301,7 @@ class _TelaEmAndamentoMeusProdutosState
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: <Widget>[
           Container(
-            width: 350,
+            width: 320,
             child: RaisedButton(
               color: Colors.white,
               onPressed: () {
@@ -351,9 +327,7 @@ class _TelaEmAndamentoMeusProdutosState
     DateTime retirada = DateTime.fromMillisecondsSinceEpoch(
         finalStartDate.millisecondsSinceEpoch);
     DateTime horaAtual = DateTime.now();
-    duracao = (horaAtual
-        .difference(retirada)
-        .inMinutes);
+    duracao = (horaAtual.difference(retirada).inMinutes);
 
     double totalOfMins = duracao.toDouble();
     double dias = totalOfMins / 1440;
@@ -422,7 +396,8 @@ class _TelaEmAndamentoMeusProdutosState
   }
 
   _textDevolucao() {
-    DateTime aux = DateTime.fromMillisecondsSinceEpoch(programedEndDate.millisecondsSinceEpoch);
+    DateTime aux = DateTime.fromMillisecondsSinceEpoch(
+        programedEndDate.millisecondsSinceEpoch);
     if (aux.isAfter(DateTime.now())) {
       return Text(
         convertedEstimatedEndDate,
@@ -432,8 +407,7 @@ class _TelaEmAndamentoMeusProdutosState
           fontSize: 20,
         ),
       );
-    }
-    else {
+    } else {
       return _text("$convertedEstimatedEndDate");
     }
   }
