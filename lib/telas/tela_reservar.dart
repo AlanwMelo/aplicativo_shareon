@@ -101,6 +101,7 @@ class _TelaReservarState extends State<TelaReservar> {
             child: Container(
               height: 720,
               child: Column(
+                mainAxisSize: MainAxisSize.min,
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
                   _text(productName, titulo: true),
@@ -114,6 +115,7 @@ class _TelaReservarState extends State<TelaReservar> {
                   Container(
                     margin: EdgeInsets.all(8),
                     child: Column(
+                      mainAxisSize: MainAxisSize.min,
                       children: <Widget>[
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -190,6 +192,7 @@ class _TelaReservarState extends State<TelaReservar> {
                   ),
                   Container(
                     child: Column(
+                      mainAxisSize: MainAxisSize.min,
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: <Widget>[
                         Container(
@@ -245,12 +248,12 @@ class _TelaReservarState extends State<TelaReservar> {
               child: GestureDetector(
                 onTap: () => null,
                 child: Container(
-                  height: 350,
                   child: Container(
                     color: Colors.white,
                     child: Container(
                       color: Colors.grey[200],
                       child: Column(
+                        mainAxisSize: MainAxisSize.min,
                         children: <Widget>[
                           Container(
                             margin: EdgeInsets.only(bottom: 8, top: 8),
@@ -267,6 +270,7 @@ class _TelaReservarState extends State<TelaReservar> {
                           Container(
                             padding: EdgeInsets.all(12),
                             child: Column(
+                              mainAxisSize: MainAxisSize.min,
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: <Widget>[
                                 Container(
@@ -351,55 +355,53 @@ class _TelaReservarState extends State<TelaReservar> {
                               ],
                             ),
                           ),
-                          Expanded(
-                            child: Container(
-                              color: Colors.indigoAccent,
-                              child: Row(
-                                children: <Widget>[
-                                  Expanded(
-                                    child: Container(
-                                      height: 70,
-                                      child: RaisedButton(
-                                        color: Colors.indigoAccent,
-                                        onPressed: () {
-                                          setState(() {
-                                            Navigator.pop(context);
-                                            _solicitaReserva();
-                                          });
-                                        },
-                                        child: Text(
-                                          "Confirmar Solicitação",
-                                          textAlign: TextAlign.center,
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.white,
-                                          ),
+                          Container(
+                            color: Colors.indigoAccent,
+                            child: Row(
+                              children: <Widget>[
+                                Expanded(
+                                  child: Container(
+                                    height: 70,
+                                    child: RaisedButton(
+                                      color: Colors.indigoAccent,
+                                      onPressed: () {
+                                        setState(() {
+                                          Navigator.pop(context);
+                                          _solicitaReserva();
+                                        });
+                                      },
+                                      child: Text(
+                                        "Confirmar Solicitação",
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.white,
                                         ),
                                       ),
                                     ),
                                   ),
-                                  Expanded(
-                                    child: Container(
-                                      height: 70,
-                                      child: RaisedButton(
-                                        color: Colors.indigoAccent,
-                                        onPressed: () {
-                                          setState(() {
-                                            Navigator.pop(context);
-                                          });
-                                        },
-                                        child: Text(
-                                          "Cancelar",
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.white,
-                                          ),
+                                ),
+                                Expanded(
+                                  child: Container(
+                                    height: 70,
+                                    child: RaisedButton(
+                                      color: Colors.indigoAccent,
+                                      onPressed: () {
+                                        setState(() {
+                                          Navigator.pop(context);
+                                        });
+                                      },
+                                      child: Text(
+                                        "Cancelar",
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.white,
                                         ),
                                       ),
                                     ),
                                   ),
-                                ],
-                              ),
+                                ),
+                              ],
                             ),
                           ),
                         ],
@@ -428,12 +430,12 @@ class _TelaReservarState extends State<TelaReservar> {
               child: GestureDetector(
                 onTap: () => null,
                 child: Container(
-                  height: 380,
                   child: Container(
                     color: Colors.white,
                     child: Container(
                       color: Colors.grey[200],
                       child: Column(
+                        mainAxisSize: MainAxisSize.min,
                         children: <Widget>[
                           Container(
                             margin: EdgeInsets.only(bottom: 8, top: 8),
@@ -450,6 +452,7 @@ class _TelaReservarState extends State<TelaReservar> {
                           Container(
                             padding: EdgeInsets.all(12),
                             child: Column(
+                              mainAxisSize: MainAxisSize.min,
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: <Widget>[
                                 Container(
@@ -524,58 +527,56 @@ class _TelaReservarState extends State<TelaReservar> {
                               ],
                             ),
                           ),
-                          Expanded(
-                            child: Container(
-                              color: Colors.indigoAccent,
-                              child: Row(
-                                children: <Widget>[
-                                  Expanded(
-                                    child: Container(
-                                      height: 70,
-                                      child: RaisedButton(
-                                        color: Colors.indigoAccent,
-                                        onPressed: () {
-                                          setState(() {
-                                            Navigator.pop(context);
-                                            Navigator.of(context).push(
-                                                MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        Creditos()));
-                                          });
-                                        },
-                                        child: Text(
-                                          "Comprar mais créditos",
-                                          textAlign: TextAlign.center,
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.white,
-                                          ),
+                          Container(
+                            color: Colors.indigoAccent,
+                            child: Row(
+                              children: <Widget>[
+                                Expanded(
+                                  child: Container(
+                                    height: 70,
+                                    child: RaisedButton(
+                                      color: Colors.indigoAccent,
+                                      onPressed: () {
+                                        setState(() {
+                                          Navigator.pop(context);
+                                          Navigator.of(context).push(
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      Creditos()));
+                                        });
+                                      },
+                                      child: Text(
+                                        "Comprar mais créditos",
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.white,
                                         ),
                                       ),
                                     ),
                                   ),
-                                  Expanded(
-                                    child: Container(
-                                      height: 70,
-                                      child: RaisedButton(
-                                        color: Colors.indigoAccent,
-                                        onPressed: () {
-                                          setState(() {
-                                            Navigator.pop(context);
-                                          });
-                                        },
-                                        child: Text(
-                                          "Ajustar",
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.white,
-                                          ),
+                                ),
+                                Expanded(
+                                  child: Container(
+                                    height: 70,
+                                    child: RaisedButton(
+                                      color: Colors.indigoAccent,
+                                      onPressed: () {
+                                        setState(() {
+                                          Navigator.pop(context);
+                                        });
+                                      },
+                                      child: Text(
+                                        "Ajustar",
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.white,
                                         ),
                                       ),
                                     ),
                                   ),
-                                ],
-                              ),
+                                ),
+                              ],
                             ),
                           ),
                         ],
@@ -962,6 +963,7 @@ class _TelaReservarState extends State<TelaReservar> {
       "programedEndDate": Timestamp.fromDate(dataFim),
       "estimatedEndPrice": valorEstimado,
       "estimatedDuration": duracao,
+      "ownerID": productOwnerID,
       "requesterID": userID,
       "status": status,
       "motivoStatus": motivo,
