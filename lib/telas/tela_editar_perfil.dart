@@ -87,8 +87,9 @@ class _EditarPerfilState extends State<EditarPerfil> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: Text('Perfil'),
+        title: Text('Editar perfil'),
         elevation: 0,
+        centerTitle: true,
         backgroundColor: Colors.indigoAccent,
         leading: IconButton(
           icon: Icon(Icons.arrow_back_ios),
@@ -269,9 +270,10 @@ class _EditarPerfilState extends State<EditarPerfil> {
                       child: Row(
                         children: <Widget>[
                           _icGPS(),
-                          Container(
-                            width: 280,
-                            child: _text(userAddress),
+                          Expanded(
+                            child: Container(
+                              child: _text(userAddress),
+                            ),
                           ),
                         ],
                       ),
@@ -281,6 +283,7 @@ class _EditarPerfilState extends State<EditarPerfil> {
                     color: Colors.white,
                     margin: const EdgeInsets.only(top: 25.0),
                     child: Column(
+                      mainAxisSize: MainAxisSize.min,
                       children: <Widget>[
                         Text("Somente dados alterados serão salvos"),
                         Container(
@@ -636,15 +639,16 @@ class _EditarPerfilState extends State<EditarPerfil> {
               child: GestureDetector(
                 onTap: () => null,
                 child: Container(
-                  height: 350,
                   child: Container(
                     color: Colors.white,
                     child: Container(
                       color: Colors.grey[200],
                       child: Column(
+                        mainAxisSize: MainAxisSize.min,
                         children: <Widget>[
                           Container(
                             margin: EdgeInsets.only(bottom: 8, top: 8),
+                            height: 30,
                             child: Text(
                               "Confirmação",
                               style: TextStyle(
@@ -659,9 +663,11 @@ class _EditarPerfilState extends State<EditarPerfil> {
                               ? Container()
                               : Container(
                                   child: Column(
+                                    mainAxisSize: MainAxisSize.min,
                                     children: <Widget>[
                                       Container(
                                         child: Column(
+                                          mainAxisSize: MainAxisSize.min,
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
                                           children: <Widget>[
@@ -677,7 +683,7 @@ class _EditarPerfilState extends State<EditarPerfil> {
                                             ),
                                             Container(
                                               margin: EdgeInsets.only(
-                                                  right: 8, left: 8),
+                                                  right: 8, left: 8, bottom: 8),
                                               child: Row(
                                                 children: <Widget>[
                                                   _textConfirmacao(
@@ -695,6 +701,7 @@ class _EditarPerfilState extends State<EditarPerfil> {
                               ? Container()
                               : Container(
                                   child: Column(
+                                    mainAxisSize: MainAxisSize.min,
                                     children: <Widget>[
                                       Container(
                                         margin: EdgeInsets.only(
@@ -723,6 +730,7 @@ class _EditarPerfilState extends State<EditarPerfil> {
                               ? Container()
                               : Container(
                                   child: Column(
+                                    mainAxisSize: MainAxisSize.min,
                                     children: <Widget>[
                                       Container(
                                         margin: EdgeInsets.only(
@@ -763,62 +771,61 @@ class _EditarPerfilState extends State<EditarPerfil> {
                                   child: _textConfirmacao("Imagem alterada",
                                       titulo: true),
                                 ),
-                          Expanded(
-                            child: Container(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.end,
-                                children: <Widget>[
-                                  Container(
-                                    color: Colors.indigoAccent,
-                                    child: Row(
-                                      children: <Widget>[
-                                        Expanded(
-                                          child: Container(
-                                            height: 70,
-                                            child: RaisedButton(
-                                              color: Colors.indigoAccent,
-                                              onPressed: () {
-                                                setState(() {
-                                                  Navigator.pop(context);
-                                                  _validaSenha();
-                                                });
-                                              },
-                                              child: Text(
-                                                "Confirmar alterações",
-                                                textAlign: TextAlign.center,
-                                                style: TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Colors.white,
-                                                ),
+                          Container(
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: <Widget>[
+                                Container(
+                                  color: Colors.indigoAccent,
+                                  child: Row(
+                                    children: <Widget>[
+                                      Expanded(
+                                        child: Container(
+                                          height: 60,
+                                          child: RaisedButton(
+                                            color: Colors.indigoAccent,
+                                            onPressed: () {
+                                              setState(() {
+                                                Navigator.pop(context);
+                                                _validaSenha();
+                                              });
+                                            },
+                                            child: Text(
+                                              "Confirmar alterações",
+                                              textAlign: TextAlign.center,
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.white,
                                               ),
                                             ),
                                           ),
                                         ),
-                                        Expanded(
-                                          child: Container(
-                                            height: 70,
-                                            child: RaisedButton(
-                                              color: Colors.indigoAccent,
-                                              onPressed: () {
-                                                setState(() {
-                                                  Navigator.pop(context);
-                                                });
-                                              },
-                                              child: Text(
-                                                "Cancelar",
-                                                style: TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Colors.white,
-                                                ),
+                                      ),
+                                      Expanded(
+                                        child: Container(
+                                          height: 60,
+                                          child: RaisedButton(
+                                            color: Colors.indigoAccent,
+                                            onPressed: () {
+                                              setState(() {
+                                                Navigator.pop(context);
+                                              });
+                                            },
+                                            child: Text(
+                                              "Cancelar",
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.white,
                                               ),
                                             ),
                                           ),
                                         ),
-                                      ],
-                                    ),
+                                      ),
+                                    ],
                                   ),
-                                ],
-                              ),
+                                ),
+                              ],
                             ),
                           ),
                         ],
@@ -849,10 +856,10 @@ class _EditarPerfilState extends State<EditarPerfil> {
                   onTap: () => null,
                   child: Container(
                     color: Colors.white,
-                    height: 160,
                     width: 300,
                     child: Container(
                       child: Column(
+                        mainAxisSize: MainAxisSize.min,
                         children: <Widget>[
                           Container(
                             margin: EdgeInsets.only(bottom: 8, top: 8),
@@ -871,53 +878,51 @@ class _EditarPerfilState extends State<EditarPerfil> {
                             child: _textConfirmacao(
                                 "Deseja mesmo voltar? Os dados preenchidos serão perdidos"),
                           ),
-                          Expanded(
-                            child: Container(
-                              color: Colors.indigoAccent,
-                              margin: EdgeInsets.only(
-                                top: 8,
-                              ),
-                              child: Row(
-                                children: <Widget>[
-                                  Expanded(
-                                    child: Container(
-                                      height: 100,
-                                      child: RaisedButton(
-                                        color: Colors.indigoAccent,
-                                        onPressed: () {
-                                          Navigator.of(context).pop();
-                                          Navigator.of(context).pop();
-                                        },
-                                        child: Text(
-                                          "Voltar",
-                                          style: TextStyle(
-                                            color: Colors.white,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  Expanded(
-                                    child: Container(
-                                      height: 100,
-                                      child: RaisedButton(
-                                        color: Colors.indigoAccent,
-                                        onPressed: () {
-                                          Navigator.pop(context);
-                                        },
-                                        child: Text(
-                                          "Cancelar",
-                                          style: TextStyle(
-                                            color: Colors.white,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
+                          Container(
+                            color: Colors.indigoAccent,
+                            margin: EdgeInsets.only(
+                              top: 8,
                             ),
-                          )
+                            child: Row(
+                              children: <Widget>[
+                                Expanded(
+                                  child: Container(
+                                    height: 60,
+                                    child: RaisedButton(
+                                      color: Colors.indigoAccent,
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                        Navigator.of(context).pop();
+                                      },
+                                      child: Text(
+                                        "Voltar",
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                Expanded(
+                                  child: Container(
+                                    height: 60,
+                                    child: RaisedButton(
+                                      color: Colors.indigoAccent,
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                      },
+                                      child: Text(
+                                        "Cancelar",
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
                         ],
                       ),
                     ),
@@ -979,12 +984,12 @@ class _EditarPerfilState extends State<EditarPerfil> {
               child: GestureDetector(
                 onTap: () => null,
                 child: Container(
-                  height: 220,
                   child: Container(
                     color: Colors.white,
                     child: Container(
                       color: Colors.grey[200],
                       child: Column(
+                        mainAxisSize: MainAxisSize.min,
                         children: <Widget>[
                           Container(
                             margin: EdgeInsets.only(bottom: 8, top: 8),
@@ -1000,9 +1005,11 @@ class _EditarPerfilState extends State<EditarPerfil> {
                           ),
                           Container(
                             child: Column(
+                              mainAxisSize: MainAxisSize.min,
                               children: <Widget>[
                                 Container(
                                   child: Column(
+                                    mainAxisSize: MainAxisSize.min,
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: <Widget>[
@@ -1043,51 +1050,50 @@ class _EditarPerfilState extends State<EditarPerfil> {
                               ),
                             ),
                           ),
-                          Expanded(
-                            child: Container(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.end,
-                                children: <Widget>[
-                                  Container(
-                                    color: Colors.indigoAccent,
-                                    child: Row(
-                                      children: <Widget>[
-                                        Expanded(
-                                          child: Container(
-                                            height: 70,
-                                            child: RaisedButton(
-                                              color: Colors.indigoAccent,
-                                              onPressed: () async {
-                                                FocusScope.of(context)
-                                                    .requestFocus(
-                                                        new FocusNode());
-                                                if (fieldPass.currentState
-                                                    .validate()) {
-                                                  if (validaSenhaController
-                                                          .text !=
-                                                      actualPass) {
-                                                    _toast("Senha incorreta",
-                                                        context);
-                                                  } else {
-                                                    _atualizaDados();
-                                                  }
+                          Container(
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: <Widget>[
+                                Container(
+                                  color: Colors.indigoAccent,
+                                  child: Row(
+                                    children: <Widget>[
+                                      Expanded(
+                                        child: Container(
+                                          height: 70,
+                                          child: RaisedButton(
+                                            color: Colors.indigoAccent,
+                                            onPressed: () async {
+                                              FocusScope.of(context)
+                                                  .requestFocus(
+                                                      new FocusNode());
+                                              if (fieldPass.currentState
+                                                  .validate()) {
+                                                if (validaSenhaController
+                                                        .text !=
+                                                    actualPass) {
+                                                  _toast("Senha incorreta",
+                                                      context);
+                                                } else {
+                                                  _atualizaDados();
                                                 }
-                                              },
-                                              child: Text(
-                                                "OK",
-                                                style: TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Colors.white,
-                                                ),
+                                              }
+                                            },
+                                            child: Text(
+                                              "OK",
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.white,
                                               ),
                                             ),
                                           ),
                                         ),
-                                      ],
-                                    ),
+                                      ),
+                                    ],
                                   ),
-                                ],
-                              ),
+                                ),
+                              ],
                             ),
                           ),
                         ],
