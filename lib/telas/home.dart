@@ -16,7 +16,6 @@ import 'package:aplicativo_shareon/telas/tela_suporte.dart';
 import 'package:aplicativo_shareon/utils/shareon_appbar.dart';
 import 'package:aplicativo_shareon/utils/timer_reserva.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';

@@ -5,6 +5,7 @@ import 'dart:math';
 import 'dart:typed_data';
 import 'dart:ui';
 
+import 'package:aplicativo_shareon/telas/home.dart';
 import 'package:barcode_scan/barcode_scan.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
@@ -42,6 +43,7 @@ class _TelaValidacaoState extends State<TelaValidacao> {
   @override
   void initState() {
     Timer.periodic(Duration(seconds: 30), (Timer t) => timerPIN());
+    Timer.periodic(Duration(seconds: 10), (Timer t) => timerVerificaStatus());
     getData();
     super.initState();
   }
@@ -299,8 +301,6 @@ class _TelaValidacaoState extends State<TelaValidacao> {
         "${Random().nextInt(10)}${Random().nextInt(10)}${Random().nextInt(10)}${Random().nextInt(10)}";
 
     pinCreatedTime = Timestamp.fromDate(DateTime.now());
-    pin = newPIN;
-    pinDuration = 2;
 
     Map<String, dynamic> updatePin = {
       "lastPINCreatedTS": Timestamp.fromDate(DateTime.now()),
@@ -312,7 +312,10 @@ class _TelaValidacaoState extends State<TelaValidacao> {
         .document(widget.userId)
         .updateData(updatePin);
 
-    setState(() {});
+    setState(() {
+      pin = newPIN;
+      pinDuration = 2;
+    });
   }
 
   timerPIN() {
@@ -405,47 +408,93 @@ class _TelaValidacaoState extends State<TelaValidacao> {
 
   _validator(String barcode, {bool qrCall = false}) async {
     if (qrCall == true) {
-      try {
-        Map validator = jsonDecode(barcode);
+      Map validator = jsonDecode(barcode);
+      print("IM $validator");
 
-        if (validator["solicitationId"] != widget.solicitationId) {
-          _toast("Este QRCode é o de outra reserva", context);
-        } else if (validator["otherUserID"] == widget.userId) {
-          _toast("Você não pode validar uma reserva com seu próprio QRCode",
-              context);
-        } else {
-          await databaseReference
-              .collection("users")
-              .where("userID", isEqualTo: validator["otherUserID"])
-              .getDocuments()
-              .timeout(Duration(seconds: 60))
-              .then((QuerySnapshot snapshot) {
-            snapshot.documents.forEach((f) async {
-              Map validaQR = f.data;
+      if (validator["solicitationID"] != widget.solicitationId) {
+        _toast("Este QRCode é o de outra reserva", context);
+      } else if (validator["otherUserID"] == widget.userId) {
+        _toast("Você não pode validar uma reserva com seu próprio QRCode",
+            context);
+      } else {
+        await databaseReference
+            .collection("users")
+            .where("userID", isEqualTo: validator["otherUserID"])
+            .getDocuments()
+            .timeout(Duration(seconds: 60))
+            .then((QuerySnapshot snapshot) {
+          snapshot.documents.forEach((f) async {
+            Map validaQR = f.data;
 
-              if (validaQR["PIN"] != validator["otherUserPIN"]) {
-                _toast("erro PIN incorreto", context);
-              } else {
-                // 0 retirada 1 devolução
-                if (retiradaDevolucao == 0) {
-                  Map<String, dynamic> validaTransacao = {
-                    "finalEndDate": Timestamp.fromDate(DateTime.now()),
-                    "status": "concluido",
-                    "finalEndPrice": "fazer",
-                    "finalEndDuration": "fazer",
-                    "motivoStatus": "devolução",
-                  };
-                }
-                if (retiradaDevolucao == 1) {}
+            if (validaQR["PIN"] != validator["otherUserPIN"]) {
+              _toast("erro PIN incorreto", context);
+            } else {
+              // 0 retirada 1 devolução
+              if (retiradaDevolucao == 0) {
+                Map<String, dynamic> validaTransacao = {
+                  "finalStartDate": Timestamp.fromDate(DateTime.now()),
+                  "status": "em andamento",
+                  "motivoStatus": "retirada",
+                };
 
-                // await databaseReference.collection("solicitations").where("")
+                await databaseReference
+                    .collection("solicitations")
+                    .document(widget.solicitationId)
+                    .updateData(validaTransacao);
+
+                _toast("Retirada validada", context);
+
+                Navigator.of(context).pushReplacement(
+                    MaterialPageRoute(builder: (BuildContext contex) {
+                  return Home();
+                }));
               }
-            });
+              if (retiradaDevolucao == 1) {
+                Map<String, dynamic> validaTransacao = {
+                  "finalEndDate": Timestamp.fromDate(DateTime.now()),
+                  "status": "concluido",
+                  "finalEndPrice": "fazer",
+                  "finalEndDuration": "fazer",
+                  "motivoStatus": "devolução",
+                };
+              }
+            }
           });
-        }
-      } catch (e) {
-        print(e);
+        });
       }
     } else {}
+  }
+
+  timerVerificaStatus() async {
+    await databaseReference
+        .collection("solicitations")
+        .where("solicitationID", isEqualTo: widget.solicitationId)
+        .getDocuments()
+        .then((QuerySnapshot snapshot) {
+      snapshot.documents.forEach((f) {
+        Map validado = f.data;
+
+        if (retiradaDevolucao == 0) {
+          // 0 retirada 1 devolução
+          if (validado["status"] == "em andamento") {
+            _toast("Retirada validada", context);
+            Navigator.of(context).pushReplacement(
+                MaterialPageRoute(builder: (BuildContext contex) {
+              return Home();
+            }));
+          }
+        }
+        if (retiradaDevolucao == 1) {
+          // 0 retirada 1 devolução
+          if (validado["status"] == "concluido") {
+            _toast("Devolução validada", context);
+            Navigator.of(context).pushReplacement(
+                MaterialPageRoute(builder: (BuildContext contex) {
+              return Home();
+            }));
+          }
+        }
+      });
+    });
   }
 }

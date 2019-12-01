@@ -323,10 +323,29 @@ class _EditaProdutoState extends State<EditaProduto> {
                               ),
                               textColor: Colors.white,
                               color: Theme.of(context).primaryColor,
-                              onPressed: () {
+                              onPressed: () async {
+                                bool emUso = false;
                                 FocusScope.of(context)
                                     .requestFocus(new FocusNode());
-                                if (camposEditar.currentState.validate()) {
+                                await databaseReference
+                                    .collection("solicitations")
+                                    .where("productID",
+                                        isEqualTo: widget.productID)
+                                    .getDocuments()
+                                    .then((QuerySnapshot snapshot) {
+                                  snapshot.documents.forEach((f) {
+                                    Map aux = f.data;
+                                    if (aux["status"] == "em andamento") {
+                                      emUso = true;
+                                    }
+                                  });
+                                });
+                                if (emUso == true) {
+                                  _toast(
+                                      "Você não pode editar um produto durante um empréstimo",
+                                      context);
+                                } else if (camposEditar.currentState
+                                    .validate()) {
                                   if (_imgMain == null &&
                                       _img2 == null &&
                                       _img3 == null &&

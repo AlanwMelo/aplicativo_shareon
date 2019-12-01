@@ -1,4 +1,4 @@
-import 'package:aplicativo_shareon/telas/tela_em_andamento_meus_produtos.dart';
+import 'package:aplicativo_shareon/telas/tela_reserva_em_andamento_meus_produtos.dart';
 import 'package:aplicativo_shareon/telas/tela_reserva_meus_produtos.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
