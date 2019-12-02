@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:math';
 
-import 'package:aplicativo_shareon/telas/tela_produto_selecionado.dart';
+import 'package:aplicativo_shareon/telas/produto_selecionado.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';

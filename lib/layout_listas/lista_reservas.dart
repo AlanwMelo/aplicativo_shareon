@@ -1,29 +1,36 @@
-import 'package:aplicativo_shareon/telas/tela_produto_selecionado.dart';
+<<<<<<< HEAD:lib/layout_listas/lista_reservas_builder.dart
+import 'package:aplicativo_shareon/telas/tela_reserva_em_andamento.dart';
+import 'package:aplicativo_shareon/telas/tela_verifica_reserva.dart';
+=======
+import 'package:aplicativo_shareon/telas/aluguel_em_andamento.dart';
+import 'package:aplicativo_shareon/telas/verificar_reserva.dart';
+>>>>>>> 1225562d4f3d433b30f4e131f65290ebec67a49c:lib/layout_listas/lista_reservas.dart
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../main.dart';
 
-class ListaHistoricoBuilder extends StatefulWidget {
+class ListaReservasBuilder extends StatefulWidget {
   @override
-  _ListaHistoricoBuilderState createState() => _ListaHistoricoBuilderState();
+  _ListaReservasBuilderState createState() => _ListaReservasBuilderState();
 }
 
-class _ProductsHist {
+class _Reservas {
   String productID;
   String name;
   String media;
   var preco;
   String status;
-  Timestamp endDate;
+  String solicitationID;
+  Timestamp programedInitDate;
   String mainIMG;
 
-  _ProductsHist(this.productID, this.name, this.preco, this.media, this.status,
-      this.endDate, this.mainIMG);
+  _Reservas(this.productID, this.name, this.preco, this.media, this.status,
+      this.solicitationID, this.programedInitDate, this.mainIMG);
 }
 
-class _ListaHistoricoBuilderState extends State<ListaHistoricoBuilder> {
+class _ListaReservasBuilderState extends State<ListaReservasBuilder> {
   SharedPreferencesController sharedPreferencesController =
       new SharedPreferencesController();
   final databaseReference = Firestore.instance;
@@ -31,7 +38,7 @@ class _ListaHistoricoBuilderState extends State<ListaHistoricoBuilder> {
   String status;
   String userID = "";
   int counter = 0;
-  List<_ProductsHist> _listaHistorico = [];
+  List<_Reservas> _listaReservas = [];
   bool listIsEmpty = false;
 
   @override
@@ -43,22 +50,29 @@ class _ListaHistoricoBuilderState extends State<ListaHistoricoBuilder> {
   }
 
   getData() async {
+    // String helper;
     await databaseReference
         .collection("solicitations")
         .where("requesterID", isEqualTo: userID)
         .getDocuments()
         .then((QuerySnapshot snapshot) {
-      if (snapshot.documents.length == 0) {
-        setState(() {
-          listIsEmpty = true;
-        });
-      }
+      setState(() {
+        listIsEmpty = true;
+      });
       snapshot.documents.forEach((f) {
         Map productData = f.data;
-        if (productData["status"] == "concluido" ||
-            productData["status"] == "cancelada") {
-          listHelper(productData["productID"], productData["status"],
-              productData["finalEndDate"]);
+        if (productData["status"] == "em andamento" ||
+            productData["status"] == "pendente" ||
+            productData["status"] == "aprovada") {
+          setState(() {
+            listIsEmpty = false;
+          });
+          listHelper(
+              productData["productID"],
+              productData["status"],
+              productData["programedInitDate"],
+              productData["solicitationID"],
+              productData["estimatedEndPrice"]);
         }
       });
     });
@@ -66,14 +80,14 @@ class _ListaHistoricoBuilderState extends State<ListaHistoricoBuilder> {
 
   @override
   Widget build(BuildContext context) {
-    return _listaHistorico.length == 0 && listIsEmpty == false
+    return _listaReservas.length == 0 && listIsEmpty == false
         ? Center(
             child: CircularProgressIndicator(),
           )
         : listIsEmpty == true
             ? Center(
                 child: Text(
-                  "Você ainda não fez nenhuma transação",
+                  "Você ainda não possui nenhuma reserva",
                   style: TextStyle(
                     color: Colors.indigoAccent,
                     fontSize: 18,
@@ -81,13 +95,23 @@ class _ListaHistoricoBuilderState extends State<ListaHistoricoBuilder> {
                   ),
                 ),
               )
-            : listGen(_listaHistorico);
+            : listGen(_listaReservas);
   }
 
-  _onClick(BuildContext context, String idx) {
-    Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) {
-      return ProdutoSelecionado(productID: idx);
-    }));
+  _onClick(
+      BuildContext context, String solicitationID, String solicitationStatus) {
+    if (solicitationStatus == "em andamento") {
+      Navigator.push(context,
+          MaterialPageRoute(builder: (BuildContext context) {
+        return TelaEmAndamento(userId: userID, solicitationID: solicitationID);
+      }));
+    } else {
+      Navigator.push(context,
+          MaterialPageRoute(builder: (BuildContext context) {
+        return TelaVerificaReserva(
+            userId: userID, solicitationID: solicitationID);
+      }));
+    }
   }
 
 //objetos
@@ -116,10 +140,14 @@ class _ListaHistoricoBuilderState extends State<ListaHistoricoBuilder> {
 
   _textNome(String idx, String status) {
     Color color;
-    if (status == "concluido") {
+    if (status == "pendente") {
+      color = Colors.orange;
+    }
+    if (status == "em andamento") {
+      color = Colors.green;
+    }
+    if (status == "aprovada") {
       color = Colors.indigoAccent;
-    } else {
-      color = Colors.redAccent;
     }
     return Expanded(
       child: Text(
@@ -146,22 +174,46 @@ class _ListaHistoricoBuilderState extends State<ListaHistoricoBuilder> {
   }
 
   _textData(Timestamp idx) {
+    Color color = Colors.black38;
+    int timeNow = Timestamp.fromDate(DateTime.now()).millisecondsSinceEpoch;
+    int reservedTime = idx.millisecondsSinceEpoch;
+    if ((reservedTime - timeNow) <= 3600000) {
+      color = Colors.orange;
+    }
+
     int convertedDay = idx.toDate().day;
     int convertedMonth = idx.toDate().month;
     int convertedYear = idx.toDate().year;
     String convertedTS =
-        "${convertedDay.toString().padLeft(2, "0")}/${convertedMonth.toString().padLeft(2, "0")}/$convertedYear";
+        "Dia ${convertedDay.toString().padLeft(2, "0")}/${convertedMonth.toString().padLeft(2, "0")}/$convertedYear";
 
     return Text(
       convertedTS,
-      style: TextStyle(
-          fontWeight: FontWeight.bold, fontSize: 16, color: Colors.black38),
+      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: color),
+    );
+  }
+
+  _textTime(Timestamp idx) {
+    Color color = Colors.black38;
+    int timeNow = Timestamp.fromDate(DateTime.now()).millisecondsSinceEpoch;
+    int reservedTime = idx.millisecondsSinceEpoch;
+    if ((reservedTime - timeNow) <= 3600000) {
+      color = Colors.orange;
+    }
+    int convertedHour = idx.toDate().hour;
+    int convertedMinute = idx.toDate().minute;
+    String convertedTS =
+        "às ${convertedHour.toString().padLeft(2, "0")}:${convertedMinute.toString().padLeft(2, "0")}";
+
+    return Text(
+      convertedTS,
+      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: color),
     );
   }
 
   _textPreco(var idx) {
     return Text(
-      "R\$ $idx",
+      "R\$ ${idx.toString()}",
       style: TextStyle(
         fontWeight: FontWeight.bold,
         fontSize: 14,
@@ -177,13 +229,14 @@ class _ListaHistoricoBuilderState extends State<ListaHistoricoBuilder> {
     );
   }
 
-  Widget listGen(List<_ProductsHist> _listaHist) {
+  Widget listGen(List<_Reservas> _listaReservas) {
     return ListView.builder(
-      itemCount: _listaHist.length,
+      itemCount: _listaReservas.length,
       itemExtent: 150,
       itemBuilder: (BuildContext context, int index) {
         return GestureDetector(
-          onTap: () => _onClick(context, _listaHist[index].productID),
+          onTap: () => _onClick(context, _listaReservas[index].solicitationID,
+              _listaReservas[index].status),
           child: Container(
             decoration: BoxDecoration(
               color: Colors.grey[200],
@@ -193,7 +246,7 @@ class _ListaHistoricoBuilderState extends State<ListaHistoricoBuilder> {
             child: Row(
               mainAxisSize: MainAxisSize.max,
               children: <Widget>[
-                _img(_listaHist[index].mainIMG),
+                _img(_listaReservas[index].mainIMG),
                 Expanded(
                   child: Container(
                     padding: EdgeInsets.all(12),
@@ -201,26 +254,33 @@ class _ListaHistoricoBuilderState extends State<ListaHistoricoBuilder> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: <Widget>[
-                        _textNome(
-                            _listaHist[index].name, _listaHist[index].status),
+                        _textNome(_listaReservas[index].name,
+                            _listaReservas[index].status),
                         Container(
                           margin: EdgeInsets.only(top: 8),
                           child: Row(
                             children: <Widget>[
-                              _textMedia(_listaHist[index].media),
+                              _textMedia(_listaReservas[index].media),
                               _iconEstrela(),
                             ],
                           ),
                         ),
                         Row(
                           children: <Widget>[
-                            _textData(_listaHist[index].endDate),
+                            Column(
+                              children: <Widget>[
+                                _textData(
+                                    _listaReservas[index].programedInitDate),
+                                _textTime(
+                                    _listaReservas[index].programedInitDate),
+                              ],
+                            ),
                             Expanded(
                               child: Container(
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.end,
                                   children: <Widget>[
-                                    _textPreco(_listaHist[index].preco),
+                                    _textPreco(_listaReservas[index].preco),
                                   ],
                                 ),
                               ),
@@ -246,7 +306,8 @@ class _ListaHistoricoBuilderState extends State<ListaHistoricoBuilder> {
     });
   }
 
-  listHelper(String id, String status, Timestamp endDate) {
+  listHelper(String id, String status, Timestamp initDate,
+      String solicitationID, var estimatedEndPrice) {
     databaseReference
         .collection("products")
         .where("ID", isEqualTo: id)
@@ -263,15 +324,18 @@ class _ListaHistoricoBuilderState extends State<ListaHistoricoBuilder> {
           snapshot.documents.forEach((f) {
             Map productIMG = f.data;
 
-            _listaHistorico.add(new _ProductsHist(
+            _listaReservas.add(new _Reservas(
                 id,
                 productData["name"],
-                productData["price"],
+                estimatedEndPrice,
                 productData["media"],
                 status,
-                endDate,
+                solicitationID,
+                initDate,
                 productIMG["productMainIMG"]));
-            _listaHistorico.sort((a, b) => a.endDate.compareTo(b.endDate));
+            _listaReservas.sort(
+                (a, b) => a.programedInitDate.compareTo(b.programedInitDate));
+
             setState(() {});
           });
         });

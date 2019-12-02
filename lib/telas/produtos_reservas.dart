@@ -1,4 +1,4 @@
-import 'package:aplicativo_shareon/layout_listas/lista_reservas_builder.dart';
+import 'package:aplicativo_shareon/layout_listas/lista_reservas.dart';
 import 'package:aplicativo_shareon/layout_listas/lista_reservas_meus_produtos.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';

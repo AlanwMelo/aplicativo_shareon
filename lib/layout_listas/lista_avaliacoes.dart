@@ -1,5 +1,5 @@
 import 'package:aplicativo_shareon/item_listas/lista_avaliacoes.dart';
-import 'package:aplicativo_shareon/telas/tela_produto_selecionado.dart';
+import 'package:aplicativo_shareon/telas/produto_selecionado.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -11,7 +11,7 @@ listaAvaliacoesBuilder() {
   ];
 
   // position()
-   {
+  {
     final listMap = _listaAvaliacoes.asMap();
     listMap.hashCode;
   }
@@ -30,6 +30,8 @@ listaAvaliacoesBuilder() {
 
 _onClick(BuildContext context) {
   Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) {
-    return ProdutoSelecionado(productID: null,);
+    return ProdutoSelecionado(
+      productID: null,
+    );
   }));
 }

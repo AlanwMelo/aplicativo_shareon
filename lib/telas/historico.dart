@@ -1,20 +1,22 @@
-import 'package:aplicativo_shareon/layout_listas/lista_meus_produtos_builder.dart';
+import 'package:aplicativo_shareon/layout_listas/lista_historico.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-class MeusProdutos extends StatefulWidget {
+class TelaHistorico extends StatefulWidget {
   @override
-  _MeusProdutosState createState() => _MeusProdutosState();
+  _TelaHistoricoState createState() => _TelaHistoricoState();
 }
 
-class _MeusProdutosState extends State<MeusProdutos> {
+class _TelaHistoricoState extends State<TelaHistorico> {
   @override
   Widget build(BuildContext context) {
-    return homeMeusProdutos();
+    return Scaffold(
+      body: homeHistorico(),
+    );
   }
 }
 
-homeMeusProdutos() {
+homeHistorico() {
   return Scaffold(
     body: Container(
       child: Column(
@@ -27,37 +29,40 @@ homeMeusProdutos() {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: <Widget>[
                 Container(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      _icPesquisar(),
-                    ],
-                  ),
-                ),
-                Container(
                   child: Expanded(
-                    child: Row(
+                    child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[_text("Meus produtos")],
+                      children: <Widget>[
+                        _icPesquisar(),
+                      ],
                     ),
                   ),
                 ),
                 Container(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.end,
                     children: <Widget>[
-                      _icFiltros(),
+                      _text("Histórico"),
                     ],
+                  ),
+                ),
+                Container(
+                  child: Expanded(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: <Widget>[
+                        _icFiltros(),
+                      ],
+                    ),
                   ),
                 ),
               ],
             ),
           ),
           Expanded(
-            child: ListaMeusProdutosBuilder(),
+            child: ListaHistoricoBuilder(),
           ),
         ],
       ),

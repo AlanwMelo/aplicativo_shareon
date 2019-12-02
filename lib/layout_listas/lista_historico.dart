@@ -1,49 +1,51 @@
-import 'package:aplicativo_shareon/telas/tela_produto_selecionado.dart';
+import 'package:aplicativo_shareon/telas/produto_selecionado.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../main.dart';
 
-class ListaMeusProdutosBuilder extends StatefulWidget {
+class ListaHistoricoBuilder extends StatefulWidget {
   @override
-  _ListaMeusProdutosBuilderState createState() =>
-      _ListaMeusProdutosBuilderState();
+  _ListaHistoricoBuilderState createState() => _ListaHistoricoBuilderState();
 }
 
-class _MyProducts {
+class _ProductsHist {
   String productID;
   String name;
-  var preco;
   String media;
-  Timestamp addDate;
+  var preco;
+  String status;
+  Timestamp endDate;
   String mainIMG;
 
-  _MyProducts(this.productID, this.name, this.preco, this.media, this.addDate,
-      this.mainIMG);
+  _ProductsHist(this.productID, this.name, this.preco, this.media, this.status,
+      this.endDate, this.mainIMG);
 }
 
-class _ListaMeusProdutosBuilderState extends State<ListaMeusProdutosBuilder> {
+class _ListaHistoricoBuilderState extends State<ListaHistoricoBuilder> {
   SharedPreferencesController sharedPreferencesController =
       new SharedPreferencesController();
   final databaseReference = Firestore.instance;
-  List<_MyProducts> _listaMeusProdutos = [];
-  String id;
+  String productID;
+  String status;
   String userID = "";
+  int counter = 0;
+  List<_ProductsHist> _listaHistorico = [];
   bool listIsEmpty = false;
 
   @override
   void initState() {
     if (userID == "") {
-      sharedPreferencesController.getID().then(_setID);
+      sharedPreferencesController.getID().then(_setUserID);
     }
     super.initState();
   }
 
   getData() async {
     await databaseReference
-        .collection("products")
-        .where("ownerID", isEqualTo: userID)
+        .collection("solicitations")
+        .where("requesterID", isEqualTo: userID)
         .getDocuments()
         .then((QuerySnapshot snapshot) {
       if (snapshot.documents.length == 0) {
@@ -51,30 +53,12 @@ class _ListaMeusProdutosBuilderState extends State<ListaMeusProdutosBuilder> {
           listIsEmpty = true;
         });
       }
-      snapshot.documents.forEach((f) async {
+      snapshot.documents.forEach((f) {
         Map productData = f.data;
-        if (productData["adStatus"] != "deletado") {
-          await databaseReference
-              .collection("productIMGs")
-              .where("productID", isEqualTo: productData["ID"])
-              .getDocuments()
-              .then((QuerySnapshot snapshot) {
-            {
-              snapshot.documents.forEach((f) {
-                Map productIMG = f.data;
-
-                _listaMeusProdutos.add(new _MyProducts(
-                    productData["ID"],
-                    productData["name"],
-                    productData["price"],
-                    productData["media"],
-                    productData["insertionDate"],
-                    productIMG["productMainIMG"]));
-              });
-              _listaMeusProdutos.sort((b, a) => a.addDate.compareTo(b.addDate));
-              setState(() {});
-            }
-          });
+        if (productData["status"] == "concluido" ||
+            productData["status"] == "cancelada") {
+          listHelper(productData["productID"], productData["status"],
+              productData["finalEndDate"]);
         }
       });
     });
@@ -82,14 +66,14 @@ class _ListaMeusProdutosBuilderState extends State<ListaMeusProdutosBuilder> {
 
   @override
   Widget build(BuildContext context) {
-    return _listaMeusProdutos.length == 0 && listIsEmpty == false
+    return _listaHistorico.length == 0 && listIsEmpty == false
         ? Center(
             child: CircularProgressIndicator(),
           )
         : listIsEmpty == true
             ? Center(
                 child: Text(
-                  "Você ainda não possui nenhum produto",
+                  "Você ainda não fez nenhuma transação",
                   style: TextStyle(
                     color: Colors.indigoAccent,
                     fontSize: 18,
@@ -97,7 +81,7 @@ class _ListaMeusProdutosBuilderState extends State<ListaMeusProdutosBuilder> {
                   ),
                 ),
               )
-            : listGen(_listaMeusProdutos);
+            : listGen(_listaHistorico);
   }
 
   _onClick(BuildContext context, String idx) {
@@ -130,7 +114,13 @@ class _ListaMeusProdutosBuilderState extends State<ListaMeusProdutosBuilder> {
     );
   }
 
-  _textNome(String idx) {
+  _textNome(String idx, String status) {
+    Color color;
+    if (status == "concluido") {
+      color = Colors.indigoAccent;
+    } else {
+      color = Colors.redAccent;
+    }
     return Expanded(
       child: Text(
         idx,
@@ -138,7 +128,7 @@ class _ListaMeusProdutosBuilderState extends State<ListaMeusProdutosBuilder> {
         style: TextStyle(
           fontWeight: FontWeight.bold,
           fontSize: 24,
-          color: Colors.indigoAccent,
+          color: color,
         ),
       ),
     );
@@ -149,9 +139,23 @@ class _ListaMeusProdutosBuilderState extends State<ListaMeusProdutosBuilder> {
       idx,
       style: TextStyle(
         fontWeight: FontWeight.bold,
-        fontSize: 18,
+        fontSize: 16,
         color: Colors.black54,
       ),
+    );
+  }
+
+  _textData(Timestamp idx) {
+    int convertedDay = idx.toDate().day;
+    int convertedMonth = idx.toDate().month;
+    int convertedYear = idx.toDate().year;
+    String convertedTS =
+        "${convertedDay.toString().padLeft(2, "0")}/${convertedMonth.toString().padLeft(2, "0")}/$convertedYear";
+
+    return Text(
+      convertedTS,
+      style: TextStyle(
+          fontWeight: FontWeight.bold, fontSize: 16, color: Colors.black38),
     );
   }
 
@@ -173,13 +177,13 @@ class _ListaMeusProdutosBuilderState extends State<ListaMeusProdutosBuilder> {
     );
   }
 
-  Widget listGen(List<_MyProducts> _listaMeusProdutos) {
+  Widget listGen(List<_ProductsHist> _listaHist) {
     return ListView.builder(
-      itemCount: _listaMeusProdutos.length,
+      itemCount: _listaHist.length,
       itemExtent: 150,
       itemBuilder: (BuildContext context, int index) {
         return GestureDetector(
-          onTap: () => _onClick(context, _listaMeusProdutos[index].productID),
+          onTap: () => _onClick(context, _listaHist[index].productID),
           child: Container(
             decoration: BoxDecoration(
               color: Colors.grey[200],
@@ -189,27 +193,38 @@ class _ListaMeusProdutosBuilderState extends State<ListaMeusProdutosBuilder> {
             child: Row(
               mainAxisSize: MainAxisSize.max,
               children: <Widget>[
-                _img(_listaMeusProdutos[index].mainIMG),
+                _img(_listaHist[index].mainIMG),
                 Expanded(
                   child: Container(
-                    padding: EdgeInsets.all(8),
+                    padding: EdgeInsets.all(12),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: <Widget>[
-                        _textNome(_listaMeusProdutos[index].name),
+                        _textNome(
+                            _listaHist[index].name, _listaHist[index].status),
                         Container(
                           margin: EdgeInsets.only(top: 8),
                           child: Row(
                             children: <Widget>[
-                              _textMedia(_listaMeusProdutos[index].media),
+                              _textMedia(_listaHist[index].media),
                               _iconEstrela(),
                             ],
                           ),
                         ),
                         Row(
                           children: <Widget>[
-                            _textPreco(_listaMeusProdutos[index].preco),
+                            _textData(_listaHist[index].endDate),
+                            Expanded(
+                              child: Container(
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: <Widget>[
+                                    _textPreco(_listaHist[index].preco),
+                                  ],
+                                ),
+                              ),
+                            ),
                           ],
                         ),
                       ],
@@ -224,10 +239,43 @@ class _ListaMeusProdutosBuilderState extends State<ListaMeusProdutosBuilder> {
     );
   }
 
-  void _setID(String value) {
+  _setUserID(String value) {
     setState(() {
       userID = value;
       getData();
+    });
+  }
+
+  listHelper(String id, String status, Timestamp endDate) {
+    databaseReference
+        .collection("products")
+        .where("ID", isEqualTo: id)
+        .getDocuments()
+        .then((QuerySnapshot snapshot) {
+      snapshot.documents.forEach((f) async {
+        Map productData = f.data;
+
+        await databaseReference
+            .collection("productIMGs")
+            .where("productID", isEqualTo: productData["ID"])
+            .getDocuments()
+            .then((QuerySnapshot snapshot) {
+          snapshot.documents.forEach((f) {
+            Map productIMG = f.data;
+
+            _listaHistorico.add(new _ProductsHist(
+                id,
+                productData["name"],
+                productData["price"],
+                productData["media"],
+                status,
+                endDate,
+                productIMG["productMainIMG"]));
+            _listaHistorico.sort((a, b) => a.endDate.compareTo(b.endDate));
+            setState(() {});
+          });
+        });
+      });
     });
   }
 }

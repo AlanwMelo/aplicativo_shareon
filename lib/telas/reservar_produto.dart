@@ -1,5 +1,5 @@
 import 'package:aplicativo_shareon/models/usuario_model.dart';
-import 'package:aplicativo_shareon/telas/tela_creditos.dart';
+import 'package:aplicativo_shareon/telas/compra_creditos.dart';
 import 'package:aplicativo_shareon/utils/seletor_calendario.dart';
 import 'package:aplicativo_shareon/utils/shareon_appbar.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';

@@ -1,4 +1,4 @@
-import 'package:aplicativo_shareon/layout_listas/lista_favoritos_builder.dart';
+import 'package:aplicativo_shareon/layout_listas/lista_favoritos.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 

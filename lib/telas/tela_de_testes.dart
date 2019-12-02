@@ -1,4 +1,5 @@
 import 'package:aplicativo_shareon/utils/alter_debit.dart';
+import 'package:aplicativo_shareon/telas/verificar_reserva.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
