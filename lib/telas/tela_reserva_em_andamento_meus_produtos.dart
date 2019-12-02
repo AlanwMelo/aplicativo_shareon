@@ -300,22 +300,24 @@ class _TelaEmAndamentoMeusProdutosState
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: <Widget>[
-          Container(
-            width: 320,
-            child: RaisedButton(
-              color: Colors.white,
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (BuildContext context) {
-                    return TelaValidacao(
-                      userId: widget.userId,
-                      solicitationId: widget.solicitationID,
-                    );
-                  }),
-                );
-              },
-              child: _text("Validar devolução", resumo: true),
+          Expanded(
+            child: Container(
+              child: RaisedButton(
+                color: Colors.white,
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (BuildContext context) {
+                      return TelaValidacao(
+                        userId: widget.userId,
+                        solicitationId: widget.solicitationID,
+                        productPrice: productPrice,
+                      );
+                    }),
+                  );
+                },
+                child: _text("Validar devolução", resumo: true),
+              ),
             ),
           ),
         ],
