@@ -1,39 +1,41 @@
 import 'dart:async';
 
-import 'package:aplicativo_shareon/telas/tela_validacao.dart';
+import 'package:aplicativo_shareon/telas/validacao.dart';
 import 'package:aplicativo_shareon/utils/shareon_appbar.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-class TelaEmAndamento extends StatefulWidget {
+class TelaEmAndamentoMeusProdutos extends StatefulWidget {
   final String userId;
   final String solicitationID;
 
-  TelaEmAndamento({@required this.userId, @required this.solicitationID});
+  TelaEmAndamentoMeusProdutos(
+      {@required this.userId, @required this.solicitationID});
 
   @override
-  _TelaEmAndamentoState createState() => _TelaEmAndamentoState();
+  _TelaEmAndamentoMeusProdutosState createState() =>
+      _TelaEmAndamentoMeusProdutosState();
 }
 
-class _TelaEmAndamentoState extends State<TelaEmAndamento> {
+class _TelaEmAndamentoMeusProdutosState
+    extends State<TelaEmAndamentoMeusProdutos> {
   final databaseReference = Firestore.instance;
   String productIMG;
   String productName;
   String productID;
-  String ownerID;
+  String tomadorID;
   String solicitationStatus = "";
   bool loading = false;
-  String ownerName;
+  String tomadorName;
   String productAddress = "";
-  Timestamp finalStartDate;
-  Timestamp programedEndDate;
-  String convertedFinalStartDate;
+  Timestamp finalStartDate = Timestamp.fromDate(DateTime.now());
+  Timestamp programedEndDate = Timestamp.fromDate(DateTime.now());
+  String convertedEstimatedStartDate;
   String convertedEstimatedEndDate;
-  String convertedEstimatedPrice;
-  double actualPrice;
   int duracao = 0;
   String strgDuracao = "";
+  double actualPrice;
   double productPrice;
   String productMainIMG = "";
 
@@ -78,7 +80,7 @@ class _TelaEmAndamentoState extends State<TelaEmAndamento> {
 
         int convertedStartHour = finalStartDate.toDate().hour;
         int convertedStartMinute = finalStartDate.toDate().minute;
-        convertedFinalStartDate =
+        convertedEstimatedStartDate =
             "${convertedStartDay.toString().padLeft(2, "0")}/${convertedStartMonth.toString().padLeft(2, "0")}/${convertedStartYear.toString()} às "
             "${convertedStartHour.toString().padLeft(2, "0")}:${convertedStartMinute.toString().padLeft(2, "0")}";
 
@@ -96,6 +98,7 @@ class _TelaEmAndamentoState extends State<TelaEmAndamento> {
 
         var aux = solicitationData["estimatedEndPrice"];
         actualPrice = aux.toDouble();
+        tomadorID = solicitationData["requesterID"];
         getProductData(productID);
       });
     });
@@ -131,12 +134,12 @@ class _TelaEmAndamentoState extends State<TelaEmAndamento> {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: <Widget>[
                     Container(
-                      margin: EdgeInsets.only(top: 16),
+                      margin: EdgeInsets.only(top: 8),
                       child: Row(
                         children: <Widget>[
-                          _text("Dono: "),
+                          _text("Tomador: "),
                           Text(
-                            ownerName,
+                            tomadorName,
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
                               color: Colors.yellow,
@@ -147,11 +150,11 @@ class _TelaEmAndamentoState extends State<TelaEmAndamento> {
                       ),
                     ),
                     Container(
-                      margin: EdgeInsets.only(top: 16),
-                      child: _text("Retirada: $convertedFinalStartDate"),
+                      margin: EdgeInsets.only(top: 8),
+                      child: _text("Retirada: $convertedEstimatedStartDate"),
                     ),
                     Container(
-                      margin: EdgeInsets.only(top: 16),
+                      margin: EdgeInsets.only(top: 8),
                       child: Row(
                         children: <Widget>[
                           _text("Devolução: "),
@@ -160,22 +163,13 @@ class _TelaEmAndamentoState extends State<TelaEmAndamento> {
                       ),
                     ),
                     Container(
-                      margin: EdgeInsets.only(top: 16),
+                      margin: EdgeInsets.only(top: 8),
                       child: _text("Duração: $strgDuracao"),
                     ),
                     Container(
-                      margin: EdgeInsets.only(top: 16),
+                      margin: EdgeInsets.only(top: 8),
                       child: _text(
-                          "Valor atual: R\$${actualPrice.toStringAsFixed(2)}"),
-                    ),
-                    Container(
-                      margin: EdgeInsets.only(top: 16),
-                      child: ConstrainedBox(
-                        constraints: BoxConstraints(
-                          minHeight: 70,
-                        ),
-                        child: _text(productAddress),
-                      ),
+                          "Valor atual: R\$ ${actualPrice.toStringAsFixed(2)}"),
                     ),
                   ],
                 ),
@@ -266,25 +260,24 @@ class _TelaEmAndamentoState extends State<TelaEmAndamento> {
         Map productData = f.data;
         productAddress = productData["productAddress"];
         productName = productData["name"];
-        ownerID = productData["ownerID"];
         var aux = productData["price"];
         productPrice = aux.toDouble();
-        getOwnerData(ownerID);
+        getRequesterData(tomadorID);
       });
     });
   }
 
-  getOwnerData(String ownerID) async {
+  getRequesterData(String requesterID) async {
     await databaseReference
         .collection("users")
-        .where("userID", isEqualTo: ownerID)
+        .where("userID", isEqualTo: requesterID)
         .getDocuments()
         .then((QuerySnapshot snapshot) {
       snapshot.documents.forEach((f) {
         Map productData = f.data;
         setState(() {
           _duracaoAtual();
-          ownerName = productData["nome"];
+          tomadorName = productData["nome"];
         });
       });
     });
@@ -308,7 +301,7 @@ class _TelaEmAndamentoState extends State<TelaEmAndamento> {
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: <Widget>[
           Container(
-            width: 350,
+            width: 320,
             child: RaisedButton(
               color: Colors.white,
               onPressed: () {
@@ -405,7 +398,7 @@ class _TelaEmAndamentoState extends State<TelaEmAndamento> {
   _textDevolucao() {
     DateTime aux = DateTime.fromMillisecondsSinceEpoch(
         programedEndDate.millisecondsSinceEpoch);
-    if (aux.isBefore(DateTime.now())) {
+    if (aux.isAfter(DateTime.now())) {
       return Text(
         convertedEstimatedEndDate,
         style: TextStyle(

@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:aplicativo_shareon/layout_listas/lista_main_builder.dart';
+import 'package:aplicativo_shareon/layout_listas/lista_main.dart';
 import 'package:aplicativo_shareon/main.dart';
 import 'package:aplicativo_shareon/telas/home.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -43,7 +43,7 @@ class _TelaMainState extends State<TelaMain> {
   FutureOr _setLocation(GeoPoint value, {int caller}) {
     setState(() {
       userLocation = GeoPoint(value.latitude, value.longitude);
-      if (userLocation != GeoPoint(0.0, 0.0) && caller == 0){
+      if (userLocation != GeoPoint(0.0, 0.0) && caller == 0) {
         Toast.show("Utilizando última localização conhecida", context,
             duration: 3,
             gravity: Toast.BOTTOM,

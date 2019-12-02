@@ -2,27 +2,26 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:aplicativo_shareon/models/usuario_model.dart';
-import 'package:aplicativo_shareon/telas/tela_cadastro_produto.dart';
-import 'package:aplicativo_shareon/telas/tela_configuracoes.dart';
-import 'package:aplicativo_shareon/telas/tela_creditos.dart';
+import 'package:aplicativo_shareon/telas/cadastro_produto.dart';
+import 'package:aplicativo_shareon/telas/compra_creditos.dart';
+import 'package:aplicativo_shareon/telas/configuracoes.dart';
+import 'package:aplicativo_shareon/telas/faq.dart';
+import 'package:aplicativo_shareon/telas/favoritos.dart';
+import 'package:aplicativo_shareon/telas/historico.dart';
+import 'package:aplicativo_shareon/telas/main.dart';
+import 'package:aplicativo_shareon/telas/meus_produtos.dart';
+import 'package:aplicativo_shareon/telas/produtos_reservas.dart';
+import 'package:aplicativo_shareon/telas/suporte.dart';
 import 'package:aplicativo_shareon/telas/tela_de_testes.dart';
-import 'package:aplicativo_shareon/telas/tela_faq.dart';
-import 'package:aplicativo_shareon/telas/tela_favoritos.dart';
-import 'package:aplicativo_shareon/telas/tela_historico.dart';
-import 'package:aplicativo_shareon/telas/tela_main.dart';
-import 'package:aplicativo_shareon/telas/tela_meus_produtos.dart';
-import 'package:aplicativo_shareon/telas/tela_reservas.dart';
-import 'package:aplicativo_shareon/telas/tela_suporte.dart';
 import 'package:aplicativo_shareon/utils/shareon_appbar.dart';
 import 'package:aplicativo_shareon/utils/timer_reserva.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import '../main.dart';
-import 'meu_perfil.dart';
+import 'perfil_usuario.dart';
 
 class Home extends StatefulWidget {
   final int optionalControllerPointer;
@@ -140,7 +139,7 @@ class _HomeState extends State<Home> {
     } else if (controllerPointer == 6) {
       return homeSuporte();
     } else if (controllerPointer == 7) {
-      return homeConfigurcoes();
+      return homeConfiguracoes();
     } else if (controllerPointer == 8) {
       return homeFAQ();
     } else if (controllerPointer == 9) {
@@ -318,7 +317,7 @@ class _HomeState extends State<Home> {
             onTap: () {
               setState(() {
                 Navigator.pop(context);
-                controllerPointer = 10;
+                controllerPointer = 9;
               });
             },
             child: Container(
@@ -948,8 +947,6 @@ class _HomeState extends State<Home> {
       });
     }
   }
-
-
 
   setAddress(String value) {
     setState(() {

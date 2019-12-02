@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:aplicativo_shareon/models/usuario_model.dart';
 import 'package:aplicativo_shareon/telas/home.dart';
-import 'package:aplicativo_shareon/telas/tela_login.dart';
+import 'package:aplicativo_shareon/telas/login.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -247,8 +247,10 @@ class _CadastroUsuarioState extends State<CadastroUsuario> {
                                         _btLoader();
                                         double debit = 0;
 
-                                        var passEncode = utf8.encode(senhaController.text);
-                                        var base64Str = base64.encode(passEncode);
+                                        var passEncode =
+                                            utf8.encode(senhaController.text);
+                                        var base64Str =
+                                            base64.encode(passEncode);
 
                                         Map<String, dynamic> userData = {
                                           "nome": nomeController.text,

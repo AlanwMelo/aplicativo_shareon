@@ -8,11 +8,11 @@ class TelaConfiguracoes extends StatefulWidget {
 class _TelaConfiguracoesState extends State<TelaConfiguracoes> {
   @override
   Widget build(BuildContext context) {
-    return homeConfigurcoes();
+    return homeConfiguracoes();
   }
 }
 
-homeConfigurcoes(){
+homeConfiguracoes() {
   return Scaffold(
     body: Container(
       child: Center(

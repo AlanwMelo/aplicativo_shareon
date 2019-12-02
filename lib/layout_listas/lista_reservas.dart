@@ -1,5 +1,5 @@
-import 'package:aplicativo_shareon/telas/tela_em_andamento.dart';
-import 'package:aplicativo_shareon/telas/tela_verifica_reserva.dart';
+import 'package:aplicativo_shareon/telas/aluguel_em_andamento.dart';
+import 'package:aplicativo_shareon/telas/verificar_reserva.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';

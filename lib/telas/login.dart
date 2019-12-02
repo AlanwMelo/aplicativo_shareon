@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:aplicativo_shareon/models/usuario_model.dart';
-import 'package:aplicativo_shareon/telas/tela_cadastro_usuario.dart';
+import 'package:aplicativo_shareon/telas/cadastro_usuario.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';

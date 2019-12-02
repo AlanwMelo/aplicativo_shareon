@@ -1,9 +1,8 @@
-import 'package:aplicativo_shareon/telas/tela_editar_perfil.dart';
+import 'package:aplicativo_shareon/telas/editar_perfil.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-//import 'package:toast/toast.dart';
 
 import '../main.dart';
 
@@ -14,7 +13,7 @@ class MeuPerfil extends StatefulWidget {
 
 class _MeuPerfilState extends State<MeuPerfil> {
   SharedPreferencesController sharedPreferencesController =
-  new SharedPreferencesController();
+      new SharedPreferencesController();
   final databaseReference = Firestore.instance;
 
   String userName = "?";
@@ -56,7 +55,8 @@ class _MeuPerfilState extends State<MeuPerfil> {
             IconButton(
               icon: Icon(Icons.edit),
               onPressed: () {
-                Navigator.of(context).push(MaterialPageRoute(builder: (BuildContext context){
+                Navigator.of(context)
+                    .push(MaterialPageRoute(builder: (BuildContext context) {
                   return EditarPerfil();
                 }));
               },
@@ -165,7 +165,7 @@ class _MeuPerfilState extends State<MeuPerfil> {
   void _logout(BuildContext context) {
     FirebaseAuth.instance.signOut();
     SharedPreferencesController sharedPreferencesController =
-    new SharedPreferencesController();
+        new SharedPreferencesController();
     sharedPreferencesController.setlogedState("0");
     sharedPreferencesController.setID("");
     sharedPreferencesController.setName("");
@@ -180,7 +180,7 @@ class _MeuPerfilState extends State<MeuPerfil> {
     Navigator.pushAndRemoveUntil(
       context,
       MaterialPageRoute(builder: (context) => MyApp()),
-          (Route<dynamic> route) => false,
+      (Route<dynamic> route) => false,
     );
   }
 
@@ -202,12 +202,12 @@ class _MeuPerfilState extends State<MeuPerfil> {
               color: Colors.white,
               child: userimgURL == null
                   ? Center(
-                child: CircularProgressIndicator(),
-              )
+                      child: CircularProgressIndicator(),
+                    )
                   : Image.network(
-                userimgURL,
-                fit: BoxFit.cover,
-              ),
+                      userimgURL,
+                      fit: BoxFit.cover,
+                    ),
             ),
           ),
         ),
@@ -289,7 +289,7 @@ class _MeuPerfilState extends State<MeuPerfil> {
       _getUserData();
     });
   }
-  
+
   alertExit(BuildContext context) {
     return showDialog(
       context: context,
@@ -324,7 +324,7 @@ class _MeuPerfilState extends State<MeuPerfil> {
                           ),
                           Text(
                             "Deseja mesmo desconectar-se da sua conta?",
-                            textAlign:  TextAlign.center,
+                            textAlign: TextAlign.center,
                             style: TextStyle(
                               color: Colors.black,
                               fontSize: 15,
