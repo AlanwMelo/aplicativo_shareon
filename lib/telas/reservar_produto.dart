@@ -723,7 +723,7 @@ class _TelaReservarState extends State<TelaReservar> {
     DateTime retirada = dataInicio;
     DateTime devolucao = dataFim;
     duracao = (devolucao.difference(retirada).inMinutes);
-    valordoProduto = valordoDoProduto ~/ (60);
+    valordoProduto = valordoDoProduto / (60);
     var calcValorProduto = duracao.toDouble() * valordoProduto;
     getTimeString(duracao);
     calcValorProdutoConversor = calcValorProduto.toStringAsFixed(2);
@@ -882,8 +882,9 @@ class _TelaReservarState extends State<TelaReservar> {
         .then((QuerySnapshot snapshot) {
       snapshot.documents.forEach((f) {
         Map productData = f.data;
-        valordoDoProduto = productData["price"];
-        valorEstimado = productData["price"];
+        var aux = productData["price"];
+        valordoDoProduto = aux.toDouble();
+        valorEstimado = aux.toDouble();
         productName = productData["name"];
         productDescription = productData["description"];
         productMedia = productData["media"];
