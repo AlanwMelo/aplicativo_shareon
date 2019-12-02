@@ -51,16 +51,17 @@ class _ListaReservasBuilderState extends State<ListaReservasBuilder> {
         .where("requesterID", isEqualTo: userID)
         .getDocuments()
         .then((QuerySnapshot snapshot) {
-      if (snapshot.documents.length == 0) {
-        setState(() {
-          listIsEmpty = true;
-        });
-      }
+      setState(() {
+        listIsEmpty = true;
+      });
       snapshot.documents.forEach((f) {
         Map productData = f.data;
         if (productData["status"] == "em andamento" ||
             productData["status"] == "pendente" ||
             productData["status"] == "aprovada") {
+          setState(() {
+            listIsEmpty = false;
+          });
           listHelper(
               productData["productID"],
               productData["status"],

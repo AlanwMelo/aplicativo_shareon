@@ -400,7 +400,7 @@ class _TelaEmAndamentoMeusProdutosState
   _textDevolucao() {
     DateTime aux = DateTime.fromMillisecondsSinceEpoch(
         programedEndDate.millisecondsSinceEpoch);
-    if (aux.isAfter(DateTime.now())) {
+    if (aux.isBefore(DateTime.now())) {
       return Text(
         convertedEstimatedEndDate,
         style: TextStyle(

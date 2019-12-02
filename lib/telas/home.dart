@@ -948,8 +948,6 @@ class _HomeState extends State<Home> {
     }
   }
 
-
-
   setAddress(String value) {
     setState(() {
       userAddress = value;

@@ -1,4 +1,4 @@
-import 'package:aplicativo_shareon/telas/tela_verifica_reserva.dart';
+import 'package:aplicativo_shareon/utils/alter_debit.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -14,7 +14,6 @@ class _tela_testes_state extends State<tela_testes> {
 
   @override
   void initState() {
-    
     super.initState();
     var initializationSettingsAndroid =
         new AndroidInitializationSettings('@mipmap/ic_launcher');
@@ -39,10 +38,8 @@ class _tela_testes_state extends State<tela_testes> {
               ),
               RaisedButton(
                 onPressed: () {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (BuildContext context) {
-                    return TelaVerificaReserva(solicitationID: "");
-                  }));
+                  var aux = new AlterDebit(userID: "qYbLysjlt1T0GlWKp5BedDFNMe73");
+                  aux.alterdebit();
                 },
                 child: Text("Tela \"Reserva Próxima\""),
               ),
@@ -66,8 +63,8 @@ class _tela_testes_state extends State<tela_testes> {
     var iOSPlatformChannelSpecifics = IOSNotificationDetails();
     var platformChannelSpecifics = NotificationDetails(
         androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
-    await flutterLocalNotificationsPlugin.show(
-        0, 'Título de Testes', 'Texto de teste de notificação...', platformChannelSpecifics,
+    await flutterLocalNotificationsPlugin.show(0, 'Título de Testes',
+        'Texto de teste de notificação...', platformChannelSpecifics,
         payload: 'item x');
   }
 

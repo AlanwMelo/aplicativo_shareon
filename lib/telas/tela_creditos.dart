@@ -14,7 +14,7 @@ class _CreditosState extends State<Creditos> {
   SharedPreferencesController sharedPreferencesController =
       new SharedPreferencesController();
   final databaseReference = Firestore.instance;
-  double saldo;
+  double saldo = 0.0;
   String userID = "";
 
   @override

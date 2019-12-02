@@ -6,6 +6,7 @@ import 'dart:typed_data';
 import 'dart:ui';
 
 import 'package:aplicativo_shareon/telas/home.dart';
+import 'package:aplicativo_shareon/utils/alter_debit.dart';
 import 'package:barcode_scan/barcode_scan.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
@@ -42,6 +43,7 @@ class _TelaValidacaoState extends State<TelaValidacao> {
   String validacao = "Validação";
   int retiradaDevolucao; // 0 retirada 1 devolução
   String otherUserID = "";
+  String ownerID = "";
   final databaseReference = Firestore.instance;
 
   @override
@@ -163,7 +165,7 @@ class _TelaValidacaoState extends State<TelaValidacao> {
                     child: RaisedButton(
                       color: Colors.white,
                       onPressed: () {
-                        _updatePIN();
+                        _avaliacao();
                       },
                       child: Text(
                         "Validar",
@@ -436,9 +438,6 @@ class _TelaValidacaoState extends State<TelaValidacao> {
           snapshot.documents.forEach((f) async {
             Map validaQR = f.data;
 
-            print(validaQR["PIN"]);
-            print(validator["otherUserPIN"]);
-
             if (validaQR["PIN"] != validator["otherUserPIN"]) {
               _toast("erro PIN incorreto", context);
             } else {
@@ -592,9 +591,6 @@ class _TelaValidacaoState extends State<TelaValidacao> {
 
         double endPrice = duracao.toDouble() * auxPrice;
 
-        print(duracao);
-        print(endPrice);
-
         Map<String, dynamic> validaTransacao = {
           "finalEndDate": Timestamp.fromDate(DateTime.now()),
           "status": "concluido",
@@ -614,6 +610,7 @@ class _TelaValidacaoState extends State<TelaValidacao> {
           "solicitation": widget.solicitationId,
           "reason": "aluguel",
           "debit": endPrice,
+          "statusTS": Timestamp.fromDate(DateTime.now()),
         };
 
         await databaseReference.collection("debitHist").add(debitADD);
@@ -626,12 +623,20 @@ class _TelaValidacaoState extends State<TelaValidacao> {
           "solicitation": widget.solicitationId,
           "reason": "aluguel",
           "debit": subtrai,
+          "statusTS": Timestamp.fromDate(DateTime.now()),
         };
 
         await databaseReference.collection("debitHist").add(debitSub);
+
+        var alterOwnerDebit = new AlterDebit(userID: owner);
+        var alterRequesterDebit = new AlterDebit(userID: requester);
+
+        alterOwnerDebit.alterdebit();
+        alterRequesterDebit.alterdebit();
       });
     });
     _toast("Devolução validada", context);
+
     Navigator.of(context)
         .pushReplacement(MaterialPageRoute(builder: (BuildContext context) {
       return Home();
@@ -640,5 +645,177 @@ class _TelaValidacaoState extends State<TelaValidacao> {
       canPop = true;
       loading = false;
     });
+  }
+
+  _avaliacao() {
+    return WillPopScope(
+      onWillPop: () async {
+        return Navigator.of(context)
+            .pushReplacement(MaterialPageRoute(builder: (BuildContext contex) {
+          return Home();
+        }));
+      },
+      child: Container(
+        padding: EdgeInsets.all(16),
+        child: Center(
+          child: ClipRRect(
+            borderRadius: BorderRadius.all(Radius.circular(16)),
+            child: GestureDetector(
+              onTap: () => null,
+              child: Container(
+                child: Container(
+                  color: Colors.white,
+                  child: Container(
+                    color: Colors.grey[200],
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        Container(
+                          margin: EdgeInsets.only(bottom: 8, top: 8),
+                          child: Text(
+                            "Avaliação",
+                            style: TextStyle(
+                              decoration: TextDecoration.none,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black,
+                              fontSize: 25,
+                            ),
+                          ),
+                        ),
+                        Container(
+                          padding: EdgeInsets.all(12),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              Container(
+                                margin: EdgeInsets.only(
+                                    right: 8, left: 8, bottom: 8),
+                                child: Row(
+                                  children: <Widget>[
+                                    _textConfirmacao("Avaliação do usuário:",
+                                        titulo: true),
+                                  ],
+                                ),
+                              ),
+                              Container(
+                                margin: EdgeInsets.only(bottom: 8),
+                                child: _starsUser(),
+                              ),
+                              ownerID == widget.userId
+                                  ? Container()
+                                  : Container(
+                                      margin: EdgeInsets.only(
+                                          right: 8, left: 8, bottom: 8),
+                                      child: Row(
+                                        children: <Widget>[
+                                          _textConfirmacao(
+                                              "Avaliação do produto:",
+                                              titulo: true),
+                                        ],
+                                      ),
+                                    ),
+                            ],
+                          ),
+                        ),
+                        Container(
+                          color: Colors.indigoAccent,
+                          child: Row(
+                            children: <Widget>[
+                              Expanded(
+                                child: Container(
+                                  height: 70,
+                                  child: RaisedButton(
+                                    color: Colors.indigoAccent,
+                                    onPressed: () {
+                                      setState(() {
+                                        Navigator.pop(context);
+                                        /* _solicitaReserva();*/
+                                      });
+                                    },
+                                    child: Text(
+                                      "Avaliar",
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  _textConfirmacao(String texto, {bool titulo = false, bool center = false}) {
+    if (titulo) {
+      return Text(
+        "$texto",
+        style: TextStyle(
+          fontFamily: 'RobotoMono',
+          fontWeight: FontWeight.bold,
+          color: Colors.red,
+          fontSize: 16,
+          decoration: TextDecoration.none,
+        ),
+      );
+    } else if (center == true) {
+      return Text(
+        "$texto",
+        textAlign: TextAlign.center,
+        style: TextStyle(
+          fontFamily: 'RobotoMono',
+          fontWeight: FontWeight.normal,
+          color: Colors.black,
+          fontSize: 16,
+          decoration: TextDecoration.none,
+        ),
+      );
+    } else {
+      return Text(
+        "$texto",
+        style: TextStyle(
+          fontFamily: 'RobotoMono',
+          fontWeight: FontWeight.normal,
+          color: Colors.black,
+          fontSize: 16,
+          decoration: TextDecoration.none,
+        ),
+      );
+    }
+  }
+
+  _iconFullStar() {
+    return Icon(
+      Icons.star,
+      color: Colors.black,
+      size: 45.0,
+    );
+  }
+
+  _iconEmptyStar() {
+    return Icon(
+      Icons.star_border,
+      color: Colors.black54,
+      size: 45.0,
+    );
+  }
+
+  _starsUser() {
+    return Row(
+      children: <Widget>[],
+    );
   }
 }
