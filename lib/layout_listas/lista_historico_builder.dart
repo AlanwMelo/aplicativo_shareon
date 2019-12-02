@@ -46,8 +46,6 @@ class _ListaHistoricoBuilderState extends State<ListaHistoricoBuilder> {
     await databaseReference
         .collection("solicitations")
         .where("requesterID", isEqualTo: userID)
-        .where("status", isEqualTo: "concluido")
-        .where("status", isEqualTo: "cancelada")
         .getDocuments()
         .then((QuerySnapshot snapshot) {
       if (snapshot.documents.length == 0) {

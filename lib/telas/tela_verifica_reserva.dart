@@ -320,7 +320,7 @@ class _TelaVerificaReservaState extends State<TelaVerificaReserva> {
           ],
         ),
       );
-    } else if ((startTime - timeNow) <= 3600000) {
+    } else if ((startTime - timeNow) <= 3600000 && solicitationStatus == "aprovada") {
       return Container(
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
