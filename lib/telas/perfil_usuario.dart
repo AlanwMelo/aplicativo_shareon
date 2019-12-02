@@ -16,8 +16,9 @@ class _MeuPerfilState extends State<MeuPerfil> {
       new SharedPreferencesController();
   final databaseReference = Firestore.instance;
 
-  String userName = "?";
-  String userMail = "?";
+  String userName = "";
+  String userMail = "";
+  String userPhone = "";
   String userimgURL;
   String userAddress = "";
   String userMedia = "-";
@@ -95,6 +96,14 @@ class _MeuPerfilState extends State<MeuPerfil> {
                   Container(
                     margin: EdgeInsets.only(top: 12, bottom: 4),
                     child: _text(userAddress),
+                  ),
+                  Container(
+                    margin: EdgeInsets.only(top: 16, bottom: 4),
+                    child: _text("Telefone:", semititle: true),
+                  ),
+                  Container(
+                    margin: EdgeInsets.only(top: 8, bottom: 4),
+                    child: _text(userPhone),
                   ),
                   Container(
                     margin: EdgeInsets.only(top: 16, bottom: 24),
@@ -278,6 +287,7 @@ class _MeuPerfilState extends State<MeuPerfil> {
         setState(() {
           userMedia = userData["media"];
           userAddress = userData["userAddress"];
+          userPhone = userData["tel_contato"];
         });
       });
     });
