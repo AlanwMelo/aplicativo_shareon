@@ -160,7 +160,7 @@ class _CadastroUsuarioState extends State<CadastroUsuario> {
                       controller: telefoneController,
                       decoration: InputDecoration(hintText: "Telefone"),
                       validator: (text) {
-                        if (text.length != 14) {
+                        if (text.length != 15) {
                           return "O telefone informado não é válido";
                         }
                         if (text.isEmpty) {

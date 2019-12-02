@@ -264,7 +264,7 @@ class _EditarPerfilState extends State<EditarPerfil> {
                       validator: (text) {
                         if (telefoneController.text.isNotEmpty) {
                           alterPhone = true;
-                          if (text.length != 14) {
+                          if (text.length != 15) {
                             return "O telefone informado não é válido";
                           }
                           if (text.isEmpty) {
