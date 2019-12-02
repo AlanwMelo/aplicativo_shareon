@@ -42,7 +42,7 @@ class _CreditosState extends State<Creditos> {
             color: Colors.white.withOpacity(0.1),
             child: Center(
               child: ClipRRect(
-                borderRadius: BorderRadius.all(Radius.circular(16)),
+                borderRadius: BorderRadius.all(Radius.circular(8)),
                 child: GestureDetector(
                   onTap: () => null,
                   child: Container(
@@ -53,17 +53,20 @@ class _CreditosState extends State<Creditos> {
                       child: Column(
                         children: <Widget>[
                           Container(
+                            padding: EdgeInsets.all(8),
                             margin: EdgeInsets.only(
                                 bottom: 32, top: 32, right: 8, left: 8),
                             child: Text(
-                              "Os créditos do Share On são adicionados através do Mercado Pago. \n"
-                              "Informe um dos seguintes valores e você será redirecionado para a página de pagamento.",
+                              "Os créditos do Share On são adicionados através do Mercado Pago. \n\n"
+                              "Selecione um dos seguintes valores e você será redirecionado para a página de pagamento.",
+                              textAlign: TextAlign.justify,
+                              textDirection: TextDirection.ltr,
                               style: TextStyle(
                                 fontFamily: 'RobotoMono',
                                 decoration: TextDecoration.none,
                                 fontWeight: FontWeight.w500,
                                 color: Colors.black,
-                                fontSize: 18,
+                                fontSize: 16,
                               ),
                             ),
                           ),
@@ -164,8 +167,12 @@ class _CreditosState extends State<Creditos> {
                       child: RaisedButton(
                         color: Colors.white,
                         onPressed: () {},
-                        child:
-                            Text("Ver histórico", textAlign: TextAlign.center),
+                        child: Text("Ver histórico",
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                            ),
+                            textAlign: TextAlign.center),
                       ),
                     ),
                     Container(
@@ -178,6 +185,10 @@ class _CreditosState extends State<Creditos> {
                         },
                         child: Container(
                           child: Text("Adicionar créditos",
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
                               textAlign: TextAlign.center),
                         ),
                       ),
@@ -192,6 +203,10 @@ class _CreditosState extends State<Creditos> {
                           child: Text(
                             "Resgatar créditos",
                             textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
                       ),
@@ -302,7 +317,7 @@ _text(String s) {
     s,
     style: TextStyle(
       color: Colors.white,
-      fontSize: 20,
+      fontSize: 24,
       fontWeight: FontWeight.bold,
     ),
   );

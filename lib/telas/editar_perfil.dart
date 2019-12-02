@@ -126,12 +126,13 @@ class _EditarPerfilState extends State<EditarPerfil> {
                       child: Center(
                         child: Container(
                           width: 150,
-                          height: 30,
+                          height: 40,
                           color: Colors.indigoAccent,
                           child: Center(
                             child: Text("Remover imagem",
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
+                                    fontSize: 16,
                                     color: Colors.white,
                                     fontWeight: FontWeight.bold)),
                           ),
@@ -141,9 +142,9 @@ class _EditarPerfilState extends State<EditarPerfil> {
                   ),
                   Container(
                       color: Colors.white,
-                      margin: EdgeInsets.only(top: 16),
+                      margin: EdgeInsets.only(top: 16, left: 8, right: 8),
                       child: TextFormField(
-                        textAlign: TextAlign.center,
+                        textAlign: TextAlign.justify,
                         decoration: InputDecoration(
                           hintText: userName,
                         ),
@@ -160,9 +161,9 @@ class _EditarPerfilState extends State<EditarPerfil> {
                       )),
                   Container(
                       color: Colors.white,
-                      margin: EdgeInsets.only(top: 16),
+                      margin: EdgeInsets.only(top: 16, left: 8, right: 8),
                       child: TextFormField(
-                        textAlign: TextAlign.center,
+                        textAlign: TextAlign.justify,
                         decoration: InputDecoration(
                           hintText: userMail,
                         ),
@@ -183,9 +184,9 @@ class _EditarPerfilState extends State<EditarPerfil> {
                       )),
                   Container(
                       color: Colors.white,
-                      margin: EdgeInsets.only(top: 16),
+                      margin: EdgeInsets.only(top: 16, left: 8, right: 8),
                       child: TextFormField(
-                        textAlign: TextAlign.center,
+                        textAlign: TextAlign.justify,
                         decoration: InputDecoration(
                           hintText: "Confirmar email",
                         ),
@@ -204,11 +205,11 @@ class _EditarPerfilState extends State<EditarPerfil> {
                       )),
                   Container(
                       color: Colors.white,
-                      margin: EdgeInsets.only(top: 16),
+                      margin: EdgeInsets.only(top: 16, left: 8, right: 8),
                       child: TextFormField(
                         obscureText: true,
                         controller: senhaController,
-                        textAlign: TextAlign.center,
+                        textAlign: TextAlign.justify,
                         decoration: InputDecoration(
                           hintText: "Nova senha",
                         ),
@@ -228,9 +229,9 @@ class _EditarPerfilState extends State<EditarPerfil> {
                       )),
                   Container(
                       color: Colors.white,
-                      margin: EdgeInsets.only(top: 16),
+                      margin: EdgeInsets.only(top: 16, left: 8, right: 8),
                       child: TextFormField(
-                        textAlign: TextAlign.center,
+                        textAlign: TextAlign.justify,
                         obscureText: true,
                         decoration: InputDecoration(
                           hintText: "Confirmar Senha",
@@ -251,7 +252,7 @@ class _EditarPerfilState extends State<EditarPerfil> {
                         },
                       )),
                   Container(
-                    margin: EdgeInsets.only(top: 22),
+                    margin: EdgeInsets.only(top: 24, left: 8, right: 8),
                     child: Row(
                       children: <Widget>[
                         Expanded(
@@ -262,7 +263,7 @@ class _EditarPerfilState extends State<EditarPerfil> {
                     ),
                   ),
                   Container(
-                    margin: EdgeInsets.only(top: 12),
+                    margin: EdgeInsets.only(top: 12, left: 8, right: 8),
                     child: GestureDetector(
                       onTap: () {
                         _selecionaLocalizacao(context);
@@ -281,20 +282,23 @@ class _EditarPerfilState extends State<EditarPerfil> {
                   ),
                   Container(
                     color: Colors.white,
-                    margin: const EdgeInsets.only(top: 25.0),
+                    margin: const EdgeInsets.only(top: 25.0, left: 8, right: 8),
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: <Widget>[
-                        Text("Somente dados alterados serão salvos"),
+                        Text(
+                            "Os dados só serão alterados após clicar no botão"),
                         Container(
+                          padding: EdgeInsets.all(8),
                           width: 400.0,
-                          height: 50.0,
+                          height: 60.0,
                           child: RaisedButton(
                             color: Colors.indigoAccent,
                             child: new Text(
                               'Atualizar dados',
                               style: TextStyle(
                                 color: Colors.white,
+                                fontSize: 16,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
@@ -305,7 +309,7 @@ class _EditarPerfilState extends State<EditarPerfil> {
                                     alterName == false &&
                                     alterMail == false &&
                                     alterAddress == false) {
-                                  _toast("Nada foi alterado", context);
+                                  _toast("Nenhum dado foi alterado", context);
                                 } else {
                                   bool emailInUse = false;
 
@@ -384,6 +388,7 @@ class _EditarPerfilState extends State<EditarPerfil> {
         }
       },
       child: Container(
+        padding: EdgeInsets.all(8),
         child: ConstrainedBox(
           constraints: BoxConstraints(
             minWidth: 200,
@@ -866,10 +871,11 @@ class _EditarPerfilState extends State<EditarPerfil> {
                             child: Text(
                               "Voltar",
                               style: TextStyle(
+                                fontFamily: 'RobotoMono',
                                 decoration: TextDecoration.none,
                                 fontWeight: FontWeight.bold,
-                                color: Colors.black,
-                                fontSize: 25,
+                                color: Colors.red[800],
+                                fontSize: 24,
                               ),
                             ),
                           ),
@@ -898,6 +904,7 @@ class _EditarPerfilState extends State<EditarPerfil> {
                                         "Voltar",
                                         style: TextStyle(
                                           color: Colors.white,
+                                          fontSize: 16,
                                         ),
                                       ),
                                     ),
@@ -915,6 +922,7 @@ class _EditarPerfilState extends State<EditarPerfil> {
                                         "Cancelar",
                                         style: TextStyle(
                                           color: Colors.white,
+                                          fontSize: 16,
                                         ),
                                       ),
                                     ),
@@ -962,6 +970,7 @@ class _EditarPerfilState extends State<EditarPerfil> {
       return Text(
         "$texto",
         style: TextStyle(
+          fontFamily: 'RobotoMono',
           fontWeight: FontWeight.normal,
           color: Colors.black,
           fontSize: 16,
