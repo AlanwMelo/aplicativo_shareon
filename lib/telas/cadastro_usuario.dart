@@ -24,6 +24,7 @@ class _CadastroUsuarioState extends State<CadastroUsuario> {
   final senhaController = TextEditingController();
   final confirmarSenhaController = TextEditingController();
   final cpfController = new MaskedTextController(mask: '000.000.000-00');
+  final telefoneController = new MaskedTextController(mask: '(00) 00000-0000');
   final enderecoController = TextEditingController();
   final campos = GlobalKey<FormState>();
   final verificacao = GlobalKey<ScaffoldState>();
@@ -154,6 +155,22 @@ class _CadastroUsuarioState extends State<CadastroUsuario> {
                       },
                     ),
                     SizedBox(height: 16.0),
+                    TextFormField(
+                      keyboardType: TextInputType.number,
+                      controller: telefoneController,
+                      decoration: InputDecoration(hintText: "Telefone"),
+                      validator: (text) {
+                        if (text.length != 14) {
+                          return "O telefone informado não é válido";
+                        }
+                        if (text.isEmpty) {
+                          return "Campo telefone obrigatório";
+                        } else {
+                          return null;
+                        }
+                      },
+                    ),
+                    SizedBox(height: 16.0),
                     GestureDetector(
                       onTap: () {
                         _selecionaLocalizacao(context);
@@ -257,6 +274,7 @@ class _CadastroUsuarioState extends State<CadastroUsuario> {
                                           "email": emailController.text,
                                           "password": base64Str,
                                           "cpf": cpf,
+                                          "tel_contato": telefoneController,
                                           "debit": debit,
                                           "media": "-",
                                           "userAddressLatLng":
@@ -346,12 +364,12 @@ class _CadastroUsuarioState extends State<CadastroUsuario> {
               child: GestureDetector(
                 onTap: () => null,
                 child: Container(
-                  height: 440,
                   child: Container(
                     color: Colors.white,
                     child: Container(
                       color: Colors.grey[200],
                       child: Column(
+                        mainAxisSize: MainAxisSize.min,
                         children: <Widget>[
                           Container(
                             margin: EdgeInsets.only(bottom: 8, top: 8),
@@ -370,6 +388,7 @@ class _CadastroUsuarioState extends State<CadastroUsuario> {
                           Container(
                             padding: EdgeInsets.all(12),
                             child: Column(
+                              mainAxisSize: MainAxisSize.min,
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: <Widget>[
                                 Container(
@@ -432,33 +451,31 @@ class _CadastroUsuarioState extends State<CadastroUsuario> {
                               ],
                             ),
                           ),
-                          Expanded(
-                            child: Container(
-                              color: Colors.indigoAccent,
-                              child: Row(
-                                children: <Widget>[
-                                  Expanded(
-                                    child: Container(
-                                      height: 70,
-                                      child: RaisedButton(
-                                        color: Colors.indigoAccent,
-                                        onPressed: () {
-                                          setState(() {
-                                            Navigator.pop(context);
-                                          });
-                                        },
-                                        child: Text(
-                                          "Ajustar CPF informado",
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.white,
-                                          ),
+                          Container(
+                            color: Colors.indigoAccent,
+                            child: Row(
+                              children: <Widget>[
+                                Expanded(
+                                  child: Container(
+                                    height: 70,
+                                    child: RaisedButton(
+                                      color: Colors.indigoAccent,
+                                      onPressed: () {
+                                        setState(() {
+                                          Navigator.pop(context);
+                                        });
+                                      },
+                                      child: Text(
+                                        "Ajustar CPF informado",
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.white,
                                         ),
                                       ),
                                     ),
                                   ),
-                                ],
-                              ),
+                                ),
+                              ],
                             ),
                           ),
                         ],

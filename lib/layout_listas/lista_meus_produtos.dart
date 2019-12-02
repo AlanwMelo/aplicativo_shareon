@@ -53,7 +53,7 @@ class _ListaMeusProdutosBuilderState extends State<ListaMeusProdutosBuilder> {
       }
       snapshot.documents.forEach((f) async {
         Map productData = f.data;
-        if (productData["adStatus"] != "deletado") {
+        if (productData["adStatus"] == "ativo") {
           await databaseReference
               .collection("productIMGs")
               .where("productID", isEqualTo: productData["ID"])

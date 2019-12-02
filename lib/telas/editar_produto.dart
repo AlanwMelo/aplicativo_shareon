@@ -425,17 +425,40 @@ class _EditaProdutoState extends State<EditaProduto> {
                           ),
                           Container(
                             child: RaisedButton(
-                                child: Text(
-                                  "Excluir produto",
-                                  style: TextStyle(
-                                    fontSize: 20,
-                                  ),
+                              child: Text(
+                                "Excluir produto",
+                                style: TextStyle(
+                                  fontSize: 20,
                                 ),
-                                textColor: Colors.white,
-                                color: Colors.red,
-                                onPressed: () {
+                              ),
+                              textColor: Colors.white,
+                              color: Colors.red,
+                              onPressed: () async {
+                                bool emUso = false;
+                                FocusScope.of(context)
+                                    .requestFocus(new FocusNode());
+                                await databaseReference
+                                    .collection("solicitations")
+                                    .where("productID",
+                                        isEqualTo: widget.productID)
+                                    .getDocuments()
+                                    .then((QuerySnapshot snapshot) {
+                                  snapshot.documents.forEach((f) {
+                                    Map aux = f.data;
+                                    if (aux["status"] == "em andamento") {
+                                      emUso = true;
+                                    }
+                                  });
+                                });
+                                if (emUso == true) {
+                                  _toast(
+                                      "Você não pode editar um produto durante um empréstimo",
+                                      context);
+                                } else {
                                   _alertDel(context);
-                                }),
+                                }
+                              },
+                            ),
                           ),
                         ],
                       ),

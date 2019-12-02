@@ -8,6 +8,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_masked_text/flutter_masked_text.dart';
 import 'package:google_map_location_picker/google_map_location_picker.dart';
 import 'package:toast/toast.dart';
 
@@ -29,6 +30,7 @@ class _EditarPerfilState extends State<EditarPerfil> {
   final confirmarEailController = TextEditingController();
   final confirmacaoSenhaController = TextEditingController();
   final validaSenhaController = TextEditingController();
+  final telefoneController = new MaskedTextController(mask: '(00) 00000-0000');
   final fields = GlobalKey<FormState>();
   final fieldPass = GlobalKey<FormState>();
 
@@ -40,6 +42,7 @@ class _EditarPerfilState extends State<EditarPerfil> {
   String oldUserAddress = "";
   String userMedia = "-";
   String userID = "";
+  String actualPhone = "";
   GeoPoint userAddressLatLng;
   bool loading = false;
   bool canPop = true;
@@ -50,6 +53,7 @@ class _EditarPerfilState extends State<EditarPerfil> {
   bool alterPass = false;
   bool alterIMG = false;
   bool alterAddress = false;
+  bool alterPhone = false;
 
   @override
   void initState() {
@@ -252,6 +256,29 @@ class _EditarPerfilState extends State<EditarPerfil> {
                         },
                       )),
                   Container(
+                    margin: EdgeInsets.only(top: 16, left: 8, right: 8),
+                    child: TextFormField(
+                      keyboardType: TextInputType.number,
+                      controller: telefoneController,
+                      decoration: InputDecoration(hintText: actualPhone),
+                      validator: (text) {
+                        if (telefoneController.text.isNotEmpty) {
+                          alterPhone = true;
+                          if (text.length != 14) {
+                            return "O telefone informado não é válido";
+                          }
+                          if (text.isEmpty) {
+                            return "Campo telefone obrigatório";
+                          } else {
+                            return null;
+                          }
+                        } else {
+                          return null;
+                        }
+                      },
+                    ),
+                  ),
+                  Container(
                     margin: EdgeInsets.only(top: 24, left: 8, right: 8),
                     child: Row(
                       children: <Widget>[
@@ -308,7 +335,8 @@ class _EditarPerfilState extends State<EditarPerfil> {
                                     alterPass == false &&
                                     alterName == false &&
                                     alterMail == false &&
-                                    alterAddress == false) {
+                                    alterAddress == false &&
+                                    alterPhone == false) {
                                   _toast("Nenhum dado foi alterado", context);
                                 } else {
                                   bool emailInUse = false;
@@ -475,6 +503,7 @@ class _EditarPerfilState extends State<EditarPerfil> {
       snapshot.documents.forEach((f) {
         Map userData = f.data;
         setState(() {
+          actualPhone = userData["tel_contato"];
           userMedia = userData["media"];
           userAddress = userData["userAddress"];
           oldUserAddress = userData["userAddress"];
@@ -594,6 +623,15 @@ class _EditarPerfilState extends State<EditarPerfil> {
           .collection("users")
           .document(userID)
           .updateData(attAddress);
+    }
+    if (alterPhone == true) {
+      Map<String, dynamic> attPhone = {
+        "tel_contato": telefoneController.text,
+      };
+      await databaseReference
+          .collection("users")
+          .document(userID)
+          .updateData(attPhone);
     }
     if (alterIMG == true) {
       String newUserImg;
@@ -725,6 +763,35 @@ class _EditarPerfilState extends State<EditarPerfil> {
                                           children: <Widget>[
                                             _textConfirmacao(
                                                 mailController.text),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                          alterPhone != true
+                              ? Container()
+                              : Container(
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: <Widget>[
+                                      Container(
+                                        margin: EdgeInsets.only(
+                                            right: 8, left: 8, bottom: 8),
+                                        child: Row(
+                                          children: <Widget>[
+                                            _textConfirmacao("Novo Telefone",
+                                                titulo: true),
+                                          ],
+                                        ),
+                                      ),
+                                      Container(
+                                        margin: EdgeInsets.only(
+                                            right: 8, left: 8, bottom: 8),
+                                        child: Row(
+                                          children: <Widget>[
+                                            _textConfirmacao(
+                                                telefoneController.text),
                                           ],
                                         ),
                                       ),
