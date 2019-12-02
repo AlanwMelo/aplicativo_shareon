@@ -1,10 +1,5 @@
-<<<<<<< HEAD:lib/layout_listas/lista_reservas_builder.dart
-import 'package:aplicativo_shareon/telas/tela_reserva_em_andamento.dart';
-import 'package:aplicativo_shareon/telas/tela_verifica_reserva.dart';
-=======
 import 'package:aplicativo_shareon/telas/aluguel_em_andamento.dart';
 import 'package:aplicativo_shareon/telas/verificar_reserva.dart';
->>>>>>> 1225562d4f3d433b30f4e131f65290ebec67a49c:lib/layout_listas/lista_reservas.dart
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
