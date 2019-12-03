@@ -94,124 +94,38 @@ class _TelaValidacaoState extends State<TelaValidacao> {
   telaValidacao() {
     return SingleChildScrollView(
       child: Container(
-        height: 720,
+        height: 600,
         padding: EdgeInsets.all(12),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: <Widget>[
-            Center(
-              child: Container(
-                child: _text(
-                    "Para validar uma transação escaneie o código do outro usuário, ou peça para ele escanear o seu."),
-              ),
-            ),
-            Container(
-              margin: EdgeInsets.only(top: 8, bottom: 8),
-              child: RaisedButton(
-                color: Colors.white,
-                onPressed: () {
-                  scan();
-                },
-                child: Text(
-                  "Escanear",
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
+        child: Center(
+          child: Container(
+            margin: EdgeInsets.only(top: 30),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                Center(
+                  child: Container(
+                    child: _text(
+                        "Para validar uma transação escaneie o código do outro usuário, ou peça para ele escanear o seu."),
                   ),
                 ),
-              ),
-            ),
-            _qrZone(qrMap.toString()),
-            Center(
-              child: Container(
-                margin: EdgeInsets.only(top: 8),
-                child: _text(
-                    "Ou se preferir digite seu PIN no celular dele, ou peça para que ele digite o dele abaixo."),
-              ),
-            ),
-            Container(
-              margin: EdgeInsets.only(top: 8),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: <Widget>[
-                  Container(
-                    child: Center(
-                      child: _boxSenha(),
-                    ),
-                  ),
-                  Container(
-                    child: Center(
-                      child: _boxSenha(),
-                    ),
-                  ),
-                  Container(
-                    child: Center(
-                      child: _boxSenha(),
-                    ),
-                  ),
-                  Container(
-                    child: Center(
-                      child: _boxSenha(),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Center(
-                child: Container(
-              margin: EdgeInsets.only(top: 8),
-              child: _textPin(),
-            )),
-            Container(
-              child: Column(
-                children: <Widget>[
-                  Container(
-                    width: 400,
-                    margin: EdgeInsets.only(bottom: 10, top: 8),
-                    child: RaisedButton(
-                      color: Colors.white,
-                      onPressed: () {
-                        showDialog(
-                            context: context,
-                            builder: (_) {
-                              return Avaliacao(
-                                  requesterID: requesterID,
-                                  userID: widget.userId,
-                                  ownerID: ownerID,
-                                  productID: productID);
-                            });
-                      },
-                      child: Text(
-                        "Validar",
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                        ),
+                _qrZone(qrMap.toString()),
+                Container(
+                  margin: EdgeInsets.only(bottom: 8),
+                  child: RaisedButton(
+                    color: Colors.white,
+                    onPressed: () {
+                      scan();
+                    },
+                    child: Text(
+                      "Escanear",
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
-                  )
-                ],
-              ),
+                  ),
+                ),
+              ],
             ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  _boxSenha() {
-    return Container(
-      child: ConstrainedBox(
-        constraints: BoxConstraints(
-          minWidth: 60,
-          minHeight: 60,
-          maxHeight: 60,
-          maxWidth: 60,
-        ),
-        child: ClipRRect(
-          borderRadius: BorderRadius.all(
-            Radius.circular(10),
-          ),
-          child: Container(
-            color: Colors.white,
           ),
         ),
       ),
@@ -368,6 +282,7 @@ class _TelaValidacaoState extends State<TelaValidacao> {
 
   _qrZone(String qrText) {
     return Container(
+      margin: EdgeInsets.only(top: 36, bottom: 32),
       child: ConstrainedBox(
         constraints: BoxConstraints(
           minWidth: 300,
