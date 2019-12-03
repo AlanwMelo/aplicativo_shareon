@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:aplicativo_shareon/telas/home.dart';
 import 'package:aplicativo_shareon/telas/validacao.dart';
+import 'package:aplicativo_shareon/telas/ver_perfil.dart';
 import 'package:aplicativo_shareon/utils/shareon_appbar.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
@@ -130,20 +131,27 @@ class _TelaReservaMeusProdutosState extends State<TelaReservaMeusProdutos> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: <Widget>[
-                    Container(
-                      margin: EdgeInsets.only(top: 8),
-                      child: Row(
-                        children: <Widget>[
-                          _text("Tomador: "),
-                          Text(
-                            tomadorName,
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: Colors.yellow,
-                              fontSize: 20,
+                    GestureDetector(
+                      onTap: (){
+                        Navigator.of(context).push(MaterialPageRoute(builder: (BuildContext context){
+                          return VerPerfil(userID: tomadorID);
+                        }));
+                      },
+                      child: Container(
+                        margin: EdgeInsets.only(top: 8),
+                        child: Row(
+                          children: <Widget>[
+                            _text("Tomador: "),
+                            Text(
+                              tomadorName,
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.yellow,
+                                fontSize: 20,
+                              ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
                     Container(

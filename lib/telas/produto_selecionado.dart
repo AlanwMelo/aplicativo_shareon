@@ -5,6 +5,7 @@ import 'package:aplicativo_shareon/models/usuario_model.dart';
 import 'package:aplicativo_shareon/telas/editar_produto.dart';
 import 'package:aplicativo_shareon/telas/reservar_produto.dart';
 import 'package:aplicativo_shareon/telas/validacao.dart';
+import 'package:aplicativo_shareon/telas/ver_perfil.dart';
 import 'package:aplicativo_shareon/telas/verificar_reserva.dart';
 import 'package:aplicativo_shareon/utils/shareon_appbar.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -266,9 +267,17 @@ class _ProdutoSelecionadoState extends State<ProdutoSelecionado> {
                                 _iconEstrela(),
                               ],
                             )),
-                        Container(
-                          margin: EdgeInsets.only(top: 8, left: 8, right: 8),
-                          child: _text("Produto de: $productOwner"),
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.of(context).push(MaterialPageRoute(
+                                builder: (BuildContext context) {
+                              return VerPerfil(userID: productOwnerID);
+                            }));
+                          },
+                          child: Container(
+                            margin: EdgeInsets.only(top: 8, left: 8, right: 8),
+                            child: _text("Produto de: $productOwner"),
+                          ),
                         ),
                         Container(
                           margin: EdgeInsets.only(top: 8, bottom: 8),

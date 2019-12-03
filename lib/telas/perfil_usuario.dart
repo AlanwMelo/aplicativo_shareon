@@ -130,7 +130,7 @@ class _MeuPerfilState extends State<MeuPerfil> {
                       color: Colors.white,
                       width: 200.0,
                       height: 50.0,
-                      margin: const EdgeInsets.all(95.0),
+                      margin: const EdgeInsets.only(top: 45.0),
                       child: RaisedButton(
                         color: Colors.white,
                         child: new Text(
