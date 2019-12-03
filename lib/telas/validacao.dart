@@ -667,18 +667,18 @@ class _TelaValidacaoState extends State<TelaValidacao> {
 
         alterOwnerDebit.alterdebit();
         alterRequesterDebit.alterdebit();
+
+        showDialog(
+            context: context,
+            builder: (_) {
+              return Avaliacao(
+                  requesterID: requesterID,
+                  userID: widget.userId,
+                  ownerID: ownerID,
+                  productID: productID);
+            });
       });
     });
-
-    showDialog(
-        context: context,
-        builder: (_) {
-          return Avaliacao(
-              requesterID: requesterID,
-              userID: widget.userId,
-              ownerID: ownerID,
-              productID: productID);
-        });
 
     setState(() {
       canPop = true;

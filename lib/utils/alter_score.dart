@@ -30,10 +30,6 @@ class AlterScore {
 
         _auxScoreValue = aux1;
         _auxScoreTotal = _auxScoreTotal + _auxScoreValue;
-        print("aux $aux");
-        print("aux1 $aux1");
-        print("_auxScoreTotal $_auxScoreTotal");
-        print("length $_auxListSize");
 
       });
     });

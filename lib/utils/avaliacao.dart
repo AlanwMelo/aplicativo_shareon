@@ -25,6 +25,9 @@ class _AvaliacaoState extends State<Avaliacao> {
   int userStarControl = 0;
   int productStarControl = 0;
   bool loading = false;
+  final fields = GlobalKey<FormState>();
+  final userController = TextEditingController();
+  final productController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -58,105 +61,130 @@ class _AvaliacaoState extends State<Avaliacao> {
                         color: Colors.white,
                         child: Container(
                           color: Colors.grey[200],
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: <Widget>[
-                              Container(
-                                margin: EdgeInsets.only(bottom: 8, top: 8),
-                                child: Text(
-                                  "Avaliação",
-                                  style: TextStyle(
-                                    decoration: TextDecoration.none,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.black,
-                                    fontSize: 25,
+                          child: Form(
+                            key: fields,
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: <Widget>[
+                                Container(
+                                  margin: EdgeInsets.only(bottom: 8, top: 8),
+                                  child: Text(
+                                    "Avaliação",
+                                    style: TextStyle(
+                                      decoration: TextDecoration.none,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.black,
+                                      fontSize: 25,
+                                    ),
                                   ),
                                 ),
-                              ),
-                              Divider(
-                                thickness: 3,
-                              ),
-                              Container(
-                                padding: EdgeInsets.all(12),
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: <Widget>[
-                                    Container(
-                                      margin: EdgeInsets.only(
-                                          right: 8, left: 8, bottom: 8),
-                                      child: Row(
-                                        children: <Widget>[
-                                          Expanded(
-                                            child: Center(
-                                              child: _textConfirmacao(
-                                                  "Avaliação do usuário:",
-                                                  titulo: true),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    Container(
-                                      margin: EdgeInsets.only(bottom: 8),
-                                      child: _starsUser(),
-                                    ),
-                                    widget.ownerID == widget.userID
-                                        ? Container()
-                                        : Container(
-                                            margin: EdgeInsets.only(
-                                                right: 8, left: 8, bottom: 8),
-                                            child: Row(
-                                              children: <Widget>[
-                                                Expanded(
-                                                  child: Center(
-                                                    child: _textConfirmacao(
-                                                        "Avaliação do produto:",
-                                                        titulo: true),
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                    widget.ownerID == widget.userID
-                                        ? Container()
-                                        : Container(
-                                            margin: EdgeInsets.only(bottom: 8),
-                                            child: _starsProduct(),
-                                          ),
-                                  ],
+                                Divider(
+                                  thickness: 3,
                                 ),
-                              ),
-                              Container(
-                                color: Colors.indigoAccent,
-                                child: Row(
-                                  children: <Widget>[
-                                    Expanded(
-                                      child: Container(
-                                        height: 70,
-                                        child: RaisedButton(
-                                          color: Colors.indigoAccent,
-                                          onPressed: () {
-                                            setState(() {
-                                              loading = true;
-                                            });
-                                            _salvaAvaliacao();
-                                          },
-                                          child: Text(
-                                            "Avaliar",
-                                            textAlign: TextAlign.center,
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              color: Colors.white,
+                                Container(
+                                  padding: EdgeInsets.all(12),
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: <Widget>[
+                                      Container(
+                                        margin: EdgeInsets.only(
+                                            right: 8, left: 8, bottom: 8),
+                                        child: Row(
+                                          children: <Widget>[
+                                            Expanded(
+                                              child: Center(
+                                                child: _textConfirmacao(
+                                                    "Avaliação do usuário:",
+                                                    titulo: true),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      Container(
+                                        margin: EdgeInsets.only(bottom: 8),
+                                        child: _starsUser(),
+                                      ),
+                                      Card(
+                                          child: TextFormField(
+                                              textAlign: TextAlign.justify,
+                                              decoration: InputDecoration(
+                                                  hintText:
+                                                      "Adicionar descrição"),
+                                              controller: userController)),
+                                      widget.ownerID == widget.userID
+                                          ? Container()
+                                          : Container(
+                                              margin: EdgeInsets.only(
+                                                  right: 8, left: 8, bottom: 8),
+                                              child: Row(
+                                                children: <Widget>[
+                                                  Expanded(
+                                                    child: Center(
+                                                      child: _textConfirmacao(
+                                                          "Avaliação do produto:",
+                                                          titulo: true),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                      widget.ownerID == widget.userID
+                                          ? Container()
+                                          : Container(
+                                              margin:
+                                                  EdgeInsets.only(bottom: 8),
+                                              child: _starsProduct(),
+                                            ),
+                                    ],
+                                  ),
+                                ),
+                                widget.ownerID == widget.userID
+                                    ? Container()
+                                    : Container(
+                                        margin:
+                                            EdgeInsets.only(right: 8, left: 8),
+                                        child: Card(
+                                            child: TextFormField(
+                                                decoration: InputDecoration(
+                                                    hintText:
+                                                        "Adicionar descrição"),
+                                                textAlign: TextAlign.justify,
+                                                controller: productController)),
+                                      ),
+                                Container(
+                                  color: Colors.indigoAccent,
+                                  child: Row(
+                                    children: <Widget>[
+                                      Expanded(
+                                        child: Container(
+                                          height: 70,
+                                          child: RaisedButton(
+                                            color: Colors.indigoAccent,
+                                            onPressed: () {
+                                              setState(() {
+                                                // loading = true;
+                                              });
+                                              _salvaAvaliacao();
+                                            },
+                                            child: Text(
+                                              "Avaliar",
+                                              textAlign: TextAlign.center,
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.white,
+                                              ),
                                             ),
                                           ),
                                         ),
                                       ),
-                                    ),
-                                  ],
+                                    ],
+                                  ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                         ),
                       ),
@@ -318,11 +346,19 @@ class _AvaliacaoState extends State<Avaliacao> {
   }
 
   _salvaAvaliacao() async {
+    String auxUserLength = userController.text.trim();
+    String auxProdLength = productController.text.trim();
+
     if (widget.ownerID == widget.userID) {
       Map<String, dynamic> requesterScore = {
         "value": userStarControl.toString(),
         "ID": widget.requesterID,
+        "TS": Timestamp.fromDate(DateTime.now()),
       };
+
+      if (auxUserLength.length > 3) {
+        requesterScore.putIfAbsent("description", () => userController.text);
+      }
 
       await databaseReference.collection("scoreValues").add(requesterScore);
 
@@ -337,18 +373,27 @@ class _AvaliacaoState extends State<Avaliacao> {
       Map<String, dynamic> productScore = {
         "value": productStarControl.toString(),
         "ID": widget.productID,
+        "TS": Timestamp.fromDate(DateTime.now()),
       };
       Map<String, dynamic> ownerScore = {
         "value": userStarControl.toString(),
-        "ID": widget.userID,
+        "ID": widget.ownerID,
+        "TS": Timestamp.fromDate(DateTime.now()),
       };
+
+      if (auxProdLength.length > 3) {
+        ownerScore.putIfAbsent("description", () => userController.text);
+      }
+      if (auxProdLength.length > 3) {
+        productScore.putIfAbsent("description", () => productController.text);
+      }
 
       await databaseReference.collection("scoreValues").add(productScore);
       await databaseReference.collection("scoreValues").add(ownerScore);
 
       var aux = new AlterScore(userID: widget.ownerID);
       aux.alterscore();
-      var aux2 = new AlterScore(userID: widget.productID);
+      var aux2 = new AlterScore(productID: widget.productID);
       aux2.alterscore();
 
       Navigator.of(context)

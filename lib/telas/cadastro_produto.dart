@@ -394,7 +394,7 @@ class _CadastroProdutoState extends State<CadastroProduto> {
                                     _toast(
                                         "As informações do tipo do produto precisam ser preenchidas",
                                         context);
-                                  } else if (productLocation == null) {
+                                  } else if (productAddress == "Informe onde encontrar seu produto") {
                                     _toast(
                                         "A localização do produto deve ser informada",
                                         context);

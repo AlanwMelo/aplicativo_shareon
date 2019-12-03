@@ -84,7 +84,7 @@ class _MeuPerfilState extends State<MeuPerfil> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: <Widget>[
-                        _text(double.parse(userMedia).toStringAsFixed(2)),
+                        _text(userMedia),
                         _iconEstrela(),
                       ],
                     ),

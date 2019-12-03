@@ -274,7 +274,7 @@ class _CadastroUsuarioState extends State<CadastroUsuario> {
                                           "email": emailController.text,
                                           "password": base64Str,
                                           "cpf": cpf,
-                                          "tel_contato": telefoneController,
+                                          "tel_contato": telefoneController.text,
                                           "debit": debit,
                                           "media": "-",
                                           "userAddressLatLng":
@@ -670,7 +670,7 @@ class _CadastroUsuarioState extends State<CadastroUsuario> {
                           Container(
                             margin: EdgeInsets.all(8),
                             child: _textConfirmacao(
-                                "Um email de autenticação será enviado ao email informado. \n\nPor favor siga os passos"
+                                "Um email de autenticação será enviado ao email informado. \n\nPor favor siga os passos "
                                 "descritos nele para poder utilizar todas as funcionalidades do app",
                                 center: true),
                           ),
