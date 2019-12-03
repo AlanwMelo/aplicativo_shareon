@@ -352,8 +352,8 @@ class _ListaFavoritosBuilderState extends State<ListaFavoritosBuilder> {
                                           },
                                         );
                                         setState(() {
-                                          getData();
                                           _listaFav.removeAt(index);
+                                          getData();
                                         });
                                         Navigator.of(context).pop();
                                       },

@@ -1,4 +1,7 @@
+import 'dart:math';
+
 import 'package:aplicativo_shareon/utils/alter_debit.dart';
+import 'package:aplicativo_shareon/utils/alter_score.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -13,9 +16,11 @@ class Master extends StatefulWidget {
 
 class _MasterState extends State<Master> {
   final fieldsSaldo = GlobalKey<FormState>();
+  final fieldsAvaliacoes = GlobalKey<FormState>();
   final databaseReference = Firestore.instance;
   final alterSaldoCPF = new MaskedTextController(mask: '000.000.000-00');
   final saldo = MoneyMaskedTextController();
+  final avaliacoesID = TextEditingController();
   String cpf;
   double auxDouble;
   bool loading = false;
@@ -171,13 +176,36 @@ class _MasterState extends State<Master> {
                     Divider(
                       thickness: 3,
                     ),
+                    Form(
+                      key: fieldsAvaliacoes,
+                      child: Container(
+                        margin: EdgeInsets.all(16),
+                        child: TextFormField(
+                          controller: avaliacoesID,
+                          decoration: InputDecoration(
+                            hintText: "ID a ser afetado",
+                            alignLabelWithHint: true,
+                            labelStyle: TextStyle(color: Colors.black),
+                          ),
+                          validator: (text) {
+                            if (text.isEmpty) {
+                              return "Informe o ID a ser alterado";
+                            } else {
+                              return null;
+                            }
+                          },
+                        ),
+                      ),
+                    ),
                     Container(
                       width: 400,
                       margin: EdgeInsets.only(right: 16, left: 16),
                       child: RaisedButton(
                         color: Colors.indigoAccent,
                         onPressed: () {
-                          alertExit(context, caller: 3);
+                          if (fieldsAvaliacoes.currentState.validate()) {
+                            alertExit(context, caller: 3);
+                          }
                         },
                         child: Text(
                           "Inserir 10 avaliações",
@@ -354,8 +382,7 @@ class _MasterState extends State<Master> {
       setState(() {
         loading = false;
       });
-    }
-    else if (caller == 2) {
+    } else if (caller == 2) {
       setState(() {
         loading = true;
       });
@@ -372,7 +399,7 @@ class _MasterState extends State<Master> {
           Map<String, dynamic> debitADD = {
             "userID": aux,
             "reason": "altered by master",
-            "debit": auxDouble*-1,
+            "debit": auxDouble * -1,
             "statusTS": Timestamp.fromDate(DateTime.now()),
           };
 
@@ -389,9 +416,58 @@ class _MasterState extends State<Master> {
       setState(() {
         loading = false;
       });
-    }
-    else if (caller == 3) {}
-    else if (caller == 4) {}
+    } else if (caller == 3) {
+      String result;
+      setState(() {
+        loading = true;
+      });
+
+      var isUser = await databaseReference
+          .collection("users")
+          .where("userID", isEqualTo: avaliacoesID.text)
+          .getDocuments();
+
+      var isProduct = await databaseReference
+          .collection("products")
+          .where("ID", isEqualTo: avaliacoesID.text)
+          .getDocuments();
+
+      for (int aux = 0; aux < 10; aux++) {
+        int random = new Random().nextInt(6);
+
+        if (random == 0) {
+          random = random + 3;
+        }
+
+        Map<String, dynamic> randonScore = {
+          "ID": avaliacoesID.text,
+          "decription": "random generated",
+          "TS": Timestamp.fromDate(DateTime.now()),
+          "value": random.toString(),
+        };
+
+        if (isUser.documents.length > 0) {
+          await databaseReference.collection("scoreValues").add(randonScore);
+          var aux = AlterScore(userID: avaliacoesID.text);
+          aux.alterscore();
+          result = "Score do usuário alterado";
+        } else if (isProduct.documents.length > 0) {
+          await databaseReference.collection("scoreValues").add(randonScore);
+          var aux1 = AlterScore(productID: avaliacoesID.text);
+          aux1.alterscore();
+          result = "Score do produto alterado";
+        } else {
+          result = "ID não encontrado";
+        }
+      }
+
+      _toast(result, context);
+
+      setState(() {
+        avaliacoesID.text = "";
+        loading = false;
+      });
+    } else if (caller == 4) {}
   }
 
   _toast(String texto, BuildContext context) {

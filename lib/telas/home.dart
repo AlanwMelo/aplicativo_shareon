@@ -3,7 +3,7 @@ import 'dart:io';
 
 import 'package:aplicativo_shareon/models/usuario_model.dart';
 import 'package:aplicativo_shareon/telas/cadastro_produto.dart';
-import 'package:aplicativo_shareon/telas/compra_creditos.dart';
+import 'package:aplicativo_shareon/telas/creditos.dart';
 import 'package:aplicativo_shareon/telas/faq.dart';
 import 'package:aplicativo_shareon/telas/favoritos.dart';
 import 'package:aplicativo_shareon/telas/historico.dart';

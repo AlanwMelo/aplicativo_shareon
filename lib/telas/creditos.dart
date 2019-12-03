@@ -10,12 +10,22 @@ class Creditos extends StatefulWidget {
   _CreditosState createState() => _CreditosState();
 }
 
+class _CreditHist {
+  String debit;
+  String reason;
+  Timestamp ts;
+
+  _CreditHist(this.debit, this.reason, this.ts);
+}
+
 class _CreditosState extends State<Creditos> {
   SharedPreferencesController sharedPreferencesController =
       new SharedPreferencesController();
   final databaseReference = Firestore.instance;
   double saldo = 0.0;
   String userID = "";
+  bool showHist = false;
+  List<_CreditHist> debits = [];
 
   @override
   void initState() {
@@ -130,9 +140,9 @@ class _CreditosState extends State<Creditos> {
         child: ConstrainedBox(
           constraints: BoxConstraints(
             minHeight: 100,
-            maxHeight: 300,
           ),
           child: Column(
+            mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               Container(
                 margin: EdgeInsets.only(top: 32, left: 8, right: 8),
@@ -157,6 +167,21 @@ class _CreditosState extends State<Creditos> {
                       ),
               ),
               Container(
+                child: Text(
+                  "Os créditos do Share On podem ser resgatados a qualquer momento com um desconto de 5R\$ desde que: \n"
+                  "Você possua 50 R\$ ou mais de créditos",
+                  textAlign: TextAlign.center,
+                  textDirection: TextDirection.ltr,
+                  style: TextStyle(
+                    fontFamily: 'RobotoMono',
+                    decoration: TextDecoration.none,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.yellow,
+                    fontSize: 12,
+                  ),
+                ),
+              ),
+              Container(
                 margin: EdgeInsets.only(top: 32, left: 8, right: 8),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -166,11 +191,13 @@ class _CreditosState extends State<Creditos> {
                       width: 100,
                       child: RaisedButton(
                         color: Colors.white,
-                        onPressed: () {},
+                        onPressed: () {
+                          showHist = !showHist;
+                        },
                         child: Text("Ver histórico",
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
-                              fontSize: 16,
+                              fontSize: 15,
                             ),
                             textAlign: TextAlign.center),
                       ),
@@ -186,7 +213,7 @@ class _CreditosState extends State<Creditos> {
                         child: Container(
                           child: Text("Adicionar créditos",
                               style: TextStyle(
-                                fontSize: 16,
+                                fontSize: 15,
                                 fontWeight: FontWeight.bold,
                               ),
                               textAlign: TextAlign.center),
@@ -204,7 +231,7 @@ class _CreditosState extends State<Creditos> {
                             "Resgatar créditos",
                             textAlign: TextAlign.center,
                             style: TextStyle(
-                              fontSize: 16,
+                              fontSize: 15,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
@@ -214,6 +241,7 @@ class _CreditosState extends State<Creditos> {
                   ],
                 ),
               ),
+              showHist == false ? Container() : _showHist(),
             ],
           ),
         ),
@@ -225,6 +253,7 @@ class _CreditosState extends State<Creditos> {
     setState(() {
       userID = value;
       getData();
+      _getList();
     });
   }
 
@@ -309,6 +338,54 @@ class _CreditosState extends State<Creditos> {
         throw 'Could not launch $url';
       }
     }
+  }
+
+  _showHist() {
+    ListView.builder(
+        itemCount: debits.length,
+        itemExtent: 30,
+        itemBuilder: (BuildContext context, int index) {
+          return Container(
+            child: _debitText(debits[index].reason, debits[index].debit),
+          );
+        });
+  }
+
+  _debitText(String reason, String debit) {
+    Color color;
+    if (double.parse(debit) > 0) {
+      color = Colors.green;
+    } else {
+      color = Colors.redAccent;
+    }
+    return Text(
+      "$reason  -  $debit",
+      style: TextStyle(
+        color: color,
+      ),
+    );
+  }
+
+  _getList() async {
+    await databaseReference
+        .collection("debitHist")
+        .where("ID", isEqualTo: userID)
+        .getDocuments()
+        .then((QuerySnapshot snapshot) {
+      snapshot.documents.forEach((f) {
+        Map values = f.data;
+
+        double auxDebit = values["debit"] ?? 0;
+        String auxrReason = values["reason"]  ?? "";
+        Timestamp auxTS = values["statusTS"] ?? Timestamp.fromDate(DateTime.now());
+
+        debits.add(new _CreditHist(
+            auxDebit.toStringAsFixed(2), auxrReason, auxTS));
+        debits.sort((a, b) => b.ts.compareTo(a.ts));
+      });
+    });
+
+    setState(() {});
   }
 }
 
