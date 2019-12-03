@@ -7,6 +7,7 @@ import 'dart:ui';
 
 import 'package:aplicativo_shareon/telas/home.dart';
 import 'package:aplicativo_shareon/utils/alter_debit.dart';
+import 'package:aplicativo_shareon/utils/avaliacao.dart';
 import 'package:barcode_scan/barcode_scan.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
@@ -44,12 +45,16 @@ class _TelaValidacaoState extends State<TelaValidacao> {
   int retiradaDevolucao; // 0 retirada 1 devolução
   String otherUserID = "";
   String ownerID = "";
+  String requesterID = "";
+  String productID = "";
   final databaseReference = Firestore.instance;
+  bool timerStop = false;
+  bool pinStop = false;
 
   @override
   void initState() {
     Timer.periodic(Duration(seconds: 10), (Timer t) => timerPIN());
-    Timer.periodic(Duration(seconds: 10), (Timer t) => timerVerificaStatus());
+    Timer.periodic(Duration(seconds: 5), (Timer t) => timerVerificaStatus());
     getData();
     super.initState();
   }
@@ -165,7 +170,15 @@ class _TelaValidacaoState extends State<TelaValidacao> {
                     child: RaisedButton(
                       color: Colors.white,
                       onPressed: () {
-                        _avaliacao();
+                        showDialog(
+                            context: context,
+                            builder: (_) {
+                              return Avaliacao(
+                                  requesterID: requesterID,
+                                  userID: widget.userId,
+                                  ownerID: ownerID,
+                                  productID: productID);
+                            });
                       },
                       child: Text(
                         "Validar",
@@ -290,6 +303,10 @@ class _TelaValidacaoState extends State<TelaValidacao> {
       snapshot.documents.forEach((f) {
         Map solicitationData = f.data;
 
+        ownerID = solicitationData["ownerID"];
+        requesterID = solicitationData["requesterID"];
+        productID = solicitationData["productID"];
+
         if (solicitationData["ownerID"] == widget.userId) {
           otherUserID = solicitationData["requesterID"];
         } else {
@@ -308,41 +325,45 @@ class _TelaValidacaoState extends State<TelaValidacao> {
   }
 
   _updatePIN() async {
-    String newPIN = "";
+    if (pinStop == false) {
+      String newPIN = "";
 
-    newPIN =
-        "${Random().nextInt(10)}${Random().nextInt(10)}${Random().nextInt(10)}${Random().nextInt(10)}";
+      newPIN =
+          "${Random().nextInt(10)}${Random().nextInt(10)}${Random().nextInt(10)}${Random().nextInt(10)}";
 
-    pinCreatedTime = Timestamp.fromDate(DateTime.now());
+      pinCreatedTime = Timestamp.fromDate(DateTime.now());
 
-    Map<String, dynamic> updatePin = {
-      "lastPINCreatedTS": Timestamp.fromDate(DateTime.now()),
-      "PIN": newPIN,
-    };
+      Map<String, dynamic> updatePin = {
+        "lastPINCreatedTS": Timestamp.fromDate(DateTime.now()),
+        "PIN": newPIN,
+      };
 
-    await databaseReference
-        .collection("users")
-        .document(widget.userId)
-        .updateData(updatePin);
+      await databaseReference
+          .collection("users")
+          .document(widget.userId)
+          .updateData(updatePin);
 
-    setState(() {
-      pin = newPIN;
-      pinDuration = 2;
-    });
+      setState(() {
+        pin = newPIN;
+        pinDuration = 2;
+      });
+    }
   }
 
   timerPIN() {
-    int timePin = pinCreatedTime.millisecondsSinceEpoch;
-    int timeNow = Timestamp.fromDate(DateTime.now()).millisecondsSinceEpoch;
-    int dif = (timeNow - timePin);
-    int difInMin = (dif ~/ 60000).toInt();
-    if (difInMin >= 3) {
-      _updatePIN();
-      pinDuration = (2 - difInMin);
-    } else {
-      pinDuration = (2 - difInMin);
+    if (pinStop == false) {
+      int timePin = pinCreatedTime.millisecondsSinceEpoch;
+      int timeNow = Timestamp.fromDate(DateTime.now()).millisecondsSinceEpoch;
+      int dif = (timeNow - timePin);
+      int difInMin = (dif ~/ 60000).toInt();
+      if (difInMin >= 3) {
+        _updatePIN();
+        pinDuration = (2 - difInMin);
+      } else {
+        pinDuration = (2 - difInMin);
+      }
+      setState(() {});
     }
-    setState(() {});
   }
 
   _qrZone(String qrText) {
@@ -456,36 +477,49 @@ class _TelaValidacaoState extends State<TelaValidacao> {
   }
 
   timerVerificaStatus() async {
-    await databaseReference
-        .collection("solicitations")
-        .where("solicitationID", isEqualTo: widget.solicitationId)
-        .getDocuments()
-        .then((QuerySnapshot snapshot) {
-      snapshot.documents.forEach((f) {
-        Map validado = f.data;
+    if (timerStop == false) {
+      await databaseReference
+          .collection("solicitations")
+          .where("solicitationID", isEqualTo: widget.solicitationId)
+          .getDocuments()
+          .then((QuerySnapshot snapshot) {
+        snapshot.documents.forEach((f) {
+          Map validado = f.data;
 
-        if (retiradaDevolucao == 0) {
-          // 0 retirada 1 devolução
-          if (validado["status"] == "em andamento") {
-            _toast("Retirada validada", context);
-            Navigator.of(context).pushReplacement(
-                MaterialPageRoute(builder: (BuildContext contex) {
-              return Home();
-            }));
+          if (retiradaDevolucao == 0) {
+            // 0 retirada 1 devolução
+            if (validado["status"] == "em andamento") {
+              _toast("Retirada validada", context);
+              Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(builder: (BuildContext contex) {
+                return Home();
+              }));
+            }
           }
-        }
-        if (retiradaDevolucao == 1) {
-          // 0 retirada 1 devolução
-          if (validado["status"] == "concluido") {
-            _toast("Devolução validada", context);
-            Navigator.of(context).pushReplacement(
-                MaterialPageRoute(builder: (BuildContext contex) {
-              return Home();
-            }));
+          if (retiradaDevolucao == 1) {
+            // 0 retirada 1 devolução
+            if (validado["status"] == "concluido") {
+              _toast("Devolução validada", context);
+
+              setState(() {
+                timerStop = true;
+                pinStop = true;
+              });
+
+              showDialog(
+                  context: context,
+                  builder: (_) {
+                    return Avaliacao(
+                        requesterID: requesterID,
+                        userID: widget.userId,
+                        ownerID: ownerID,
+                        productID: productID);
+                  });
+            }
           }
-        }
+        });
       });
-    });
+    }
   }
 
   _strgDia(int dia, int hora, int min) {
@@ -635,187 +669,20 @@ class _TelaValidacaoState extends State<TelaValidacao> {
         alterRequesterDebit.alterdebit();
       });
     });
-    _toast("Devolução validada", context);
 
-    Navigator.of(context)
-        .pushReplacement(MaterialPageRoute(builder: (BuildContext context) {
-      return Home();
-    }));
+    showDialog(
+        context: context,
+        builder: (_) {
+          return Avaliacao(
+              requesterID: requesterID,
+              userID: widget.userId,
+              ownerID: ownerID,
+              productID: productID);
+        });
+
     setState(() {
       canPop = true;
       loading = false;
     });
-  }
-
-  _avaliacao() {
-    return WillPopScope(
-      onWillPop: () async {
-        return Navigator.of(context)
-            .pushReplacement(MaterialPageRoute(builder: (BuildContext contex) {
-          return Home();
-        }));
-      },
-      child: Container(
-        padding: EdgeInsets.all(16),
-        child: Center(
-          child: ClipRRect(
-            borderRadius: BorderRadius.all(Radius.circular(16)),
-            child: GestureDetector(
-              onTap: () => null,
-              child: Container(
-                child: Container(
-                  color: Colors.white,
-                  child: Container(
-                    color: Colors.grey[200],
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: <Widget>[
-                        Container(
-                          margin: EdgeInsets.only(bottom: 8, top: 8),
-                          child: Text(
-                            "Avaliação",
-                            style: TextStyle(
-                              decoration: TextDecoration.none,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.black,
-                              fontSize: 25,
-                            ),
-                          ),
-                        ),
-                        Container(
-                          padding: EdgeInsets.all(12),
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              Container(
-                                margin: EdgeInsets.only(
-                                    right: 8, left: 8, bottom: 8),
-                                child: Row(
-                                  children: <Widget>[
-                                    _textConfirmacao("Avaliação do usuário:",
-                                        titulo: true),
-                                  ],
-                                ),
-                              ),
-                              Container(
-                                margin: EdgeInsets.only(bottom: 8),
-                                child: _starsUser(),
-                              ),
-                              ownerID == widget.userId
-                                  ? Container()
-                                  : Container(
-                                      margin: EdgeInsets.only(
-                                          right: 8, left: 8, bottom: 8),
-                                      child: Row(
-                                        children: <Widget>[
-                                          _textConfirmacao(
-                                              "Avaliação do produto:",
-                                              titulo: true),
-                                        ],
-                                      ),
-                                    ),
-                            ],
-                          ),
-                        ),
-                        Container(
-                          color: Colors.indigoAccent,
-                          child: Row(
-                            children: <Widget>[
-                              Expanded(
-                                child: Container(
-                                  height: 70,
-                                  child: RaisedButton(
-                                    color: Colors.indigoAccent,
-                                    onPressed: () {
-                                      setState(() {
-                                        Navigator.pop(context);
-                                        /* _solicitaReserva();*/
-                                      });
-                                    },
-                                    child: Text(
-                                      "Avaliar",
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.white,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  _textConfirmacao(String texto, {bool titulo = false, bool center = false}) {
-    if (titulo) {
-      return Text(
-        "$texto",
-        style: TextStyle(
-          fontFamily: 'RobotoMono',
-          fontWeight: FontWeight.bold,
-          color: Colors.red,
-          fontSize: 16,
-          decoration: TextDecoration.none,
-        ),
-      );
-    } else if (center == true) {
-      return Text(
-        "$texto",
-        textAlign: TextAlign.center,
-        style: TextStyle(
-          fontFamily: 'RobotoMono',
-          fontWeight: FontWeight.normal,
-          color: Colors.black,
-          fontSize: 16,
-          decoration: TextDecoration.none,
-        ),
-      );
-    } else {
-      return Text(
-        "$texto",
-        style: TextStyle(
-          fontFamily: 'RobotoMono',
-          fontWeight: FontWeight.normal,
-          color: Colors.black,
-          fontSize: 16,
-          decoration: TextDecoration.none,
-        ),
-      );
-    }
-  }
-
-  _iconFullStar() {
-    return Icon(
-      Icons.star,
-      color: Colors.black,
-      size: 45.0,
-    );
-  }
-
-  _iconEmptyStar() {
-    return Icon(
-      Icons.star_border,
-      color: Colors.black54,
-      size: 45.0,
-    );
-  }
-
-  _starsUser() {
-    return Row(
-      children: <Widget>[],
-    );
   }
 }

@@ -774,6 +774,7 @@ class _TelaReservarState extends State<TelaReservar> {
     if (titulo == true) {
       return Text(
         "$texto",
+        textAlign: TextAlign.center,
         style: TextStyle(
           fontWeight: FontWeight.bold,
           color: Colors.white,

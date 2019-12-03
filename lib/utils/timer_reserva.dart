@@ -14,6 +14,7 @@ class TimerReserva {
   SharedPreferencesController sharedPreferencesController =
       new SharedPreferencesController();
   List<_Timer> list = [];
+  String pendente;
 
   Future<String> timerVerifier(String userID, String actualState) async {
     list.clear();
@@ -33,9 +34,11 @@ class TimerReserva {
       } else if ((nearestTime - timeNow) <= 3600000) {
         if (actualState != "Há uma reserva próxima") {
           return "Há uma reserva próxima";
-        } else {
-          return "";
         }
+      } else if (pendente != null) {
+        return pendente;
+      } else {
+        return "";
       }
     }
     return "";
@@ -52,6 +55,27 @@ class TimerReserva {
         if (productData["status"] == "pendente" ||
             productData["status"] == "em andamento" ||
             productData["status"] == "aprovado") {
+          list.add(new _Timer(
+              productData["status"], productData["programedInitDate"]));
+          list.sort(
+              (a, b) => a.programedInitDate.compareTo(b.programedInitDate));
+        }
+      });
+    });
+    await databaseReference
+        .collection("solicitations")
+        .where("ownerID", isEqualTo: userID)
+        .getDocuments()
+        .then((QuerySnapshot snapshot) {
+      snapshot.documents.forEach((f) {
+        Map productData = f.data;
+        if (productData["status"] == "pendente" ||
+            productData["status"] == "em andamento" ||
+            productData["status"] == "aprovado") {
+          if (productData["status"] == "pendente" &&
+              productData["ownerID"] == userID) {
+            pendente = "Há uma aprovação pendente";
+          }
           list.add(new _Timer(
               productData["status"], productData["programedInitDate"]));
           list.sort(

@@ -21,7 +21,7 @@ class _MeuPerfilState extends State<MeuPerfil> {
   String userPhone = "";
   String userimgURL;
   String userAddress = "";
-  String userMedia = "-";
+  String userMedia = "0.0";
   String userID = "";
 
   @override
@@ -84,7 +84,7 @@ class _MeuPerfilState extends State<MeuPerfil> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: <Widget>[
-                        _text(userMedia),
+                        _text(double.parse(userMedia).toStringAsFixed(2)),
                         _iconEstrela(),
                       ],
                     ),

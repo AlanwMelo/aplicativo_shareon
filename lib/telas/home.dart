@@ -77,7 +77,7 @@ class _HomeState extends State<Home> {
     } else {
       controllerPointer = 1;
     }
-    Timer.periodic(Duration(seconds: 300), (Timer t) => timerReserva());
+    Timer.periodic(Duration(minutes: 5), (Timer t) => timerReserva());
     sharedPreferencesController.getID().then(_setUserID);
     super.initState();
 
@@ -558,7 +558,7 @@ class _HomeState extends State<Home> {
             onTap: () {
               setState(() {
                 Navigator.pop(context);
-                controllerPointer = 7;
+                controllerPointer = 6;
               });
             },
             child: Container(
