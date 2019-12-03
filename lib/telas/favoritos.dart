@@ -33,33 +33,11 @@ homeFavoritos() {
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: <Widget>[
                       Container(
-                        child: Expanded(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              _icPesquisar(),
-                            ],
-                          ),
-                        ),
-                      ),
-                      Container(
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: <Widget>[
                             _text("Favoritos"),
                           ],
-                        ),
-                      ),
-                      Container(
-                        child: Expanded(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            children: <Widget>[
-                              _icFiltros(),
-                            ],
-                          ),
                         ),
                       ),
                     ],
@@ -87,23 +65,6 @@ homeFavoritos() {
         ],
       ),
     ),
-  );
-}
-
-_icFiltros() {
-  return Icon(
-    Icons.filter_list,
-    color: Colors.white,
-    size: 30.0,
-  );
-}
-
-_icPesquisar() {
-  return Icon(
-    Icons.search,
-    color: Colors.white,
-    size: 30.0,
-    semanticLabel: 'Set Location',
   );
 }
 

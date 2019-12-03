@@ -4,7 +4,6 @@ import 'dart:io';
 import 'package:aplicativo_shareon/models/usuario_model.dart';
 import 'package:aplicativo_shareon/telas/cadastro_produto.dart';
 import 'package:aplicativo_shareon/telas/compra_creditos.dart';
-import 'package:aplicativo_shareon/telas/configuracoes.dart';
 import 'package:aplicativo_shareon/telas/faq.dart';
 import 'package:aplicativo_shareon/telas/favoritos.dart';
 import 'package:aplicativo_shareon/telas/historico.dart';
@@ -12,7 +11,6 @@ import 'package:aplicativo_shareon/telas/main.dart';
 import 'package:aplicativo_shareon/telas/meus_produtos.dart';
 import 'package:aplicativo_shareon/telas/produtos_reservas.dart';
 import 'package:aplicativo_shareon/telas/suporte.dart';
-import 'package:aplicativo_shareon/telas/tela_de_testes.dart';
 import 'package:aplicativo_shareon/utils/shareon_appbar.dart';
 import 'package:aplicativo_shareon/utils/timer_reserva.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -21,6 +19,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import '../main.dart';
+import 'funcoes_master.dart';
 import 'perfil_usuario.dart';
 
 class Home extends StatefulWidget {
@@ -133,19 +132,19 @@ class _HomeState extends State<Home> {
     } else if (controllerPointer == 3) {
       return TelaReservas();
     } else if (controllerPointer == 4) {
-      return homeHistorico();
+      return TelaHistorico();
     } else if (controllerPointer == 5) {
       return homeMeusProdutos();
     } else if (controllerPointer == 6) {
       return homeSuporte();
-    } else if (controllerPointer == 7) {
+    }
+    /*else if (controllerPointer == 7) {
       return homeConfiguracoes();
-    } else if (controllerPointer == 8) {
+    } */
+    else if (controllerPointer == 8) {
       return homeFAQ();
     } else if (controllerPointer == 9) {
       return Creditos();
-    } else if (controllerPointer == 21) {
-      return tela_testes();
     }
   }
 
@@ -288,7 +287,9 @@ class _HomeState extends State<Home> {
                   onTap: () {
                     setState(() {
                       Navigator.pop(context);
-                      controllerPointer = 21;
+                      Navigator.of(context).push(MaterialPageRoute(builder: (BuildContext context){
+                        return Master();
+                      }));
                     });
                   },
                   child: Container(
@@ -584,7 +585,7 @@ class _HomeState extends State<Home> {
               ),
             ),
           ),
-          GestureDetector(
+          /*GestureDetector(
             onTap: () {
               setState(() {
                 Navigator.pop(context);
@@ -613,7 +614,7 @@ class _HomeState extends State<Home> {
                 ),
               ),
             ),
-          ),
+          ),*/
           GestureDetector(
             onTap: () {
               setState(() {

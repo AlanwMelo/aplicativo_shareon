@@ -872,7 +872,8 @@ class _EditaProdutoState extends State<EditaProduto> {
       loading = true;
     });
 
-    String priceAux = priceController.text.replaceAll(",", ".");
+    String priceAux1 = priceController.text.replaceAll(".", "");
+    String priceAux2 = priceAux1.replaceAll(",", ".");
 
     String adStatus = "em atualização";
     String description = descriptionController.text.isEmpty
@@ -889,7 +890,7 @@ class _EditaProdutoState extends State<EditaProduto> {
       "description": description,
       "location": productLocation,
       "name": name,
-      "price": double.parse(priceAux),
+      "price": double.parse(priceAux2),
       "type": "material esportivo",
       "adStatus": adStatus,
       "tamanho": newTamanho,

@@ -271,7 +271,7 @@ class _ListaHistoricoBuilderState extends State<ListaHistoricoBuilder> {
                 status,
                 endDate,
                 productIMG["productMainIMG"]));
-            _listaHistorico.sort((a, b) => a.endDate.compareTo(b.endDate));
+            _listaHistorico.sort((b, a) => a.endDate.compareTo(b.endDate));
             setState(() {});
           });
         });

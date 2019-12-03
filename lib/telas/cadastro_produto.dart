@@ -899,8 +899,8 @@ class _CadastroProdutoState extends State<CadastroProduto> {
       loading = true;
     });
 
-    String priceAux = priceController.text.replaceAll(",", ".");
-    print(priceAux);
+    String priceAux1 = priceController.text.replaceAll(".", "");
+    String priceAux2 = priceAux1.replaceAll(",", ".");
 
     String adStatus = "em provisionamento";
     Timestamp insertionDate = Timestamp.fromDate(DateTime.now());
@@ -910,7 +910,7 @@ class _CadastroProdutoState extends State<CadastroProduto> {
       "location": productLocation,
       "name": nameController.text,
       "ownerID": widget.userID,
-      "price": double.parse(priceAux),
+      "price": double.parse(priceAux2),
       "type": "material esportivo",
       "media": "-",
       "productAddress": productAddress,
