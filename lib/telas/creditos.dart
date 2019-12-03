@@ -192,9 +192,6 @@ class _CreditosState extends State<Creditos> {
                       child: RaisedButton(
                         color: Colors.white,
                         onPressed: () {
-                          print(debits[0].debit);
-                          print(debits[0].ts);
-                          print(debits[0].reason);
                           showHist = !showHist;
                         },
                         child: Text("Ver histórico",
@@ -352,8 +349,10 @@ class _CreditosState extends State<Creditos> {
         margin: EdgeInsets.all(8),
         padding: EdgeInsets.all(8),
         child: debits.length == 0
-            ? Container(child: _debitText("Nada para exibir", "0.0"))
+            ? Container(
+                width: 400, child: _debitText("Nada para exibir", "0.0"))
             : Container(
+                width: 400,
                 child: Center(
                   child: ListView.builder(
                       shrinkWrap: true,
@@ -384,15 +383,13 @@ class _CreditosState extends State<Creditos> {
     } else {
       color = Colors.redAccent;
     }
-    return Expanded(
-      child: Text(
-        "$reason: $debit",
-        textAlign: TextAlign.center,
-        style: TextStyle(
-          fontWeight: FontWeight.bold,
-          color: color,
-          fontSize: 16,
-        ),
+    return Text(
+      "$reason: $debit",
+      textAlign: TextAlign.center,
+      style: TextStyle(
+        fontWeight: FontWeight.bold,
+        color: color,
+        fontSize: 16,
       ),
     );
   }
@@ -403,21 +400,23 @@ class _CreditosState extends State<Creditos> {
         .where("userID", isEqualTo: userID)
         .getDocuments()
         .then((QuerySnapshot snapshot) {
+          print(snapshot.documents.length);
       snapshot.documents.forEach((f) {
         Map values = f.data;
 
-        double auxDebit = values["debit"] ?? 0;
+        var auxDebit = values["debit"] ?? 0;
+        double auxDebit1 = auxDebit.toDouble();
         String auxrReason = values["reason"] ?? "";
         Timestamp auxTS =
             values["statusTS"] ?? Timestamp.fromDate(DateTime.now());
 
-        debits.add(
-            new _CreditHist(auxDebit.toStringAsFixed(2), auxrReason, auxTS));
-        debits.sort((a, b) => b.ts.compareTo(a.ts));
+        setState(() {
+          debits.add(
+              new _CreditHist(auxDebit1.toStringAsFixed(2), auxrReason, auxTS));
+          debits.sort((a, b) => b.ts.compareTo(a.ts));
+        });
       });
     });
-
-    setState(() {});
   }
 }
 

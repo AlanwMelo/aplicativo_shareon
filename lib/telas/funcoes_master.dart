@@ -157,15 +157,11 @@ class _MasterState extends State<Master> {
                         onPressed: () {
                           if (fieldsSaldo.currentState.validate()) {
                             alertExit(context, caller: 2);
-                            print(cpf);
-                            print(saldo.text);
                           }
 
-                          print(saldo.text);
                           String aux1 = saldo.text.replaceAll(".", "");
                           String aux2 = aux1.replaceAll(",", ".");
                           auxDouble = double.parse(aux2);
-                          print(auxDouble * -1);
                         },
                         child: Text(
                           "Remover Saldo",
@@ -364,7 +360,7 @@ class _MasterState extends State<Master> {
 
           Map<String, dynamic> debitADD = {
             "userID": aux,
-            "reason": "altered by master",
+            "reason": "Compra de créditos",
             "debit": auxDouble,
             "statusTS": Timestamp.fromDate(DateTime.now()),
           };
@@ -376,7 +372,7 @@ class _MasterState extends State<Master> {
 
           alterSaldoCPF.text = "";
 
-          _toast("Créditos removidos com sucesso", context);
+          _toast("Créditos inseridos com sucesso", context);
         });
       });
       setState(() {
@@ -398,7 +394,7 @@ class _MasterState extends State<Master> {
 
           Map<String, dynamic> debitADD = {
             "userID": aux,
-            "reason": "altered by master",
+            "reason": "Saque",
             "debit": auxDouble * -1,
             "statusTS": Timestamp.fromDate(DateTime.now()),
           };
@@ -410,7 +406,7 @@ class _MasterState extends State<Master> {
 
           saldo.text = "";
 
-          _toast("Créditos inseridos com sucesso", context);
+          _toast("Créditos removidos com sucesso", context);
         });
       });
       setState(() {

@@ -1,4 +1,5 @@
 import 'dart:async';
+
 import 'package:aplicativo_shareon/layout_listas/lista_main.dart';
 import 'package:aplicativo_shareon/main.dart';
 import 'package:aplicativo_shareon/telas/home.dart';
@@ -131,23 +132,7 @@ class _TelaMainState extends State<TelaMain> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
-                  Container(
-                    child: Expanded(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          GestureDetector(
-                            onTap: () {
-                              setState(() {
-                              });
-                            },
-                            child: _icAtualizar(),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
+
                   GestureDetector(
                     onTap: () => _selecionaLocalizacao(context),
                     child: Container(
@@ -155,17 +140,6 @@ class _TelaMainState extends State<TelaMain> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
                           _icGPS(),
-                        ],
-                      ),
-                    ),
-                  ),
-                  Container(
-                    child: Expanded(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: <Widget>[
-                          _icFiltros(),
                         ],
                       ),
                     ),
@@ -183,23 +157,6 @@ class _TelaMainState extends State<TelaMain> {
       ),
     );
   }
-}
-
-_icFiltros() {
-  return Icon(
-    Icons.filter_list,
-    color: Colors.white,
-    size: 30.0,
-  );
-}
-
-_icAtualizar() {
-  return Icon(
-    Icons.sync,
-    color: Colors.white,
-    size: 30.0,
-    semanticLabel: 'Set Location',
-  );
 }
 
 _icGPS() {
