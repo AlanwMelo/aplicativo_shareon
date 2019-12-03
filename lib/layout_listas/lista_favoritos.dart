@@ -167,7 +167,7 @@ class _ListaFavoritosBuilderState extends State<ListaFavoritosBuilder> {
     );
   }
 
-  Widget listGen(List<_FavoritesData> _listaFav) {
+   listGen(List<_FavoritesData> _listaFav) {
     return ListView.builder(
       itemCount: _listaFav.length,
       itemExtent: 150,

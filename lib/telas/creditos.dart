@@ -192,6 +192,9 @@ class _CreditosState extends State<Creditos> {
                       child: RaisedButton(
                         color: Colors.white,
                         onPressed: () {
+                          print(debits[0].debit);
+                          print(debits[0].ts);
+                          print(debits[0].reason);
                           showHist = !showHist;
                         },
                         child: Text("Ver histórico",
@@ -341,14 +344,37 @@ class _CreditosState extends State<Creditos> {
   }
 
   _showHist() {
-    ListView.builder(
-        itemCount: debits.length,
-        itemExtent: 30,
-        itemBuilder: (BuildContext context, int index) {
-          return Container(
-            child: _debitText(debits[index].reason, debits[index].debit),
-          );
-        });
+    return Container(
+        decoration: BoxDecoration(
+          color: Colors.grey[200],
+          borderRadius: BorderRadius.all(Radius.circular(16)),
+        ),
+        margin: EdgeInsets.all(8),
+        padding: EdgeInsets.all(8),
+        child: debits.length == 0
+            ? Container(child: _debitText("Nada para exibir", "0.0"))
+            : Container(
+                child: Center(
+                  child: ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: debits.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        return Container(
+                            margin: EdgeInsets.only(left: 8, right: 8),
+                            child: Column(
+                              children: <Widget>[
+                                Row(
+                                  children: <Widget>[
+                                    _debitText(debits[index].reason,
+                                        debits[index].debit),
+                                  ],
+                                ),
+                                Divider(thickness: 2),
+                              ],
+                            ));
+                      }),
+                ),
+              ));
   }
 
   _debitText(String reason, String debit) {
@@ -358,10 +384,15 @@ class _CreditosState extends State<Creditos> {
     } else {
       color = Colors.redAccent;
     }
-    return Text(
-      "$reason  -  $debit",
-      style: TextStyle(
-        color: color,
+    return Expanded(
+      child: Text(
+        "$reason: $debit",
+        textAlign: TextAlign.center,
+        style: TextStyle(
+          fontWeight: FontWeight.bold,
+          color: color,
+          fontSize: 16,
+        ),
       ),
     );
   }
@@ -369,18 +400,19 @@ class _CreditosState extends State<Creditos> {
   _getList() async {
     await databaseReference
         .collection("debitHist")
-        .where("ID", isEqualTo: userID)
+        .where("userID", isEqualTo: userID)
         .getDocuments()
         .then((QuerySnapshot snapshot) {
       snapshot.documents.forEach((f) {
         Map values = f.data;
 
         double auxDebit = values["debit"] ?? 0;
-        String auxrReason = values["reason"]  ?? "";
-        Timestamp auxTS = values["statusTS"] ?? Timestamp.fromDate(DateTime.now());
+        String auxrReason = values["reason"] ?? "";
+        Timestamp auxTS =
+            values["statusTS"] ?? Timestamp.fromDate(DateTime.now());
 
-        debits.add(new _CreditHist(
-            auxDebit.toStringAsFixed(2), auxrReason, auxTS));
+        debits.add(
+            new _CreditHist(auxDebit.toStringAsFixed(2), auxrReason, auxTS));
         debits.sort((a, b) => b.ts.compareTo(a.ts));
       });
     });
