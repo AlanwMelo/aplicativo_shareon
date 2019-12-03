@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:aplicativo_shareon/layout_listas/lista_main.dart';
 import 'package:aplicativo_shareon/main.dart';
 import 'package:aplicativo_shareon/telas/home.dart';
@@ -138,7 +137,13 @@ class _TelaMainState extends State<TelaMain> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
-                          _icPesquisar(),
+                          GestureDetector(
+                            onTap: () {
+                              setState(() {
+                              });
+                            },
+                            child: _icAtualizar(),
+                          ),
                         ],
                       ),
                     ),
@@ -188,9 +193,9 @@ _icFiltros() {
   );
 }
 
-_icPesquisar() {
+_icAtualizar() {
   return Icon(
-    Icons.search,
+    Icons.sync,
     color: Colors.white,
     size: 30.0,
     semanticLabel: 'Set Location',

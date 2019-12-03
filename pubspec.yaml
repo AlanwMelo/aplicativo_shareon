@@ -33,7 +33,7 @@ dependencies:
   flutter_map: any
   flutter_local_notifications: ^0.8.4
   google_map_location_picker: ^2.1.0
-  shared_preferences: ^0.5.4+3
+  shared_preferences: ^0.5.4+6
   firebase_messaging: ^5.1.8
   flutter_launcher_icons: ^0.7.4
   valida_cpf: ^0.0.1

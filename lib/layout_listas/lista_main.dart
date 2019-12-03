@@ -37,6 +37,13 @@ class _ListaMainBuilderState extends State<ListaMainBuilder> {
   GeoPoint userLocation;
   ScrollController _controller;
   bool listIsEmpty = false;
+  bool canReload = false;
+
+  @override
+  void didChangeDependencies() {
+    // TODO: implement didChangeDependencies
+    super.didChangeDependencies();
+  }
 
   @override
   initState() {

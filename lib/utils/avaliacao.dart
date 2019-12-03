@@ -351,10 +351,13 @@ class _AvaliacaoState extends State<Avaliacao> {
 
     if (widget.ownerID == widget.userID) {
       Map<String, dynamic> requesterScore = {
-        "value": userStarControl.toString(),
         "ID": widget.requesterID,
         "TS": Timestamp.fromDate(DateTime.now()),
       };
+
+      if (userStarControl != 0) {
+        requesterScore.putIfAbsent("value", () => userStarControl.toString());
+      }
 
       if (auxUserLength.length > 3) {
         requesterScore.putIfAbsent("description", () => userController.text);
@@ -376,7 +379,6 @@ class _AvaliacaoState extends State<Avaliacao> {
         "TS": Timestamp.fromDate(DateTime.now()),
       };
       Map<String, dynamic> ownerScore = {
-        "value": userStarControl.toString(),
         "ID": widget.ownerID,
         "TS": Timestamp.fromDate(DateTime.now()),
       };
@@ -384,6 +386,14 @@ class _AvaliacaoState extends State<Avaliacao> {
       if (auxProdLength.length > 3) {
         ownerScore.putIfAbsent("description", () => userController.text);
       }
+
+      if (userStarControl != 0) {
+        ownerScore.putIfAbsent("value", () => userStarControl.toString());
+      }
+      if (productStarControl != 0) {
+        ownerScore.putIfAbsent("value", () => productStarControl.toString());
+      }
+
       if (auxProdLength.length > 3) {
         productScore.putIfAbsent("description", () => productController.text);
       }
