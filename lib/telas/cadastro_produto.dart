@@ -413,7 +413,7 @@ class _CadastroProdutoState extends State<CadastroProduto> {
                                       _img5 = null;
                                     }
                                   }
-                                  if (btPointer == 1) {
+                                  else if (btPointer == 1) {
                                     if (campoEsportivo.currentState
                                         .validate()) {
                                       _cadastraMaterialEsportivo().then(
