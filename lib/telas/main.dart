@@ -84,7 +84,7 @@ class _TelaMainState extends State<TelaMain> {
               Container(
                 margin: EdgeInsets.only(top: 32, left: 8, right: 8),
                 child: _text(
-                    "Para vizualizar nossa lista de produtos precisamos saber sua localização."
+                    "Para visualizar nossa lista de produtos precisamos saber sua localização."
                     " Clique no ícone abaixo para seleciona-la."),
               ),
               GestureDetector(
