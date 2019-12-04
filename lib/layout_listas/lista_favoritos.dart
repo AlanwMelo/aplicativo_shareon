@@ -353,6 +353,7 @@ class _ListaFavoritosBuilderState extends State<ListaFavoritosBuilder> {
                                         );
                                         setState(() {
                                           _listaFav.removeAt(index);
+                                          _listaFav = [];
                                           getData();
                                         });
                                         Navigator.of(context).pop();

@@ -139,7 +139,7 @@ class _HomeState extends State<Home> {
       return homeConfiguracoes();
     } */
     else if (controllerPointer == 8) {
-      return homeFAQ();
+      return homeFAQ(context);
     } else if (controllerPointer == 9) {
       return Creditos();
     }

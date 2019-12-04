@@ -56,7 +56,7 @@ class _EditaProdutoState extends State<EditaProduto> {
 
   //Materiais de Escritorio
 
-  //Eletrodomesticos
+  //eletroeletronico
   final campoEletroEditar = GlobalKey<FormState>();
   final marcaEletroController = TextEditingController();
   bool voltagemInformada = false;
@@ -76,12 +76,12 @@ class _EditaProdutoState extends State<EditaProduto> {
   String _img5String;
   int btPointer;
   bool livrosPressed = false;
-  bool eletrodomesticosPressed = false;
+  bool eletroeletronicoPressed = false;
   bool materiaisEsportivosPressed = false;
   bool materiaisEscritorioPressed = false;
   bool loading = false;
 
-  //int btPointer = 1 Materiais Esportivos / 2 Livros / 3 Escritorio / 4 Eletrodomesticos
+  //int btPointer = 1 Materiais Esportivos / 2 Livros / 3 Escritorio / 4 eletroeletronico
 
   @override
   void initState() {
@@ -295,10 +295,10 @@ class _EditaProdutoState extends State<EditaProduto> {
                                         height: 50,
                                         child: FlatButton(
                                           onPressed: () {},
-                                          color: eletrodomesticosPressed == true
+                                          color: eletroeletronicoPressed == true
                                               ? Colors.orange
                                               : Colors.indigoAccent,
-                                          child: Text("Eletrodomésticos",
+                                          child: Text("Eletroeletrônico",
                                               textAlign: TextAlign.center,
                                               style: TextStyle(
                                                   color: Colors.white)),
@@ -655,7 +655,7 @@ class _EditaProdutoState extends State<EditaProduto> {
   }
 
   _infoTipo() {
-    //int btPointer = 1 Materiais Esportivos / 2 Livros / 3 Escritorio / 4 Eletrodomesticos
+    //int btPointer = 1 Materiais Esportivos / 2 Livros / 3 Escritorio / 4 eletroeletronico
     if (btPointer == 1) {
       void _handleRadioValueME(int value) {
         setState(() {
@@ -1224,7 +1224,7 @@ class _EditaProdutoState extends State<EditaProduto> {
       "name": name,
       "ownerID": widget.userID,
       "price": double.parse(priceAux),
-      "type": "eletrodomestico",
+      "type": "eletroeletronico",
       "adStatus": adStatus,
       "marca": marca,
       "voltagem": newVoltagem,
@@ -1607,9 +1607,9 @@ class _EditaProdutoState extends State<EditaProduto> {
         } else if (actualType == "material de escritorio") {
           btPointer = 3;
           materiaisEscritorioPressed = true;
-        } else if (actualType == "eletrodomestico") {
+        } else if (actualType == "eletroeletronico") {
           btPointer = 4;
-          eletrodomesticosPressed = true;
+          eletroeletronicoPressed = true;
           actualMarcaEletro = productData["marca"];
           voltagem = productData["voltagem"];
           if (voltagem == "110") {

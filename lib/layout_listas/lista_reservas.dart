@@ -62,12 +62,15 @@ class _ListaReservasBuilderState extends State<ListaReservasBuilder> {
           setState(() {
             listIsEmpty = false;
           });
+          var aux = productData["estimatedEndPrice"];
+          double aux1 = aux.toDouble();
+
           listHelper(
               productData["productID"],
               productData["status"],
               productData["programedInitDate"],
               productData["solicitationID"],
-              productData["estimatedEndPrice"]);
+              aux1.toStringAsFixed(2));
         }
       });
     });

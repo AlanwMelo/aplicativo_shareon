@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:aplicativo_shareon/models/usuario_model.dart';
 import 'package:aplicativo_shareon/telas/home.dart';
 import 'package:aplicativo_shareon/telas/login.dart';
+import 'package:aplicativo_shareon/telas/termos_condicoes.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
@@ -198,9 +199,44 @@ class _CadastroUsuarioState extends State<CadastroUsuario> {
                     SizedBox(
                       height: 16.0,
                     ),
+                    Container(
+                        child: Text(
+                            "Antes de criar conta leia nossos termos e condições no seguinte link: \n",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                                color: Colors.black,
+                                fontFamily: 'RobotoMono',
+                                fontWeight: FontWeight.bold,
+                                fontSize: 18))),
+                    Container(
+                      child: Row(
+                        children: <Widget>[
+                          Expanded(
+                            child: Center(
+                              child: GestureDetector(
+                                onTap: (){
+                                  Navigator.of(context).push(MaterialPageRoute(builder: (BuildContext context){
+                                    return Termos();
+                                  }));
+                                },
+                                child: Text(
+                                  "Termos e condições de uso",
+                                  style: TextStyle(
+                                      color: Colors.redAccent,
+                                      fontFamily: 'RobotoMono',
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 18),
+                                ),
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
                     SizedBox(
-                      height: 44.0,
+                      height: 60.0,
                       child: Container(
+                        margin: EdgeInsets.only(top: 16),
                         child: btloading != false
                             ? RaisedButton(
                                 color: Theme.of(context).primaryColor,
@@ -300,6 +336,14 @@ class _CadastroUsuarioState extends State<CadastroUsuario> {
                               ),
                       ),
                     ),
+                    Container(
+                        child: Text(
+                      "\n Ao criar conta você está afirmando que concorda com nossos termos",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                          fontFamily: 'RobotoMono',
+                          fontWeight: FontWeight.bold),
+                    )),
                   ],
                 ),
               );

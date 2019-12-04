@@ -53,9 +53,9 @@ class _ListaReservasMeuProdutosBuilderState
         .where("ownerID", isEqualTo: userID)
         .getDocuments()
         .then((QuerySnapshot snapshot) {
-        setState(() {
-          listIsEmpty = true;
-        });
+      setState(() {
+        listIsEmpty = true;
+      });
       snapshot.documents.forEach((f) {
         Map productData = f.data;
         if (productData["status"] == "em andamento" ||
@@ -64,12 +64,16 @@ class _ListaReservasMeuProdutosBuilderState
           setState(() {
             listIsEmpty = false;
           });
+
+          var aux = productData["estimatedEndPrice"];
+          double aux1 = aux.toDouble();
           listHelper(
-              productData["productID"],
-              productData["status"],
-              productData["programedInitDate"],
-              productData["solicitationID"],
-              productData["estimatedEndPrice"]);
+            productData["productID"],
+            productData["status"],
+            productData["programedInitDate"],
+            productData["solicitationID"],
+            aux1.toStringAsFixed(2),
+          );
         }
       });
     });

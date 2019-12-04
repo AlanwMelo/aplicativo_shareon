@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:convert';
 
 import 'package:aplicativo_shareon/models/usuario_model.dart';
@@ -80,6 +79,12 @@ class _ProdutoSelecionadoState extends State<ProdutoSelecionado> {
   List<_ReservaProxima> reservaEmAndamento = [];
   bool emailVerified;
   bool loading = false;
+  String marca = "";
+  String tamanho = "";
+  String titulo = "";
+  String editora = "";
+  String voltagem = "";
+  bool reservarLoading = false;
 
   @override
   void initState() {
@@ -134,6 +139,16 @@ class _ProdutoSelecionadoState extends State<ProdutoSelecionado> {
               productMedia = productData["media"];
               productOwnerID = productData["ownerID"];
               productType = productData["type"];
+              if (productType == "livro") {
+                titulo = productData["titulo"];
+                editora = productData["editora"];
+              } else if (productType == "eletroeletronico") {
+                voltagem = productData["voltagem"];
+                marca = productData["marca"];
+              } else if (productType == "material esportivo") {
+                marca = productData["marca"];
+                tamanho = productData["tamanho"];
+              }
               getProductIMGs();
               getUserData();
             });
@@ -279,6 +294,9 @@ class _ProdutoSelecionadoState extends State<ProdutoSelecionado> {
                             margin: EdgeInsets.only(top: 8, left: 8, right: 8),
                             child: _text("Produto de: $productOwner"),
                           ),
+                        ),
+                        Container(
+                          child: _extraText(),
                         ),
                         Container(
                           margin: EdgeInsets.only(top: 8, bottom: 8),
@@ -584,12 +602,19 @@ class _ProdutoSelecionadoState extends State<ProdutoSelecionado> {
     );
   }
 
+  void _setMail(String value) {
+    setState(() {
+      userMail = value;
+    });
+  }
+
   _setID(String value) {
     setState(() {
       userID = value;
       getFavoriteStatus();
       getIsMyProduct();
       getSolicitationStatus();
+      sharedPreferencesController.getEmail().then(_setMail);
     });
   }
 
@@ -711,25 +736,40 @@ class _ProdutoSelecionadoState extends State<ProdutoSelecionado> {
         child: _text("Editar", resumo: true),
       );
     } else if (myProduct == false) {
-      return RaisedButton(
-        color: Colors.white,
-        onPressed: () {
-          if (emailVerified == false) {
-            sharedPreferencesController
-                .getEmailAuth()
-                .then((value) => _verifyAuth(value, caller: 1));
-          } else {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (BuildContext context) {
-                return TelaReservar(
-                    productID: widget.productID, productPrice: productPrice);
-              }),
+      return reservarLoading == true
+          ? RaisedButton(
+              color: Colors.white,
+              onPressed: () {},
+              child: Container(
+                padding: EdgeInsets.all(1),
+                child: Center(
+                  child: CircularProgressIndicator(),
+                ),
+              ),
+            )
+          : RaisedButton(
+              color: Colors.white,
+              onPressed: () {
+                setState(() {
+                  reservarLoading = true;
+                });
+                if (emailVerified == false || emailVerified == null) {
+                  sharedPreferencesController
+                      .getEmailAuth()
+                      .then((value) => _verifyAuth(value, caller: 1));
+                } else {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (BuildContext context) {
+                      return TelaReservar(
+                          productID: widget.productID,
+                          productPrice: productPrice);
+                    }),
+                  );
+                }
+              },
+              child: _text("Reservar", resumo: true),
             );
-          }
-        },
-        child: _text("Reservar", resumo: true),
-      );
     }
   }
 
@@ -795,7 +835,7 @@ class _ProdutoSelecionadoState extends State<ProdutoSelecionado> {
         backgroundColor: Colors.black.withOpacity(0.8));
   }
 
-  Future<FutureOr> _verifyAuth(bool value, {int caller}) async {
+  _verifyAuth(bool value, {int caller}) async {
     await databaseReference
         .collection("users")
         .where("userID", isEqualTo: userID)
@@ -818,7 +858,21 @@ class _ProdutoSelecionadoState extends State<ProdutoSelecionado> {
           .isAuthenticated(await FirebaseAuth.instance.currentUser());
 
       if (caller == 1 && emailVerified == false) {
+        setState(() {
+          reservarLoading = false;
+        });
         _alertEmail();
+      } else if (caller == 1 && emailVerified == true) {
+        setState(() {
+          reservarLoading = false;
+        });
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (BuildContext context) {
+            return TelaReservar(
+                productID: widget.productID, productPrice: productPrice);
+          }),
+        );
       }
     });
   }
@@ -1095,5 +1149,55 @@ class _ProdutoSelecionadoState extends State<ProdutoSelecionado> {
         );
       },
     );
+  }
+
+  _extraText() {
+    if (productType == "livro") {
+      return Column(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          Container(
+            margin: EdgeInsets.only(top: 8),
+            child: _text("Título: $titulo"),
+          ),
+          Container(
+            margin: EdgeInsets.only(top: 8),
+            child: _text("Editora: $editora"),
+          ),
+        ],
+      );
+    } else if (productType == "material esportivo") {
+      return Column(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          tamanho == ""
+              ? Container()
+              : Container(
+                  margin: EdgeInsets.only(top: 8),
+                  child: _text("Tamanho: $tamanho"),
+                ),
+          Container(
+            margin: EdgeInsets.only(top: 8),
+            child: _text("Marca: $marca"),
+          ),
+        ],
+      );
+    } else if (productType == "eletroeletronico") {
+      return Column(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          Container(
+            margin: EdgeInsets.only(top: 8),
+            child: _text("Voltagem: $voltagem"),
+          ),
+          Container(
+            margin: EdgeInsets.only(top: 8),
+            child: _text("Marca: $marca"),
+          ),
+        ],
+      );
+    } else {
+      return Container();
+    }
   }
 }

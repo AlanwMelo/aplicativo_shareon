@@ -136,113 +136,117 @@ class _CreditosState extends State<Creditos> {
   homeCreditos() {
     return Scaffold(
       backgroundColor: Colors.indigoAccent,
-      body: Center(
+      body: SingleChildScrollView(
         child: ConstrainedBox(
           constraints: BoxConstraints(
-            minHeight: 100,
+            minHeight: 720,
           ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              Container(
-                margin: EdgeInsets.only(top: 32, left: 8, right: 8),
-                child: _text("Meus créditos:"),
-              ),
-              Container(
-                margin: EdgeInsets.only(top: 8, left: 8, right: 8),
-                child: saldo == null
-                    ? Center(
-                        child: CircularProgressIndicator(
-                          valueColor:
-                              new AlwaysStoppedAnimation<Color>(Colors.white),
-                        ),
-                      )
-                    : Text(
-                        "R\$ ${saldo.toStringAsFixed(2)}",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 60,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-              ),
-              Container(
-                child: Text(
-                  "Os créditos do Share On podem ser resgatados a qualquer momento com um desconto de 5R\$ desde que: \n"
-                  "Você possua 50 R\$ ou mais de créditos",
-                  textAlign: TextAlign.center,
-                  textDirection: TextDirection.ltr,
-                  style: TextStyle(
-                    fontFamily: 'RobotoMono',
-                    decoration: TextDecoration.none,
-                    fontWeight: FontWeight.w500,
-                    color: Colors.yellow,
-                    fontSize: 12,
+          child: Container(
+            child: Center(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  Container(
+                    margin: EdgeInsets.only(top: 32, left: 8, right: 8),
+                    child: _text("Meus créditos:"),
                   ),
-                ),
-              ),
-              Container(
-                margin: EdgeInsets.only(top: 32, left: 8, right: 8),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: <Widget>[
-                    Container(
-                      height: 100,
-                      width: 100,
-                      child: RaisedButton(
-                        color: Colors.white,
-                        onPressed: () {
-                          showHist = !showHist;
-                        },
-                        child: Text("Ver histórico",
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 15,
+                  Container(
+                    margin: EdgeInsets.only(top: 8, left: 8, right: 8),
+                    child: saldo == null
+                        ? Center(
+                            child: CircularProgressIndicator(
+                              valueColor: new AlwaysStoppedAnimation<Color>(
+                                  Colors.white),
                             ),
-                            textAlign: TextAlign.center),
-                      ),
-                    ),
-                    Container(
-                      height: 100,
-                      width: 100,
-                      child: RaisedButton(
-                        color: Colors.white,
-                        onPressed: () {
-                          adicionarCreditos(context);
-                        },
-                        child: Container(
-                          child: Text("Adicionar créditos",
-                              style: TextStyle(
-                                fontSize: 15,
-                                fontWeight: FontWeight.bold,
-                              ),
-                              textAlign: TextAlign.center),
-                        ),
-                      ),
-                    ),
-                    Container(
-                      height: 100,
-                      width: 100,
-                      child: RaisedButton(
-                        color: Colors.white,
-                        onPressed: () {},
-                        child: Container(
-                          child: Text(
-                            "Resgatar créditos",
-                            textAlign: TextAlign.center,
+                          )
+                        : Text(
+                            "R\$ ${saldo.toStringAsFixed(2)}",
                             style: TextStyle(
-                              fontSize: 15,
+                              color: Colors.white,
+                              fontSize: 60,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
-                        ),
+                  ),
+                  Container(
+                    child: Text(
+                      "Os créditos do Share On podem ser resgatados a qualquer momento com um desconto de 5R\$ desde que: \n"
+                      "Você possua 50 R\$ ou mais de créditos",
+                      textAlign: TextAlign.center,
+                      textDirection: TextDirection.ltr,
+                      style: TextStyle(
+                        fontFamily: 'RobotoMono',
+                        decoration: TextDecoration.none,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.yellow,
+                        fontSize: 12,
                       ),
                     ),
-                  ],
-                ),
+                  ),
+                  Container(
+                    margin: EdgeInsets.only(top: 32, left: 8, right: 8),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: <Widget>[
+                        Container(
+                          height: 100,
+                          width: 100,
+                          child: RaisedButton(
+                            color: Colors.white,
+                            onPressed: () {
+                              showHist = !showHist;
+                            },
+                            child: Text("Ver histórico",
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 15,
+                                ),
+                                textAlign: TextAlign.center),
+                          ),
+                        ),
+                        Container(
+                          height: 100,
+                          width: 100,
+                          child: RaisedButton(
+                            color: Colors.white,
+                            onPressed: () {
+                              adicionarCreditos(context);
+                            },
+                            child: Container(
+                              child: Text("Adicionar créditos",
+                                  style: TextStyle(
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                  textAlign: TextAlign.center),
+                            ),
+                          ),
+                        ),
+                        Container(
+                          height: 100,
+                          width: 100,
+                          child: RaisedButton(
+                            color: Colors.white,
+                            onPressed: () {},
+                            child: Container(
+                              child: Text(
+                                "Resgatar créditos",
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  showHist == false ? Container() : _showHist(),
+                ],
               ),
-              showHist == false ? Container() : _showHist(),
-            ],
+            ),
           ),
         ),
       ),

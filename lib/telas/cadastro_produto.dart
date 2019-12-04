@@ -44,7 +44,7 @@ class _CadastroProdutoState extends State<CadastroProduto> {
 
   //Materiais de Escritorio
 
-  //Eletrodomesticos
+  //eletroeletronico
   final campoEletro = GlobalKey<FormState>();
   final marcaEletroController = TextEditingController();
   bool voltagemInformada = false;
@@ -58,12 +58,12 @@ class _CadastroProdutoState extends State<CadastroProduto> {
   File _img5;
   int btPointer;
   bool livrosPressed = false;
-  bool eletrodomesticosPressed = false;
+  bool eletroeletronicoPressed = false;
   bool materiaisEsportivosPressed = false;
   bool materiaisEscritorioPressed = false;
   bool loading = false;
 
-  //int btPointer = 1 Materiais Esportivos / 2 Livros / 3 Escritorio / 4 Eletrodomesticos
+  //int btPointer = 1 Materiais Esportivos / 2 Livros / 3 Escritorio / 4 eletroeletronico
 
   @override
   void initState() {
@@ -246,7 +246,7 @@ class _CadastroProdutoState extends State<CadastroProduto> {
                                                 livrosPressed = false;
                                                 materiaisEscritorioPressed =
                                                     false;
-                                                eletrodomesticosPressed = false;
+                                                eletroeletronicoPressed = false;
                                               }
                                               if (btPointer != 1) {
                                                 btPointer = 1;
@@ -275,7 +275,7 @@ class _CadastroProdutoState extends State<CadastroProduto> {
                                                     false;
                                                 materiaisEsportivosPressed =
                                                     false;
-                                                eletrodomesticosPressed = false;
+                                                eletroeletronicoPressed = false;
                                               }
                                               if (btPointer != 2) {
                                                 btPointer = 2;
@@ -304,7 +304,7 @@ class _CadastroProdutoState extends State<CadastroProduto> {
                                                 livrosPressed = false;
                                                 materiaisEsportivosPressed =
                                                     false;
-                                                eletrodomesticosPressed = false;
+                                                eletroeletronicoPressed = false;
                                               }
                                               if (btPointer != 3) {
                                                 btPointer = 3;
@@ -338,7 +338,7 @@ class _CadastroProdutoState extends State<CadastroProduto> {
                                             setState(() {
                                               if (materiaisEsportivosPressed ==
                                                   false) {
-                                                eletrodomesticosPressed = true;
+                                                eletroeletronicoPressed = true;
                                                 materiaisEsportivosPressed =
                                                     false;
                                                 livrosPressed = false;
@@ -350,10 +350,10 @@ class _CadastroProdutoState extends State<CadastroProduto> {
                                               }
                                             });
                                           },
-                                          color: eletrodomesticosPressed == true
+                                          color: eletroeletronicoPressed == true
                                               ? Colors.orange
                                               : Colors.indigoAccent,
-                                          child: Text("Eletrodomésticos",
+                                          child: Text("Eletroeletrônico",
                                               textAlign: TextAlign.center,
                                               style: TextStyle(
                                                   color: Colors.white)),
@@ -654,7 +654,7 @@ class _CadastroProdutoState extends State<CadastroProduto> {
   }
 
   _infoTipo() {
-    //int btPointer = 1 Materiais Esportivos / 2 Livros / 3 Escritorio / 4 Eletrodomesticos
+    //int btPointer = 1 Materiais Esportivos / 2 Livros / 3 Escritorio / 4 eletroeletronico
     if (btPointer == 1) {
       void _handleRadioValueME(int value) {
         setState(() {
@@ -1248,7 +1248,7 @@ class _CadastroProdutoState extends State<CadastroProduto> {
       "ownerID": widget.userID,
       "productAddress": productAddress,
       "price": double.parse(priceAux),
-      "type": "eletrodomestico",
+      "type": "eletroeletronico",
       "media": "-",
       "adStatus": adStatus,
       "marca": marcaEletroController.text,
