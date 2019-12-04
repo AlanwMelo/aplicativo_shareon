@@ -16,6 +16,7 @@ import 'package:page_indicator/page_indicator.dart';
 import 'package:toast/toast.dart';
 
 import '../main.dart';
+import 'avaliacoes_produtos.dart';
 import 'home.dart';
 
 class ProdutoSelecionado extends StatefulWidget {
@@ -101,7 +102,7 @@ class _ProdutoSelecionadoState extends State<ProdutoSelecionado> {
       }
     }
     if (productInFavorites == false) {
-      favoriteController = "Adcionar aos Favoritos";
+      favoriteController = "Adicionar aos Favoritos";
     } else if (productInFavorites == true) {
       favoriteController = "Remover dos Favoritos";
     }
@@ -301,19 +302,40 @@ class _ProdutoSelecionadoState extends State<ProdutoSelecionado> {
                             ),
                           ),
                         ),
-                        Container(
-                          margin: EdgeInsets.only(bottom: 8),
-                          child: RaisedButton(
-                            color: Colors.white,
-                            onPressed: () {
-                              _setFavoriteState();
-                            },
-                            child: _text(favoriteController, resumo: true),
-                          ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: <Widget>[
+                            Container(
+                              margin: EdgeInsets.only(bottom: 8),
+                              child: RaisedButton(
+                                color: Colors.white,
+                                onPressed: () {
+                                  _setFavoriteState();
+                                },
+                                child: _text(favoriteController, resumo: true),
+                              ),
+                            ),
+                            GestureDetector(
+                              onTap: (){
+                                Navigator.of(context).push(MaterialPageRoute(builder: (BuildContext context){
+                                  return AvaliacoesProdutos(id: widget.productID);
+                                }));
+                              },
+                              child: Text(
+                                "Ver avaliações",
+                                style: TextStyle(
+                                    fontSize: 16,
+                                    color: Colors.white,
+                                    fontFamily: 'RobotoMono',
+                                    fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                          ],
                         ),
                         Container(
                           width: 400,
-                          margin: EdgeInsets.only(bottom: 8, right: 8, left: 8),
+                          margin:
+                              EdgeInsets.only(bottom: 16, right: 8, left: 8),
                           child: prodDestination(),
                         ),
                       ],

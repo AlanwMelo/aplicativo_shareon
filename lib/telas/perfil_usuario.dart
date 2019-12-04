@@ -11,6 +11,13 @@ class MeuPerfil extends StatefulWidget {
   _MeuPerfilState createState() => _MeuPerfilState();
 }
 
+class _AvaliacoesHist {
+  String description;
+  Timestamp ts;
+
+  _AvaliacoesHist(this.description, this.ts);
+}
+
 class _MeuPerfilState extends State<MeuPerfil> {
   SharedPreferencesController sharedPreferencesController =
       new SharedPreferencesController();
@@ -23,6 +30,7 @@ class _MeuPerfilState extends State<MeuPerfil> {
   String userAddress = "";
   String userMedia = "0.0";
   String userID = "";
+  List<_AvaliacoesHist> avaliacoes = [];
 
   @override
   void initState() {
@@ -46,22 +54,42 @@ class _MeuPerfilState extends State<MeuPerfil> {
           title: Text('Perfil'),
           elevation: 0,
           backgroundColor: Colors.indigoAccent,
-          leading: IconButton(
-            icon: Icon(Icons.arrow_back_ios),
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-          ),
           actions: <Widget>[
-            IconButton(
-              icon: Icon(Icons.edit),
-              onPressed: () {
-                Navigator.of(context)
-                    .push(MaterialPageRoute(builder: (BuildContext context) {
-                  return EditarPerfil();
-                }));
-              },
-            )
+            Expanded(
+              child: Container(),
+            ),
+            Expanded(
+              child: Container(
+                child: Center(
+                  child: IconButton(
+                    icon: Icon(Icons.edit),
+                    onPressed: () {
+                      Navigator.of(context).push(
+                          MaterialPageRoute(builder: (BuildContext context) {
+                        return EditarPerfil();
+                      }));
+                    },
+                  ),
+                ),
+              ),
+            ),
+            Expanded(
+              child: Container(
+                child: Center(
+                    child: GestureDetector(
+                  onTap: () {
+                    alertExit(context);
+                  },
+                  child: Text(
+                    "Logout",
+                    style: TextStyle(
+                        fontSize: 16,
+                        fontFamily: 'RobotoMono',
+                        fontWeight: FontWeight.bold),
+                  ),
+                )),
+              ),
+            ),
           ]),
       body: SizedBox.expand(
         child: Container(
@@ -112,7 +140,6 @@ class _MeuPerfilState extends State<MeuPerfil> {
                   ConstrainedBox(
                     constraints: BoxConstraints(
                       minHeight: 40,
-                      minWidth: 1000,
                     ),
                     child: Container(
                       child: ClipRRect(
@@ -120,30 +147,17 @@ class _MeuPerfilState extends State<MeuPerfil> {
                         child: Container(
                           padding: EdgeInsets.all(8),
                           color: Colors.white,
-                          child: _text("Você ainda não possui avaliações.",
-                              resumo: true),
+                          child: avaliacoes.length == 0
+                              ? Center(
+                                  child: _text(
+                                      "Você ainda não possui avaliações.",
+                                      resumo: true),
+                                )
+                              : _avaliacoesList(),
                         ),
                       ),
                     ),
                   ),
-                  Container(
-                      color: Colors.white,
-                      width: 200.0,
-                      height: 50.0,
-                      margin: const EdgeInsets.only(top: 45.0),
-                      child: RaisedButton(
-                        color: Colors.white,
-                        child: new Text(
-                          'Logout',
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        onPressed: () {
-                          alertExit(context);
-                        },
-                      )),
                 ],
               ),
             ),
@@ -297,6 +311,7 @@ class _MeuPerfilState extends State<MeuPerfil> {
     setState(() {
       userID = value;
       _getUserData();
+      _getList();
     });
   }
 
@@ -401,6 +416,60 @@ class _MeuPerfilState extends State<MeuPerfil> {
           ),
         );
       },
+    );
+  }
+
+  _getList() async {
+    await databaseReference
+        .collection("scoreValues")
+        .where("ID", isEqualTo: userID)
+        .getDocuments()
+        .then((QuerySnapshot snapshot) {
+      snapshot.documents.forEach((f) {
+        Map values = f.data;
+        if (values["description"] != null) {
+          Timestamp auxTS =
+              values["statusTS"] ?? Timestamp.fromDate(DateTime.now());
+          setState(() {
+            avaliacoes.add(new _AvaliacoesHist(values["description"], auxTS));
+            avaliacoes.sort((a, b) => b.ts.compareTo(a.ts));
+          });
+        }
+      });
+    });
+  }
+
+  _avaliacoesList() {
+    return Center(
+      child: ListView.builder(
+          shrinkWrap: true,
+          itemCount: avaliacoes.length,
+          itemBuilder: (BuildContext context, int index) {
+            return Container(
+                margin: EdgeInsets.only(left: 8, right: 8),
+                child: Column(
+                  children: <Widget>[
+                    Row(
+                      children: <Widget>[
+                        _avaliacoesText(avaliacoes[index].description),
+                      ],
+                    ),
+                    Divider(thickness: 2),
+                  ],
+                ));
+          }),
+    );
+  }
+
+  _avaliacoesText(String text) {
+    return Text(
+      "$text",
+      textAlign: TextAlign.center,
+      style: TextStyle(
+        fontWeight: FontWeight.bold,
+        color: Colors.black54,
+        fontSize: 16,
+      ),
     );
   }
 }

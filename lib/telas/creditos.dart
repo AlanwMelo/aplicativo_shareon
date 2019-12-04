@@ -400,7 +400,6 @@ class _CreditosState extends State<Creditos> {
         .where("userID", isEqualTo: userID)
         .getDocuments()
         .then((QuerySnapshot snapshot) {
-          print(snapshot.documents.length);
       snapshot.documents.forEach((f) {
         Map values = f.data;
 
