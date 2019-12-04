@@ -3,9 +3,9 @@ import 'dart:convert';
 
 import 'package:aplicativo_shareon/models/usuario_model.dart';
 import 'package:aplicativo_shareon/telas/editar_produto.dart';
+import 'package:aplicativo_shareon/telas/perfil_outro_usuario.dart';
 import 'package:aplicativo_shareon/telas/reservar_produto.dart';
 import 'package:aplicativo_shareon/telas/validacao.dart';
-import 'package:aplicativo_shareon/telas/ver_perfil.dart';
 import 'package:aplicativo_shareon/telas/verificar_reserva.dart';
 import 'package:aplicativo_shareon/utils/shareon_appbar.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -315,19 +315,18 @@ class _ProdutoSelecionadoState extends State<ProdutoSelecionado> {
                                 child: _text(favoriteController, resumo: true),
                               ),
                             ),
-                            GestureDetector(
-                              onTap: (){
-                                Navigator.of(context).push(MaterialPageRoute(builder: (BuildContext context){
-                                  return AvaliacoesProdutos(id: widget.productID);
-                                }));
-                              },
-                              child: Text(
-                                "Ver avaliações",
-                                style: TextStyle(
-                                    fontSize: 16,
-                                    color: Colors.white,
-                                    fontFamily: 'RobotoMono',
-                                    fontWeight: FontWeight.bold),
+                            Container(
+                              margin: EdgeInsets.only(bottom: 8),
+                              child: RaisedButton(
+                                color: Colors.white,
+                                onPressed: () {
+                                  Navigator.of(context).push(MaterialPageRoute(
+                                      builder: (BuildContext context) {
+                                    return AvaliacoesProdutos(
+                                        id: widget.productID);
+                                  }));
+                                },
+                                child: _text("Ver avaliações", resumo: true),
                               ),
                             ),
                           ],

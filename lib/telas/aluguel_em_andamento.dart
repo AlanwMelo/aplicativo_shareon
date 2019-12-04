@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:aplicativo_shareon/telas/validacao.dart';
-import 'package:aplicativo_shareon/telas/ver_perfil.dart';
+import 'package:aplicativo_shareon/telas/perfil_outro_usuario.dart';
 import 'package:aplicativo_shareon/utils/shareon_appbar.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';

@@ -4,6 +4,7 @@ import 'package:aplicativo_shareon/models/usuario_model.dart';
 import 'package:aplicativo_shareon/telas/home.dart';
 import 'package:aplicativo_shareon/telas/login.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_masked_text/flutter_masked_text.dart';
@@ -33,6 +34,7 @@ class _CadastroUsuarioState extends State<CadastroUsuario> {
   GeoPoint userAddressLatLng;
   String cpf;
   bool btloading = false;
+  FirebaseAuth auth = FirebaseAuth.instance;
 
   @override
   Widget build(BuildContext context) {
@@ -274,7 +276,8 @@ class _CadastroUsuarioState extends State<CadastroUsuario> {
                                           "email": emailController.text,
                                           "password": base64Str,
                                           "cpf": cpf,
-                                          "tel_contato": telefoneController.text,
+                                          "tel_contato":
+                                              telefoneController.text,
                                           "debit": debit,
                                           "media": "-",
                                           "userAddressLatLng":
@@ -409,7 +412,9 @@ class _CadastroUsuarioState extends State<CadastroUsuario> {
                                 ),
                                 GestureDetector(
                                   onTap: () {
-                                    print("Not yet");
+                                    auth.sendPasswordResetEmail(
+                                        email: emailController.text);
+                                    _toast("Email enviado", context);
                                   },
                                   child: Container(
                                     margin: EdgeInsets.only(
@@ -430,22 +435,21 @@ class _CadastroUsuarioState extends State<CadastroUsuario> {
                                       top: 8, right: 8, left: 8, bottom: 8),
                                   child: _textConfirmacao(
                                       "Se você ainda não possuí conta ou quer alterar o email vinculado a seu CPF"
-                                      " acesse este link:"),
+                                      " entre em contato com nossa equipe através do email:"),
                                 ),
-                                GestureDetector(
-                                  onTap: () {
-                                    print("Not yet");
-                                  },
-                                  child: Container(
-                                    margin: EdgeInsets.only(
-                                        right: 8, left: 8, bottom: 32),
-                                    child: Row(
-                                      children: <Widget>[
-                                        _textConfirmacao(
-                                            "Contestar / Reassociar CPF",
-                                            titulo: true),
-                                      ],
-                                    ),
+                                Container(
+                                  margin: EdgeInsets.only(
+                                      right: 8, left: 8, bottom: 32),
+                                  child: Row(
+                                    children: <Widget>[
+                                      Expanded(
+                                        child: Center(
+                                          child: _textConfirmacao(
+                                              "aplicativoshareon@gmail.com",
+                                              titulo: true),
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
                               ],

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math';
 
 import 'package:aplicativo_shareon/utils/alter_debit.dart';
@@ -24,6 +25,12 @@ class _MasterState extends State<Master> {
   String cpf;
   double auxDouble;
   bool loading = false;
+
+  @override
+  void initState() {
+    Timer.periodic(Duration(minutes: 5), (Timer t) => _attDB());
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -463,7 +470,9 @@ class _MasterState extends State<Master> {
         avaliacoesID.text = "";
         loading = false;
       });
-    } else if (caller == 4) {}
+    } else if (caller == 4) {
+      _attDB();
+    }
   }
 
   _toast(String texto, BuildContext context) {
@@ -471,5 +480,33 @@ class _MasterState extends State<Master> {
         duration: 3,
         gravity: Toast.BOTTOM,
         backgroundColor: Colors.black.withOpacity(0.8));
+  }
+
+  Future _attDB() async {
+    await databaseReference
+        .collection("solicitations")
+        .getDocuments()
+        .then((QuerySnapshot snapshot) {
+      snapshot.documents.forEach((f) async {
+        Map data = f.data;
+
+        Timestamp ts = data["programedInitDate"];
+
+        DateTime aux = DateTime.fromMillisecondsSinceEpoch(ts.millisecondsSinceEpoch);
+        DateTime now = DateTime.now();
+
+        if (aux.isBefore(now) && data["status"] == "pendente") {
+          Map<String, dynamic> attStatus = {
+            "status": "cancelada",
+            "motivoStatus": "cancelado por falta de resposta",
+            "finalEndDate": Timestamp.fromDate(DateTime.now()),
+          };
+          await databaseReference
+              .collection("solicitations")
+              .document(data["solicitationID"])
+              .updateData(attStatus);
+        }
+      });
+    });
   }
 }

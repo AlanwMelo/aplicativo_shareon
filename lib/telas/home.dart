@@ -10,7 +10,6 @@ import 'package:aplicativo_shareon/telas/historico.dart';
 import 'package:aplicativo_shareon/telas/main.dart';
 import 'package:aplicativo_shareon/telas/meus_produtos.dart';
 import 'package:aplicativo_shareon/telas/produtos_reservas.dart';
-import 'package:aplicativo_shareon/telas/suporte.dart';
 import 'package:aplicativo_shareon/utils/shareon_appbar.dart';
 import 'package:aplicativo_shareon/utils/timer_reserva.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -135,8 +134,6 @@ class _HomeState extends State<Home> {
       return TelaHistorico();
     } else if (controllerPointer == 5) {
       return homeMeusProdutos();
-    } else if (controllerPointer == 6) {
-      return homeSuporte();
     }
     /*else if (controllerPointer == 7) {
       return homeConfiguracoes();
@@ -287,7 +284,8 @@ class _HomeState extends State<Home> {
                   onTap: () {
                     setState(() {
                       Navigator.pop(context);
-                      Navigator.of(context).push(MaterialPageRoute(builder: (BuildContext context){
+                      Navigator.of(context).push(
+                          MaterialPageRoute(builder: (BuildContext context) {
                         return Master();
                       }));
                     });
@@ -555,36 +553,7 @@ class _HomeState extends State<Home> {
               ],
             ),
           ),*/
-          GestureDetector(
-            onTap: () {
-              setState(() {
-                Navigator.pop(context);
-                controllerPointer = 6;
-              });
-            },
-            child: Container(
-              height: 50,
-              child: Center(
-                child: Row(
-                  children: <Widget>[
-                    Container(
-                      margin: EdgeInsets.only(left: 10, bottom: 3),
-                      child: _iconSuporte(),
-                    ),
-                    SizedBox(
-                      width: 270,
-                      child: Container(
-                        margin: EdgeInsets.only(
-                          left: 14,
-                        ),
-                        child: _text("Suporte"),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
+
           /*GestureDetector(
             onTap: () {
               setState(() {
@@ -846,25 +815,9 @@ class _HomeState extends State<Home> {
     );
   }
 
-  _iconSuporte() {
-    return Icon(
-      Icons.assistant,
-      color: Colors.black54,
-      size: 24.0,
-    );
-  }
-
   _iconFAQ() {
     return Icon(
       Icons.help_outline,
-      color: Colors.black54,
-      size: 24.0,
-    );
-  }
-
-  _iconConfig() {
-    return Icon(
-      Icons.settings,
       color: Colors.black54,
       size: 24.0,
     );

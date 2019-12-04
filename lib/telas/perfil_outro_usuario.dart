@@ -11,6 +11,13 @@ class VerPerfil extends StatefulWidget {
   _VerPerfilState createState() => _VerPerfilState();
 }
 
+class _AvaliacoesHist {
+  String description;
+  Timestamp ts;
+
+  _AvaliacoesHist(this.description, this.ts);
+}
+
 class _VerPerfilState extends State<VerPerfil> {
   final databaseReference = Firestore.instance;
 
@@ -21,6 +28,7 @@ class _VerPerfilState extends State<VerPerfil> {
   String userAddress = "";
   String userMedia = "0.0";
   String userID = "";
+  List<_AvaliacoesHist> avaliacoes = [];
 
   @override
   void initState() {
@@ -96,7 +104,6 @@ class _VerPerfilState extends State<VerPerfil> {
                   ConstrainedBox(
                     constraints: BoxConstraints(
                       minHeight: 40,
-                      minWidth: 1000,
                     ),
                     child: Container(
                       child: ClipRRect(
@@ -104,8 +111,13 @@ class _VerPerfilState extends State<VerPerfil> {
                         child: Container(
                           padding: EdgeInsets.all(8),
                           color: Colors.white,
-                          child: _text("Você ainda não possui avaliações.",
-                              resumo: true),
+                          child: avaliacoes.length == 0
+                              ? Center(
+                            child: _text(
+                                "Este usuário ainda não possui avaliações.",
+                                resumo: true),
+                          )
+                              : _avaliacoesList(),
                         ),
                       ),
                     ),
@@ -218,6 +230,7 @@ class _VerPerfilState extends State<VerPerfil> {
     setState(() {
       userID = value;
       _getUserData();
+      _getList();
     });
   }
 
@@ -322,6 +335,59 @@ class _VerPerfilState extends State<VerPerfil> {
           ),
         );
       },
+    );
+  }
+
+  _getList() async {
+    await databaseReference
+        .collection("scoreValues")
+        .where("ID", isEqualTo: userID)
+        .getDocuments()
+        .then((QuerySnapshot snapshot) {
+      snapshot.documents.forEach((f) {
+        Map values = f.data;
+        if (values["description"] != null) {
+          Timestamp auxTS =
+              values["statusTS"] ?? Timestamp.fromDate(DateTime.now());
+          setState(() {
+            avaliacoes.add(new _AvaliacoesHist(values["description"], auxTS));
+            avaliacoes.sort((a, b) => b.ts.compareTo(a.ts));
+          });
+        }
+      });
+    });
+  }
+
+  _avaliacoesList() {
+    return Center(
+      child: ListView.builder(
+          shrinkWrap: true,
+          itemCount: avaliacoes.length,
+          itemBuilder: (BuildContext context, int index) {
+            return Container(
+                margin: EdgeInsets.only(left: 8, right: 8),
+                child: Column(
+                  children: <Widget>[
+                    Row(
+                      children: <Widget>[
+                        _avaliacoesText(avaliacoes[index].description),
+                      ],
+                    ),
+                    Divider(thickness: 2),
+                  ],
+                ));
+          }),
+    );
+  }
+  _avaliacoesText(String text) {
+    return Text(
+      "$text",
+      textAlign: TextAlign.center,
+      style: TextStyle(
+        fontWeight: FontWeight.bold,
+        color: Colors.black54,
+        fontSize: 16,
+      ),
     );
   }
 }
