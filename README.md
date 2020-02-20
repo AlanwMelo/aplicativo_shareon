@@ -1,5 +1,4 @@
 # aplicativo_shareon
 TCC
 
-App C:\Users\Public\TC\
-SDK C:\Program Files\flutter
+Um aplicativo para o aluguel de produtos de baixo custo.
